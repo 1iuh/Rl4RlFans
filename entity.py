@@ -1,6 +1,8 @@
 from typing import Tuple
 import copy
 
+from render_order import RenderOrder
+
 
 class Entity:
     """
@@ -16,6 +18,7 @@ class Entity:
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
+        render_order: RenderOrder = RenderOrder.CORPSE,
     ):
 
         self.x = x
@@ -24,6 +27,8 @@ class Entity:
         self.color = color
         self.name = name
         self.blocks_movement = blocks_movement
+        self.render_order = render_order
+
         if gamemap:
             self.gamemap = gamemap
             gamemap.entities.add(self)
@@ -74,6 +79,7 @@ class Actor(Entity):
            color=color,
            name=name,
            blocks_movement=True,
+           render_order=RenderOrder.ACTOR,
        )
 
        self.ai = ai_cls(self)

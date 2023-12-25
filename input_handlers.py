@@ -11,6 +11,15 @@ class EventHandler(tcod.event.EventDispatch):
         self.engine = engine
 
     def handle_events(self) -> None:
+        raise NotImplementedError()
+
+    def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
+        raise SystemExit()
+
+
+class MainGameEventHandler(EventHandler):
+
+    def handle_events(self) -> None:
         for event in tcod.event.wait():
             action = self.dispatch(event)
 
@@ -21,9 +30,6 @@ class EventHandler(tcod.event.EventDispatch):
 
             self.engine.handle_enemy_turns()
             self.engine.update_fov()  # Update the FOV before the players next action.
-
-    def ev_quit(self, event: tcod.event.Quit):
-        raise SystemExit()
 
     def ev_keydown(self, event: tcod.event.KeyDown):
         action: Optional[Action] = None
@@ -46,3 +52,25 @@ class EventHandler(tcod.event.EventDispatch):
 
         # No valid key was pressed
         return action
+
+class GameOverEventHandler(EventHandler):
+
+   def handle_events(self) -> None:
+       for event in tcod.event.wait():
+           action = self.dispatch(event)
+
+           if action is None:
+               continue
+
+           action.perform()
+
+   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+       action: Optional[Action] = None
+
+       key = event.sym
+
+       if key == tcod.event.K_ESCAPE:
+           action = EscapeAction(self.engine.player)
+
+       # No valid key was pressed
+       return action

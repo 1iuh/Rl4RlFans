@@ -1,8 +1,8 @@
 import numpy as np
-# from tcod.console import Console
 import tcod
 import random
 from entity_factories import all_entities
+from entity import Actor
 
 import tile_types
 
@@ -17,6 +17,15 @@ class GameMap:
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
 
+    @property
+    def actors(self):
+        """Iterate over this maps living actors."""
+        yield from (
+            entity
+            for entity in self.entities
+            if isinstance(entity, Actor) and entity.is_alive
+        )
+
     def in_bounds(self, x, y):
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
@@ -25,6 +34,13 @@ class GameMap:
         for entity in self.entities:
             if entity.blocks_movement and entity.x == location_x and entity.y == location_y:
                 return entity
+
+        return None
+
+    def get_actor_at_location(self, x: int, y: int):
+        for actor in self.actors:
+            if actor.x == x and actor.y == y:
+                return actor
 
         return None
 
@@ -41,10 +57,15 @@ class GameMap:
             choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD,
         )
-        for entity in self.entities:
+        entities_sorted_for_rendering = sorted(
+            self.entities, key=lambda x: x.render_order.value
+        )
+        for entity in entities_sorted_for_rendering:
             # Only print entities that are in the FOV
             if self.visible[entity.x, entity.y]:
-                console.print(x=entity.x, y=entity.y, string=entity.char, fg=entity.color)
+                console.print(
+                        x=entity.x, y=entity.y, string=entity.char, fg=entity.color
+                   )
 
 
 class RectangularRoom:

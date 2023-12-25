@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import tcod
 from engine import Engine
-from input_handlers import EventHandler
 from game_map import generate_dungeon
+from charmap import charmap
 import entity_factories
 import copy
 
 
-def main() -> None:
+def main():
     screen_width = 80
     screen_height = 50
     map_width = 80
@@ -18,7 +18,7 @@ def main() -> None:
     max_monsters_per_room = 2
 
     tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "asset/font2bitmap.png", 200, 92, charmap
     )
 
     player = copy.deepcopy(entity_factories.player)
