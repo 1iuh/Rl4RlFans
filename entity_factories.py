@@ -26,4 +26,12 @@ twoflower = Actor(
    fighter=Fighter(hp=30, defense=2, power=5),
 )
 
+Sagancharum = Actor(
+   char="P",
+   color=(3, 252, 65),
+   name="甘蔗",
+   ai_cls=HostileEnemy,
+   fighter=Fighter(hp=30, defense=2, power=5),
+)
+
 all_entities = (a_tree, twoflower) 
