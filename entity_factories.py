@@ -45,6 +45,6 @@ all_entities = (a_tree, twoflower, sagancharum)
 health_potion = Item(
    char="!",
    color=(127, 0, 255),
-   name="Health Potion",
+   name="生命药水",
    consumable=HealingConsumable(amount=4),
 )

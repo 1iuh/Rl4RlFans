@@ -30,11 +30,6 @@ class Action:
         raise NotImplementedError()
 
 
-class EscapeAction(Action):
-    def perform(self) -> None:
-        raise SystemExit()
-
-
 class ActionWithDirection(Action):
    def __init__(self, entity, dx, dy):
        super().__init__(entity)
@@ -94,13 +89,13 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            raise exceptions.Impossible("That way is blocked.")
+            raise exceptions.Impossible("那里没路。")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is out of bounds.
-            raise exceptions.Impossible("That way is blocked.")
+            raise exceptions.Impossible("那里没路。")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is out of bounds.
-            raise exceptions.Impossible("That way is blocked.")
+            raise exceptions.Impossible("那里没路。")
 
         self.entity.move(self.dx, self.dy)
 
