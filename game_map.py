@@ -1,10 +1,13 @@
+
 import numpy as np
 import tcod
 import random
-from entity_factories import all_entities
-from entity import Actor
+import entity_factories
+from entity import Actor, Item
 
 import tile_types
+
+from typing import Iterator
 
 
 class GameMap:
@@ -18,6 +21,10 @@ class GameMap:
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
 
     @property
+    def gamemap(self):
+        return self
+
+    @property
     def actors(self):
         """Iterate over this maps living actors."""
         yield from (
@@ -25,6 +32,11 @@ class GameMap:
             for entity in self.entities
             if isinstance(entity, Actor) and entity.is_alive
         )
+
+    @property
+    def items(self) -> Iterator[Item]:
+        yield from (entity for entity in self.entities if isinstance(entity, Item))
+
 
     def in_bounds(self, x, y):
         """Return True if x and y are inside of the bounds of this map."""
@@ -97,16 +109,23 @@ class RectangularRoom:
         )
 
 
-def place_entities( room, dungeon, maximum_monsters):
+def place_entities( room, dungeon, maximum_monsters, maximum_items):
    number_of_monsters = random.randint(0, maximum_monsters)
+   number_of_items = random.randint(0, maximum_items)
 
    for i in range(number_of_monsters):
        x = random.randint(room.x1 + 1, room.x2 - 1)
        y = random.randint(room.y1 + 1, room.y2 - 1)
 
        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-           entity = random.choice(all_entities)
+           entity = random.choice(entity_factories.all_entities)
            entity.spawn(dungeon, x, y)
+   for i in range(number_of_items):
+        x = random.randint(room.x1 + 1, room.x2 - 1)
+        y = random.randint(room.y1 + 1, room.y2 - 1)
+
+        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+            entity_factories.health_potion.spawn(dungeon, x, y)
 
 def generate_dungeon(
    map_width,
@@ -115,6 +134,7 @@ def generate_dungeon(
    room_max_size,
    max_rooms,
    max_monsters_per_room,
+   max_items_per_room,
    engine,
 ):
    """Generate a new dungeon map."""
@@ -150,7 +170,7 @@ def generate_dungeon(
                dungeon.tiles[x, y] = tile_types.floor
 
 
-       place_entities(new_room, dungeon, max_monsters_per_room)
+       place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
        # Finally, append the new room to the list.
        rooms.append(new_room)

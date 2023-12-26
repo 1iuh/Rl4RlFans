@@ -1,7 +1,14 @@
-from typing import Tuple
+from __future__ import annotations
+
+from typing import Tuple, TYPE_CHECKING, Optional
 import copy
 
 from render_order import RenderOrder
+
+if TYPE_CHECKING:
+   from game_map import GameMap
+   from components.consumable import Consumable
+   from components.inventory import Inventory
 
 
 class Entity:
@@ -9,9 +16,11 @@ class Entity:
     A generic object to represent players, enemies, items, etc.
     """
 
+    parent: GameMap
+
     def __init__(
         self,
-        gamemap=None,
+        parent: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
         char: str = "?",
@@ -29,9 +38,14 @@ class Entity:
         self.blocks_movement = blocks_movement
         self.render_order = render_order
 
-        if gamemap:
-            self.gamemap = gamemap
-            gamemap.entities.add(self)
+        if parent:
+            # If parent isn't provided now then it will be set later.
+            self.parent = parent
+            parent.entities.add(self)
+
+    @property
+    def gamemap(self) -> GameMap:
+        return self.parent.gamemap
 
 
     def spawn(self, gamemap, x, y):
@@ -39,7 +53,7 @@ class Entity:
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-        clone.gamemap = gamemap
+        clone.parent = gamemap
         gamemap.entities.add(clone)
         return clone
 
@@ -48,10 +62,10 @@ class Entity:
         self.x = x
         self.y = y
         if gamemap:
-            if hasattr(self, "gamemap"):  # Possibly uninitialized.
-                self.gamemap.entities.remove(self)
-            self.gamemap = gamemap
-            gamemap.entities.add(self)
+            if hasattr(self, "parent"):  # Possibly uninitialized.
+                if self.parent is self.gamemap:
+                    self.gamemap.entities.remove(self)
+            self.parent = gamemap
 
     def move(self, dx: int, dy: int) -> None:
         # Move the entity by a given amount
@@ -70,7 +84,8 @@ class Actor(Entity):
        color: Tuple[int, int, int] = (255, 255, 255),
        name: str = "<Unnamed>",
        ai_cls,
-       fighter
+       fighter,
+       inventory
    ):
        super().__init__(
            x=x,
@@ -85,9 +100,36 @@ class Actor(Entity):
        self.ai = ai_cls(self)
 
        self.fighter = fighter
-       self.fighter.entity = self
+       self.fighter.parent = self
+       self.inventory = inventory
+       self.inventory.parent = self
 
    @property
    def is_alive(self) -> bool:
        """Returns True as long as this actor can perform actions."""
        return bool(self.ai)
+
+
+class Item(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "?",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "<Unnamed>",
+        consumable: Consumable,
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            blocks_movement=False,
+            render_order=RenderOrder.ITEM,
+        )
+
+        self.consumable = consumable
+        self.consumable.parent = self
