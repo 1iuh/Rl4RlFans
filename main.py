@@ -10,18 +10,18 @@ import traceback
 
 
 def main():
-    screen_width = 80
-    screen_height = 50
-    map_width = 80
-    map_height = 45
+    screen_width = 50
+    screen_height = 40
+    map_width = 50
+    map_height = 35
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
     max_monsters_per_room = 2
-    max_items_per_room = 3
+    max_items_per_room = 5
 
     tileset = tcod.tileset.load_tilesheet(
-        "asset/font2bitmap.png", 200, 92, charmap
+        "asset/font24.png", 200, 92, charmap
     )
 
     player = copy.deepcopy(entity_factories.player)

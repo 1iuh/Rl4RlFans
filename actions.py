@@ -105,7 +105,6 @@ class WaitAction(Action):
        pass
 
 
-
 class BumpAction(ActionWithDirection):
 
    def perform(self):

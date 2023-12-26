@@ -45,11 +45,11 @@ class Engine:
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)
-        self.message_log.render(console=console, x=21, y=45, width=40, height=5)
+        self.message_log.render(console=console, x=14, y=console.height-5, width=32, height=5)
         render_bar(
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
-            total_width=20,
+            total_width=12,
         )
-        render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        render_names_at_mouse_location(console=console, x=14, y=console.height-6, engine=self)
