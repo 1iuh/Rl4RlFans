@@ -69,3 +69,10 @@ confusion_scroll = Item(
     name="迷惑卷轴",
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
+
+fireball_scroll = Item(
+    char="~",
+    color=(255, 0, 0),
+    name="火球卷轴",
+    consumable=consumable.FireballConsumable(20, 2),
+)

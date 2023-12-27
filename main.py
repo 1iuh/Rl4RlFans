@@ -7,6 +7,7 @@ import color
 import entity_factories
 import copy
 import traceback
+import imageio.v2 as imageio
 
 
 def main():
@@ -23,6 +24,8 @@ def main():
     tileset = tcod.tileset.load_tilesheet(
         "asset/font24.png", 200, 92, charmap
     )
+    tileset.set_tile(0x100000, imageio.imread("asset/floor.png"))
+    tileset.set_tile(0x100001, imageio.imread("asset/wall.png"))
 
     player = copy.deepcopy(entity_factories.player)
     engine = Engine(player=player)

@@ -8,7 +8,7 @@ import components.inventory
 import components.ai
 from components.base_component import BaseComponent
 from exceptions import Impossible
-from input_handlers import SingleRangedAttackHandler
+from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -114,4 +114,39 @@ class ConfusionConsumable(Consumable):
         target.ai = components.ai.ConfusedEnemy(
             entity=target, previous_ai=target.ai, turns_remaining=self.number_of_turns,
         )
+        self.consume()
+
+
+class FireballConsumable(Consumable):
+    def __init__(self, damage: int, radius: int):
+        self.damage = damage
+        self.radius = radius
+
+    def get_action(self, consumer: Actor) -> Optional[actions.Action]:
+        self.engine.message_log.add_message(
+            "选择目标.", color.needs_target
+        )
+        self.engine.event_handler = AreaRangedAttackHandler(
+            self.engine,
+            radius=self.radius,
+            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+        )
+        return None
+
+    def activate(self, action: actions.ItemAction) -> None:
+        target_xy = action.target_xy
+        if not self.engine.game_map.visible[target_xy]:
+            raise Impossible("不能选择没有视野的地方.")
+
+        targets_hit = False
+        for actor in self.engine.game_map.actors:
+            if actor.distance(*target_xy) <= self.radius:
+                self.engine.message_log.add_message(
+                    f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"
+                )
+                actor.fighter.take_damage(self.damage)
+                targets_hit = True
+
+        if not targets_hit:
+            raise Impossible("范围内没有目标")
         self.consume()

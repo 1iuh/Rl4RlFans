@@ -129,10 +129,12 @@ def place_entities( room, dungeon, maximum_monsters, maximum_items):
 
             if item_chance < 0.2:
                 entity_factories.health_potion.spawn(dungeon, x, y)
-            elif item_chance < 0.7:
+            elif item_chance < 0.4:
                entity_factories.confusion_scroll.spawn(dungeon, x, y)
+            elif item_chance < 0.6:
+               entity_factories.lightning_scroll.spawn(dungeon, x, y)
             else:
-                entity_factories.lightning_scroll.spawn(dungeon, x, y)
+                entity_factories.fireball_scroll.spawn(dungeon, x, y)
 
 def generate_dungeon(
    map_width,
