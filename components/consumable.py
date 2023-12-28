@@ -6,6 +6,7 @@ import actions
 import color
 import components.inventory
 import components.ai
+from visual_effects import VisualEffect
 from components.base_component import BaseComponent
 from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
@@ -147,6 +148,6 @@ class FireballConsumable(Consumable):
                 actor.fighter.take_damage(self.damage)
                 targets_hit = True
 
-        if not targets_hit:
-            raise Impossible("范围内没有目标")
+        consumer = action.entity
+        self.gamemap.visual_effects.append(VisualEffect(self.gamemap,'*', consumer.x, consumer.y, target_xy[0], target_xy[1]))
         self.consume()

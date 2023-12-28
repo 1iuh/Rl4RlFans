@@ -6,6 +6,7 @@ from charmap import charmap
 import color
 import entity_factories
 import copy
+import time
 import traceback
 import imageio.v2 as imageio
 
@@ -26,6 +27,9 @@ def main():
     )
     tileset.set_tile(0x100000, imageio.imread("asset/floor.png"))
     tileset.set_tile(0x100001, imageio.imread("asset/wall.png"))
+    tileset.set_tile(0x100002, imageio.imread("asset/idle0.png"))
+    tileset.set_tile(0x100003, imageio.imread("asset/idle1.png"))
+    tileset.set_tile(0x100004, imageio.imread("asset/idle2.png"))
 
     player = copy.deepcopy(entity_factories.player)
     engine = Engine(player=player)
@@ -54,8 +58,11 @@ def main():
             root_console.clear()
             engine.event_handler.on_render(console=root_console)
             context.present(root_console)
+            if len(engine.game_map.visual_effects) > 0:
+                time.sleep(0.1)
+                continue
             try:
-                for event in tcod.event.wait():
+                for event in tcod.event.wait(0.1):
                     context.convert_event(event)
                     engine.event_handler.handle_events(event)
             except Exception:  # Handle exceptions in game.

@@ -39,6 +39,7 @@ class Entity:
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
+        self.hasAnimation = False
 
         if parent:
             # If parent isn't provided now then it will be set later.
@@ -89,6 +90,7 @@ class Actor(Entity):
        x: int = 0,
        y: int = 0,
        char: str = "?",
+       hasAnimation: bool = False,
        color: Tuple[int, int, int] = (255, 255, 255),
        name: str = "<Unnamed>",
        ai_cls,
@@ -106,11 +108,26 @@ class Actor(Entity):
        )
 
        self.ai = ai_cls(self)
-
+       self.hasAnimation = hasAnimation
+       self.char = char
+       self.keyframe = 0;
        self.fighter = fighter
        self.fighter.parent = self
        self.inventory = inventory
        self.inventory.parent = self
+
+
+   @property
+   def frame(self):
+       animation = [
+               0x100002,
+               0x100003,
+               0x100004,
+               ]
+       self.keyframe += 1;
+       if self.keyframe > len(animation) -1:
+           self.keyframe = 0
+       return chr(animation[self.keyframe])
 
    @property
    def is_alive(self) -> bool:

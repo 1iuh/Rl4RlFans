@@ -19,6 +19,7 @@ class GameMap:
 
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
+        self.visual_effects = []
 
     @property
     def gamemap(self):
@@ -75,9 +76,18 @@ class GameMap:
         for entity in entities_sorted_for_rendering:
             # Only print entities that are in the FOV
             if self.visible[entity.x, entity.y]:
-                console.print(
-                        x=entity.x, y=entity.y, string=entity.char, fg=entity.color
-                   )
+
+                if entity.hasAnimation:
+                    console.print(
+                            x=entity.x, y=entity.y, string=entity.frame, fg=entity.color, bg=None
+                    )
+                else:
+                    console.print(
+                            x=entity.x, y=entity.y, string=entity.char, fg=entity.color
+                    )
+        self.visual_effects = [vfx for vfx in self.visual_effects if not vfx.isFinish]
+        for vfx in self.visual_effects:
+            vfx.render(console)
 
 
 class RectangularRoom:
