@@ -1,4 +1,5 @@
 from typing import Tuple
+import tilesets
 
 import numpy as np  # type: ignore
 
@@ -6,8 +7,8 @@ import numpy as np  # type: ignore
 graphic_dt = np.dtype(
     [
         ("ch", np.int32),  # Unicode codepoint.
-        ("fg", "3B"),  # 3 unsigned bytes, for RGB colors.
-        ("bg", "3B"),
+        ("fg", tilesets.void),  # 3 unsigned bytes, for RGB colors.
+        ("bg", tilesets.void),
     ]
 )
 
@@ -22,7 +23,7 @@ tile_dt = np.dtype(
 )
 
 # SHROUD represents unexplored, unseen tiles
-SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
+SHROUD = np.array((ord(" "), 0, 1), dtype=graphic_dt)
 
 
 def new_tile(
@@ -39,12 +40,12 @@ def new_tile(
 floor = new_tile(
    walkable=True,
    transparent=True,
-   dark=(0x100000, (255, 255, 255), (50, 50, 150)),
-   light=(0x100000, (255, 255, 255), (200, 180, 50)),
+   dark=tilesets.floor,
+   light=tilesets.floor,
 )
 wall = new_tile(
    walkable=False,
    transparent=False,
-   dark=(0x100001, (255, 255, 255), (0, 0, 100)),
-   light=(0x100001, (255, 255, 255), (130, 110, 50)),
+   dark=tilesets.wall,
+   light=tilesets.wall,
 )

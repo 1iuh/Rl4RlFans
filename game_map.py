@@ -6,6 +6,7 @@ import entity_factories
 from entity import Actor, Item
 
 import tile_types
+import tilesets
 
 from typing import Iterator
 
@@ -57,6 +58,30 @@ class GameMap:
 
         return None
 
+    def crade_render(self):
+        # render_map
+        x = 0
+        y = 0
+        for xd in self.tiles:
+            print(xd)
+            #for yd in xd: 
+                #if yd:
+                    #tilesets.wall.center_x = x * 24;
+                    #tilesets.wall.center_y = y * 24;
+                    #tilesets.wall.draw();
+                    #x +=1
+                #y += 1 
+        entities_sorted_for_rendering = sorted(
+            self.entities, key=lambda x: x.render_order.value
+        )
+        for entity in entities_sorted_for_rendering:
+            # Only print entities that are in the FOV
+            if self.visible[entity.x, entity.y]:
+                entity.sprite.center_x = entity.x * 24
+                entity.sprite.center_y = entity.y * 24
+                entity.sprite.draw()
+                
+
     def render(self, console):
         """
         Renders the map.
@@ -77,14 +102,9 @@ class GameMap:
             # Only print entities that are in the FOV
             if self.visible[entity.x, entity.y]:
 
-                if entity.hasAnimation:
-                    console.print(
-                            x=entity.x, y=entity.y, string=entity.frame, fg=entity.color, bg=None
-                    )
-                else:
-                    console.print(
-                            x=entity.x, y=entity.y, string=entity.char, fg=entity.color
-                    )
+                console.print(
+                        x=entity.x, y=entity.y, string=entity.char, fg=entity.color
+                )
         self.visual_effects = [vfx for vfx in self.visual_effects if not vfx.isFinish]
         for vfx in self.visual_effects:
             vfx.render(console)

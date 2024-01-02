@@ -8,9 +8,10 @@ from typing import Tuple, TYPE_CHECKING, Optional, Union
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
-   from game_map import GameMap
-   from components.consumable import Consumable
-   from components.inventory import Inventory
+    from game_map import GameMap
+    from components.consumable import Consumable
+    from components.inventory import Inventory
+    from arcade import Sprite
 
 
 class Entity:
@@ -30,6 +31,7 @@ class Entity:
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
         render_order: RenderOrder = RenderOrder.CORPSE,
+        sprite: Optional[Sprite] = None,
     ):
 
         self.x = x
@@ -40,6 +42,7 @@ class Entity:
         self.blocks_movement = blocks_movement
         self.render_order = render_order
         self.hasAnimation = False
+        self.sprite = sprite
 
         if parent:
             # If parent isn't provided now then it will be set later.
@@ -93,6 +96,7 @@ class Actor(Entity):
        hasAnimation: bool = False,
        color: Tuple[int, int, int] = (255, 255, 255),
        name: str = "<Unnamed>",
+       sprite: Optional[Sprite] = None,
        ai_cls,
        fighter,
        inventory
@@ -105,6 +109,7 @@ class Actor(Entity):
            name=name,
            blocks_movement=True,
            render_order=RenderOrder.ACTOR,
+           sprite=sprite,
        )
 
        self.ai = ai_cls(self)
@@ -144,6 +149,7 @@ class Item(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
+        sprite: Optional[Sprite] = None,
         consumable: Consumable,
     ):
         super().__init__(
@@ -154,6 +160,7 @@ class Item(Entity):
             name=name,
             blocks_movement=False,
             render_order=RenderOrder.ITEM,
+            sprite=sprite,
         )
 
         self.consumable = consumable
