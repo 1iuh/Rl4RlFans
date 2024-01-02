@@ -5,6 +5,7 @@ from input_handlers import GameOverEventHandler
 
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
+from tilesets import void
 import color
 
 if TYPE_CHECKING:
@@ -59,6 +60,7 @@ class Fighter(BaseComponent):
             death_message_color = color.enemy_die
  
         self.parent.char = "%"
+        self.parent.sprite = void 
         self.parent.color = (191, 0, 0)
         self.parent.blocks_movement = False
         self.parent.ai = None

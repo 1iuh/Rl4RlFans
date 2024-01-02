@@ -58,19 +58,34 @@ class GameMap:
 
         return None
 
-    def crade_render(self):
+    def arcade_render(self):
         # render_map
         x = 0
         y = 0
-        for xd in self.tiles:
-            print(xd)
-            #for yd in xd: 
-                #if yd:
-                    #tilesets.wall.center_x = x * 24;
-                    #tilesets.wall.center_y = y * 24;
-                    #tilesets.wall.draw();
-                    #x +=1
-                #y += 1 
+        now_map = np.select(
+            condlist=[self.visible, self.explored],
+            choicelist=[self.tiles["light"], self.tiles["dark"]],
+            default=tile_types.SHROUD,
+        )
+
+        for row in now_map:
+            for col in row: 
+                grid = None
+                if col == 1001:
+                    grid = tilesets.floor_light
+                elif col == 1002:
+                    grid = tilesets.floor_dark
+                elif col == 1003:
+                    grid = tilesets.wall_light
+                elif col == 1004:
+                    grid = tilesets.wall_dark
+                if grid != None:
+                    grid.center_x = x * 24
+                    grid.center_y = y * 24
+                    grid.draw()
+                y +=1
+            y = 0
+            x += 1 
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
         )
@@ -80,7 +95,6 @@ class GameMap:
                 entity.sprite.center_x = entity.x * 24
                 entity.sprite.center_y = entity.y * 24
                 entity.sprite.draw()
-                
 
     def render(self, console):
         """

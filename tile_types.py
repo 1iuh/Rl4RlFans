@@ -3,27 +3,24 @@ import tilesets
 
 import numpy as np  # type: ignore
 
-# Tile graphics structured type compatible with Console.tiles_rgb.
-graphic_dt = np.dtype(
-    [
-        ("ch", np.int32),  # Unicode codepoint.
-        ("fg", tilesets.void),  # 3 unsigned bytes, for RGB colors.
-        ("bg", tilesets.void),
-    ]
-)
+void = 1000
+dark_wall = 1001
+light_wall = 1002
+dark_floor = 1003
+light_floor = 1004
 
 # Tile struct used for statically defined tile data.
 tile_dt = np.dtype(
     [
         ("walkable", bool),  # True if this tile can be walked over.
         ("transparent", bool),  # True if this tile doesn't block FOV.
-        ("dark", graphic_dt),  # Graphics for when this tile is not in FOV.
-        ("light", graphic_dt),  # Graphics for when the tile is in FOV.
+        ("dark", int),  # Graphics for when this tile is not in FOV.
+        ("light", int),  # Graphics for when the tile is in FOV.
     ]
 )
 
 # SHROUD represents unexplored, unseen tiles
-SHROUD = np.array((ord(" "), 0, 1), dtype=graphic_dt)
+SHROUD = np.array((void), dtype=int)
 
 
 def new_tile(
@@ -40,12 +37,12 @@ def new_tile(
 floor = new_tile(
    walkable=True,
    transparent=True,
-   dark=tilesets.floor,
-   light=tilesets.floor,
+   dark=dark_floor,
+   light=light_floor,
 )
 wall = new_tile(
    walkable=False,
    transparent=False,
-   dark=tilesets.wall,
-   light=tilesets.wall,
+   dark=dark_wall,
+   light=light_wall,
 )

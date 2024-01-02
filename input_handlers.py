@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import Callable, Optional, Tuple, TYPE_CHECKING
+from arcade import key as arcade_key
 
-import tcod.event
 from actions import (
    Action,
    BumpAction,
@@ -18,38 +18,40 @@ if TYPE_CHECKING:
     from entity import Item
 
 MOVE_KEYS = {
-    tcod.event.K_h: (-1, 0),
-    tcod.event.K_j: (0, 1),
-    tcod.event.K_k: (0, -1),
-    tcod.event.K_l: (1, 0),
+    arcade_key.H: (-1, 0),
+    arcade_key.J: (0, -1),
+    arcade_key.K: (0, 1),
+    arcade_key.L: (1, 0),
 }
 
 CURSOR_Y_KEYS = {
-    tcod.event.K_UP: -1,
-    tcod.event.K_DOWN: 1,
-    tcod.event.K_PAGEUP: -10,
-    tcod.event.K_PAGEDOWN: 10,
+    arcade_key.UP: -1,
+    arcade_key.DOWN: 1,
+    arcade_key.PAGEUP: -10,
+    arcade_key.PAGEDOWN: 10,
 }
 
 WAIT_KEYS = {
-    tcod.event.K_PERIOD,
-    tcod.event.K_KP_5,
-    tcod.event.K_CLEAR,
+    arcade_key.PERIOD,
+    arcade_key.KEY_5,
+    arcade_key.CLEAR,
 }
 
 CONFIRM_KEYS = {
-   tcod.event.K_RETURN,
-   tcod.event.K_KP_ENTER,
+   arcade_key.RETURN,
 }
 
-class EventHandler(tcod.event.EventDispatch):
+class EventHandler:
     engine: Engine
 
     def __init__(self, engine):
         self.engine = engine
 
-    def handle_events(self, event: tcod.event.Event) -> None:
-        self.handle_action(self.dispatch(event))
+    def on_key_press(self, key):
+        pass
+
+    def handle_events(self, key) -> None:
+        self.handle_action(self.on_key_press(key))
 
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.
@@ -70,41 +72,34 @@ class EventHandler(tcod.event.EventDispatch):
         self.engine.update_fov()
         return True
 
-    def on_render(self, console: tcod.Console) -> None:
+    def on_render(self, console) -> None:
         self.engine.render(console)
 
-    def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
-        if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
-            self.engine.mouse_location = event.tile.x, event.tile.y # type: ignore
-
-    def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
-        raise SystemExit()
 
 
 class MainGameEventHandler(EventHandler):
 
-    def ev_keydown(self, event: tcod.event.KeyDown):
+    def on_key_press(self, key):
+
         action: Optional[Action] = None
 
         player = self.engine.player
-
-        key = event.sym
 
         if key in MOVE_KEYS:
             action = BumpAction(player, *MOVE_KEYS[key])
         elif key in WAIT_KEYS:
             action = WaitAction(self.engine)
-        elif key == tcod.event.K_v:
+        elif key == arcade_key.V:
             self.engine.event_handler = HistoryViewer(self.engine)
-        elif key == tcod.event.K_g:
+        elif key == arcade_key.G:
             action = PickupAction(player)
-        elif key == tcod.event.K_i:
+        elif key == arcade_key.I:
             self.engine.event_handler = InventoryActivateHandler(self.engine)
-        elif key == tcod.event.K_d:
+        elif key == arcade_key.D:
             self.engine.event_handler = InventoryDropHandler(self.engine)
-        elif key == tcod.event.K_SLASH:
+        elif key == arcade_key.SLASH:
             self.engine.event_handler = LookHandler(self.engine)
-        elif key == tcod.event.K_ESCAPE:
+        elif key == arcade_key.ESCAPE:
             raise SystemExit()
 
         # No valid key was pressed
@@ -112,8 +107,8 @@ class MainGameEventHandler(EventHandler):
 
 class GameOverEventHandler(EventHandler):
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> None:
-        if event.sym == tcod.event.K_ESCAPE:
+    def on_key_press(self, key):
+        if key == arcade_key.ESCAPE:
             raise SystemExit()
 
 

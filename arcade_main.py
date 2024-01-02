@@ -39,7 +39,7 @@ class MyGame(arcade.Window):
         # Call the parent class and set up the window
         super().__init__(screen_width, screen_height, screen_title) # type: ignore
 
-        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE) # type: ignore
+        arcade.set_background_color(arcade.csscolor.BLACK) # type: ignore
 
     def setup(self):
         self.player = copy.deepcopy(entity_factories.player)
@@ -60,9 +60,16 @@ class MyGame(arcade.Window):
         """Render the screen."""
 
         self.clear()
-        self.engine.game_map.crade_render()
         # Code to draw the screen goes here
+        self.engine.game_map.arcade_render()
 
+    def on_update(self, delta_time):
+        for entity in self.engine.game_map.entities:
+            entity.sprite.update_animation(delta_time)
+
+    def on_key_press(self, symbol, modifiers):
+        """Called whenever a key is pressed. """
+        self.engine.event_handler.handle_events(symbol)
 
 def main():
     """Main function"""
