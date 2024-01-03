@@ -17,6 +17,7 @@ class MyGame(arcade.Window):
 
         # Call the parent class and set up the window
         super().__init__(constants.screen_width, constants.screen_height, constants.screen_title) # type: ignore
+        self.set_update_rate(1/30)
 
         arcade.set_background_color(arcade.csscolor.BLACK) # type: ignore
 
@@ -41,9 +42,9 @@ class MyGame(arcade.Window):
 
         self.clear()
         # Code to draw the screen goes here
-        self.engine.event_handler.on_render()
         self.time_now = time.time()
-        if self.time_now - time.time() > 0.1:
+        self.engine.event_handler.on_render()
+        if self.time_now - time.time() > 0.01:
             print("lagggggggggggggggg")
 
     def on_update(self, delta_time):
