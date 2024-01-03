@@ -51,8 +51,8 @@ class VisualEffect:
         location = self.path.pop(0)
         console.print( x=location[0], y=location[1], string=self.char, fg=color.red)
 
-    def on_path_end(self, console:tcod.Console):
-        console.draw_frame(x=self.dx-1, y=self.dy-1, width=3, height=3, decoration=self.char * 9, fg=color.red)
+    def on_path_end(self, console):
+        # console.draw_frame(x=self.dx-1, y=self.dy-1, width=3, height=3, decoration=self.char * 9, fg=color.red)
         self.isFinish = True
 
 

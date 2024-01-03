@@ -21,8 +21,20 @@ class Message:
 
 
 class MessageLog:
+    context: arcade.Text
+
     def __init__(self) -> None:
         self.messages: List[Message] = []
+        self.context = arcade.Text(
+            "",
+            0,
+            0,
+            arcade.color.WHITE, # type: ignore
+            constants.font_size,
+            font_name='stsong',
+            multiline=True,
+            width=400,
+        )
 
     def add_message(
         self, text: str, fg: Tuple[int, int, int] = color.white, *, stack: bool = True,
@@ -37,39 +49,20 @@ class MessageLog:
         else:
             self.messages.append(Message(text, fg))
 
-    def render( self, x: int, y: int, width: int, height: int,) -> None:
+    def render( self, x: int, y: int, lines:int, cursor:int=0) -> None:
         """Render this log over the given area.
         `x`, `y`, `width`, `height` is the rectangular region to render onto
         the `console`.
         """
-        self.render_messages(x, y, width, height, self.messages)
-
-    @staticmethod
-    def wrap(string: str, width: int) -> Iterable[str]:
-        """Return a wrapped text message."""
-        for line in string.splitlines():  # Handle newlines in messages.
-            yield from textwrap.wrap(
-                line, width, expand_tabs=True,
-            )
-
-    @classmethod
-    def render_messages(
-            cls,
-            x: int,
-            y: int,
-            width: int,
-            height: int,
-            messages: Reversible[Message],
-    ) -> None:
-        """Render the messages provided.
-        The `messages` are rendered starting at the last message and working
-        backwards.
-        """
-        y_offset = height - 1
-
-        for message in reversed(messages):
-            for line in reversed(list(cls.wrap(message.full_text, width))):
-                arcade.draw_text(line, x, y+y_offset*constants.font_line_height, font_name="Songti SC")
-                y_offset -= 1
-                if y_offset < 0:
-                    return  # No more space to print messages.
+        if cursor != 0:
+            start = max(0, cursor-lines)
+            if start == 0:
+                end = lines
+            else:
+                end = cursor
+            self.context.text = "\n".join([m.full_text for m in self.messages[start: end]])
+        else:
+            self.context.text = "\n".join([m.full_text for m in self.messages[-lines: ]])
+        self.context.x = x
+        self.context.y = y
+        self.context.draw()

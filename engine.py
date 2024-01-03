@@ -43,10 +43,9 @@ class Engine:
 
     def render(self) -> None:
         self.game_map.arcade_render()
-        self.message_log.render(x=14, y=600, width=64, height=5)
+        self.message_log.render(x=14, y=720, lines=10)
         render_bar(
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=12,
         )
-        # render_names_at_mouse_location(console=console, x=14, y=console.height-6, engine=self)

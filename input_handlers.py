@@ -123,7 +123,17 @@ class HistoryViewer(EventHandler):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.log_length = len(engine.message_log.messages)
-        self.cursor = self.log_length - 1
+        self.cursor = self.log_length
+        self.title = arcade.Text(
+            "┤消息记录├",
+            int(constants.screen_center_x - constants.history_viewer_width/2),
+            int(constants.screen_center_y + constants.history_viewer_height/2) - 24,
+            arcade.color.WHITE, # type: ignore
+            constants.font_size,
+            font_name='stsong',
+            align='center',
+            width=constants.history_viewer_width,
+        )
 
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
@@ -136,36 +146,28 @@ class HistoryViewer(EventHandler):
                 constants.history_viewer_height,
                 arcade.color.BLACK_OLIVE
                 )
-        arcade.draw_text(
-                "┤Message history├",
-                start_x=constants.history_viewer_width/2 + constants.screen_center_x,
-                start_y=constants.history_viewer_height/2 + constants.screen_center_y,
-                width=constants.history_viewer_width,
-                align="center"
-                )
-
         # Render the message log using the cursor parameter.
-        self.engine.message_log.render_messages(
-                int(constants.history_viewer_width/2 + constants.screen_center_x),
-                int(constants.history_viewer_height/2 + constants.screen_center_y),
-                constants.history_viewer_width,
-                constants.history_viewer_height ,
-                self.engine.message_log.messages[: self.cursor + 1],
+        self.title.draw()
+        self.engine.message_log.render(
+                int(constants.screen_center_x - constants.history_viewer_width/2) + 60,
+                int(constants.screen_center_y + constants.history_viewer_height/2) - 60,
+                lines=constants.history_viewer_lines,
+                cursor=self.cursor
         )
 
     def on_key_press(self, key):
         # Fancy conditional movement to make it feel right.
         if key in CURSOR_Y_KEYS:
             adjust = CURSOR_Y_KEYS[key]
-            if adjust < 0 and self.cursor == 0:
+            if adjust < 0 and self.cursor <= constants.history_viewer_lines:
                 # Only move from the top to the bottom when you're on the edge.
-                self.cursor = self.log_length - 1
-            elif adjust > 0 and self.cursor == self.log_length - 1:
+                self.cursor = constants.history_viewer_lines
+            elif adjust > 0 and self.cursor == self.log_length:
                 # Same with bottom to top movement.
-                self.cursor = 0
+                self.cursor = self.log_length
             else:
                 # Otherwise move while staying clamped to the bounds of the history log.
-                self.cursor = max(0, min(self.cursor + adjust, self.log_length - 1))
+                self.cursor = max(0, min(self.cursor + adjust, self.log_length))
         else:  # Any other key moves back to the main game state.
             self.engine.event_handler = MainGameEventHandler(self.engine)
 
