@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Callable, Optional, Tuple, TYPE_CHECKING
 from arcade import key as arcade_key
+import arcade
+import constants
 
 from actions import (
    Action,
@@ -29,6 +31,8 @@ CURSOR_Y_KEYS = {
     arcade_key.DOWN: 1,
     arcade_key.PAGEUP: -10,
     arcade_key.PAGEDOWN: 10,
+    arcade_key.J: -1,
+    arcade_key.K: 1,
 }
 
 WAIT_KEYS = {
@@ -70,10 +74,11 @@ class EventHandler:
         self.engine.handle_enemy_turns()
 
         self.engine.update_fov()
+        self.engine.render()
         return True
 
-    def on_render(self, console) -> None:
-        self.engine.render(console)
+    def on_render(self) -> None:
+        self.engine.render()
 
 
 
@@ -112,9 +117,6 @@ class GameOverEventHandler(EventHandler):
             raise SystemExit()
 
 
-
-
-
 class HistoryViewer(EventHandler):
     """Print the history on a larger window which can be navigated."""
 
@@ -123,32 +125,38 @@ class HistoryViewer(EventHandler):
         self.log_length = len(engine.message_log.messages)
         self.cursor = self.log_length - 1
 
-    def on_render(self, console: tcod.Console) -> None:
-        super().on_render(console)  # Draw the main state as the background.
-
-        log_console = tcod.Console(console.width - 6, console.height - 6)
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
 
         # Draw a frame with a custom banner title.
-        log_console.draw_frame(0, 0, log_console.width, log_console.height)
-        log_console.print_box(
-            0, 0, log_console.width, 1, "┤Message history├", alignment=tcod.CENTER
-        )
+        arcade.draw_rectangle_filled(
+                constants.screen_center_x,
+                constants.screen_center_y,
+                constants.history_viewer_width,
+                constants.history_viewer_height,
+                arcade.color.BLACK_OLIVE
+                )
+        arcade.draw_text(
+                "┤Message history├",
+                start_x=constants.history_viewer_width/2 + constants.screen_center_x,
+                start_y=constants.history_viewer_height/2 + constants.screen_center_y,
+                width=constants.history_viewer_width,
+                align="center"
+                )
 
         # Render the message log using the cursor parameter.
         self.engine.message_log.render_messages(
-            log_console,
-            1,
-            1,
-            log_console.width - 2,
-            log_console.height - 2,
-            self.engine.message_log.messages[: self.cursor + 1],
+                int(constants.history_viewer_width/2 + constants.screen_center_x),
+                int(constants.history_viewer_height/2 + constants.screen_center_y),
+                constants.history_viewer_width,
+                constants.history_viewer_height ,
+                self.engine.message_log.messages[: self.cursor + 1],
         )
-        log_console.blit(console, 3, 3)
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> None:
+    def on_key_press(self, key):
         # Fancy conditional movement to make it feel right.
-        if event.sym in CURSOR_Y_KEYS:
-            adjust = CURSOR_Y_KEYS[event.sym]
+        if key in CURSOR_Y_KEYS:
+            adjust = CURSOR_Y_KEYS[key]
             if adjust < 0 and self.cursor == 0:
                 # Only move from the top to the bottom when you're on the edge.
                 self.cursor = self.log_length - 1
@@ -158,10 +166,6 @@ class HistoryViewer(EventHandler):
             else:
                 # Otherwise move while staying clamped to the bounds of the history log.
                 self.cursor = max(0, min(self.cursor + adjust, self.log_length - 1))
-        elif event.sym == tcod.event.K_HOME:
-            self.cursor = 0  # Move directly to the top message.
-        elif event.sym == tcod.event.K_END:
-            self.cursor = self.log_length - 1  # Move directly to the last message.
         else:  # Any other key moves back to the main game state.
             self.engine.event_handler = MainGameEventHandler(self.engine)
 

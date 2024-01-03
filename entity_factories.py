@@ -44,8 +44,45 @@ sagancharum = Actor(
         inventory=Inventory(capacity=0),
         sprite=tilesets.chort,
         )
+feishiko = Actor(
+        char="P",
+        color=(3, 252, 65),
+        name="feishiko",
+        ai_cls=HostileEnemy,
+        fighter=Fighter(hp=18, defense=2, power=3),
+        inventory=Inventory(capacity=0),
+        sprite=tilesets.feishiko,
+        )
+toufu = Actor(
+        char="P",
+        color=(3, 252, 65),
+        name="麻婆豆腐",
+        ai_cls=HostileEnemy,
+        fighter=Fighter(hp=18, defense=2, power=3),
+        inventory=Inventory(capacity=0),
+        sprite=tilesets.toufu,
+        )
+silencess = Actor(
+        char="P",
+        color=(3, 252, 65),
+        name="言静",
+        ai_cls=HostileEnemy,
+        fighter=Fighter(hp=18, defense=2, power=3),
+        inventory=Inventory(capacity=0),
+        sprite=tilesets.silencess,
+        )
 
-all_entities = (a_tree, twoflower, sagancharum) 
+superlight = Actor(
+        char="P",
+        color=(3, 252, 65),
+        name="科学超电灯泡",
+        ai_cls=HostileEnemy,
+        fighter=Fighter(hp=18, defense=2, power=3),
+        inventory=Inventory(capacity=0),
+        sprite=tilesets.superlight,
+        )
+
+all_entities = (a_tree, twoflower, sagancharum, feishiko, toufu, silencess, superlight) 
 
 health_potion = Item(
         char="!",

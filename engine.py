@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     from entity import Actor
     from game_map import GameMap
     from input_handlers import EventHandler
-    from tcod.console import Console
-
 
 
 class Engine:
@@ -43,13 +41,12 @@ class Engine:
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
 
-    def render(self, console: Console) -> None:
-        self.game_map.render(console)
-        self.message_log.render(console=console, x=14, y=console.height-5, width=32, height=5)
+    def render(self) -> None:
+        self.game_map.arcade_render()
+        self.message_log.render(x=14, y=600, width=64, height=5)
         render_bar(
-            console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=12,
         )
-        render_names_at_mouse_location(console=console, x=14, y=console.height-6, engine=self)
+        # render_names_at_mouse_location(console=console, x=14, y=console.height-6, engine=self)
