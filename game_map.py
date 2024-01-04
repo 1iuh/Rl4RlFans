@@ -4,9 +4,11 @@ import tcod
 import random
 import entity_factories
 from entity import Actor, Item
+from arcade import SpriteList, Sprite, pause
 
 import tile_types
 import tilesets
+import constants
 
 from typing import Iterator
 
@@ -21,6 +23,26 @@ class GameMap:
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
         self.visual_effects = []
+        self.sprites = SpriteList() 
+
+    def init_sprites(self):
+        x = 0
+        y = 0
+        for row in self.gamemap.tiles:
+            for col in row: 
+                cons:Sprite
+                if col[2] == 1001:
+                    cons = tilesets.FloorSprite()
+                elif col[2] == 1002:
+                    cons = tilesets.WallSprite()
+                else:
+                    continue
+                cons.center_x = x * constants.grid_size
+                cons.center_y = y * constants.grid_size
+                self.gamemap.sprites.append(cons)
+                y += 1
+            y = 0
+            x += 1
 
     @property
     def gamemap(self):
@@ -60,32 +82,27 @@ class GameMap:
 
     def arcade_render(self):
         # render_map
-        x = 0
-        y = 0
-        now_map = np.select(
-            condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
-            default=tile_types.SHROUD,
-        )
+        # now_map = np.select(
+        #     condlist=[self.visible, self.explored],
+        #     choicelist=[self.tiles["light"], self.tiles["dark"]],
+        #     default=tile_types.SHROUD,
+        # )
 
-        for row in now_map:
-            for col in row: 
-                grid = None
-                if col == 1001:
-                    grid = tilesets.floor_light
-                elif col == 1002:
-                    grid = tilesets.floor_dark
-                elif col == 1003:
-                    grid = tilesets.wall_light
-                elif col == 1004:
-                    grid = tilesets.wall_dark
-                if grid != None:
-                    grid.center_x = x * 24
-                    grid.center_y = y * 24
-                    grid.draw()
-                y +=1
-            y = 0
-            x += 1 
+        i = 0
+        for row in self.visible:
+            for col in row:
+                if col:
+                    self.sprites[i].set_is_light(True) 
+                else:
+                    self.sprites[i].set_is_light(False) 
+                i += 1
+        i = 0
+        for row in self.explored:
+            for col in row:
+                if col:
+                    self.sprites[i].set_is_seen(True) 
+                i += 1
+        self.sprites.draw()
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
         )
@@ -181,55 +198,54 @@ def place_entities( room, dungeon, maximum_monsters, maximum_items):
                 entity_factories.fireball_scroll.spawn(dungeon, x, y)
 
 def generate_dungeon(
-   map_width,
-   map_height,
-   room_min_size,
-   room_max_size,
-   max_rooms,
-   max_monsters_per_room,
-   max_items_per_room,
-   engine,
-):
-   """Generate a new dungeon map."""
-   player = engine.player
-   dungeon = GameMap(engine, map_width, map_height, entities=[player])
+        map_width,
+        map_height,
+        room_min_size,
+        room_max_size,
+        max_rooms,
+        max_monsters_per_room,
+        max_items_per_room,
+        engine,
+        ):
+    """Generate a new dungeon map."""
+    player = engine.player
+    dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
-   rooms = []
+    rooms = []
 
-   for r in range(max_rooms):
-       room_width = random.randint(room_min_size, room_max_size)
-       room_height = random.randint(room_min_size, room_max_size)
+    for r in range(max_rooms):
+        room_width = random.randint(room_min_size, room_max_size)
+        room_height = random.randint(room_min_size, room_max_size)
 
-       x = random.randint(0, dungeon.width - room_width - 1)
-       y = random.randint(0, dungeon.height - room_height - 1)
+        x = random.randint(0, dungeon.width - room_width - 1)
+        y = random.randint(0, dungeon.height - room_height - 1)
 
-       # "RectangularRoom" class makes rectangles easier to work with
-       new_room = RectangularRoom(x, y, room_width, room_height)
+        # "RectangularRoom" class makes rectangles easier to work with
+        new_room = RectangularRoom(x, y, room_width, room_height)
 
-       # Run through the other rooms and see if they intersect with this one.
-       if any(new_room.intersects(other_room) for other_room in rooms):
-           continue  # This room intersects, so go to the next attempt.
-       # If there are no intersections then the room is valid.
+        # Run through the other rooms and see if they intersect with this one.
+        if any(new_room.intersects(other_room) for other_room in rooms):
+            continue  # This room intersects, so go to the next attempt.
+        # If there are no intersections then the room is valid.
 
-       # Dig out this rooms inner area.
-       dungeon.tiles[new_room.inner] = tile_types.floor
+        # Dig out this rooms inner area.
+        dungeon.tiles[new_room.inner] = tile_types.floor
 
-       if len(rooms) == 0:
-           # The first room, where the player starts.
-           player.place(*new_room.center, dungeon)
-       else:  # All rooms after the first.
-           # Dig out a tunnel between this room and the previous one.
-           for x, y in tunnel_between(rooms[-1].center, new_room.center):
-               dungeon.tiles[x, y] = tile_types.floor
+        if len(rooms) == 0:
+            # The first room, where the player starts.
+            player.place(*new_room.center, dungeon)
+        else:  # All rooms after the first.
+            # Dig out a tunnel between this room and the previous one.
+            for x, y in tunnel_between(rooms[-1].center, new_room.center):
+                dungeon.tiles[x, y] = tile_types.floor
 
+        # place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
+        # Finally, append the new room to the list.
+        rooms.append(new_room)
 
-       # place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
+    dungeon.init_sprites()
 
-       # Finally, append the new room to the list.
-       rooms.append(new_room)
-
-   return dungeon
-
+    return dungeon
 
 def tunnel_between(start, end):
    """Return an L-shaped tunnel between these two points."""

@@ -18,7 +18,7 @@ class MyGame(arcade.Window):
 
         # Call the parent class and set up the window
         super().__init__(constants.screen_width, constants.screen_height, constants.screen_title, update_rate=1/30,
-                draw_rate=1/30) # type: ignore
+                draw_rate=1/60) # type: ignore
         arcade.set_background_color(arcade.csscolor.BLACK) # type: ignore
 
     def setup(self):
@@ -42,9 +42,9 @@ class MyGame(arcade.Window):
 
         self.clear()
         self.engine.event_handler.on_render()
+        arcade.draw_text(arcade.get_fps(30), 100, 100)
 
     def on_update(self, delta_time):
-        print(arcade.get_fps(30))
         for entity in self.engine.game_map.entities:
             entity.sprite.update_animation(delta_time)
 
