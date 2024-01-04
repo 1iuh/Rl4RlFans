@@ -44,7 +44,7 @@ class ConstructSprite(arcade.Sprite):
         self.update_texture()
 
     def set_is_light(self, val):
-        self.is_seen = val
+        self.is_light = val
         self.update_texture()
 
     def update_texture(self):
@@ -67,14 +67,14 @@ def WallSprite():
      return ConstructSprite(
              tileset_textures[2],
              tileset_textures[1],
-             tileset_textures[120],
+             tileset_textures[130],
              scale=1)
 
 def FloorSprite(): 
      return ConstructSprite(
              tileset_textures[12],
              tileset_textures[11],
-             tileset_textures[120],
+             tileset_textures[130],
              scale=1)
 
 player = AnimationSprite("./asset/player_idle_f{0}.png", 3, scale=1)
