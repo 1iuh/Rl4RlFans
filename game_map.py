@@ -223,7 +223,7 @@ def generate_dungeon(
                dungeon.tiles[x, y] = tile_types.floor
 
 
-       place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
+       # place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
        # Finally, append the new room to the list.
        rooms.append(new_room)

@@ -4,6 +4,7 @@ from tcod.map import compute_fov
 from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 from render_functions import render_bar, render_names_at_mouse_location
+import arcade
 import exceptions
 
 from typing import TYPE_CHECKING
@@ -43,9 +44,9 @@ class Engine:
 
     def render(self) -> None:
         self.game_map.arcade_render()
-        self.message_log.render(x=14, y=720, lines=10)
-        render_bar(
-            current_value=self.player.fighter.hp,
-            maximum_value=self.player.fighter.max_hp,
-            total_width=12,
-        )
+        # self.message_log.render(x=14, y=720, lines=10)
+        # render_bar(
+        #     current_value=self.player.fighter.hp,
+        #     maximum_value=self.player.fighter.max_hp,
+        #     total_width=12,
+        # )

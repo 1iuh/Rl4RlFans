@@ -81,7 +81,6 @@ class EventHandler:
         self.engine.render()
 
 
-
 class MainGameEventHandler(EventHandler):
 
     def on_key_press(self, key):

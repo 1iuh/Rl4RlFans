@@ -29,7 +29,7 @@ def render_bar( current_value: int, maximum_value: int, total_width: int) -> Non
     arcade.draw_rectangle_outline(100, 800, total_width*12, 20, arcade.color.AERO_BLUE) # type: ignore
     if bar_width > 0:
         arcade.draw_rectangle_filled(100, 800, bar_width*12, 20, arcade.color.RED_ORANGE) # type: ignore
-    arcade.draw_text(f"HP:{current_value}/{maximum_value}", 70, 794)
+    #arcade.draw_text(f"HP:{current_value}/{maximum_value}", 70, 794)
 
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine

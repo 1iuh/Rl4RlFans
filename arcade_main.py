@@ -5,8 +5,9 @@ from game_map import generate_dungeon
 import entity_factories
 import copy
 import time
-import traceback
 import constants
+
+arcade.enable_timings() 
 
 class MyGame(arcade.Window):
     """
@@ -16,9 +17,8 @@ class MyGame(arcade.Window):
     def __init__(self):
 
         # Call the parent class and set up the window
-        super().__init__(constants.screen_width, constants.screen_height, constants.screen_title) # type: ignore
-        self.set_update_rate(1/30)
-
+        super().__init__(constants.screen_width, constants.screen_height, constants.screen_title, update_rate=1/30,
+                draw_rate=1/30) # type: ignore
         arcade.set_background_color(arcade.csscolor.BLACK) # type: ignore
 
     def setup(self):
@@ -41,13 +41,10 @@ class MyGame(arcade.Window):
         """Render the screen."""
 
         self.clear()
-        # Code to draw the screen goes here
-        self.time_now = time.time()
         self.engine.event_handler.on_render()
-        if self.time_now - time.time() > 0.01:
-            print("lagggggggggggggggg")
 
     def on_update(self, delta_time):
+        print(arcade.get_fps(30))
         for entity in self.engine.game_map.entities:
             entity.sprite.update_animation(delta_time)
 

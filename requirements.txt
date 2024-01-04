@@ -1,0 +1,12 @@
+arcade==3.0.0.dev25
+attrs==23.2.0
+cffi==1.16.0
+imageio==2.33.1
+numpy==1.26.2
+Pillow==10.0.1
+pycparser==2.21
+pyglet==2.0.10
+pymunk==6.5.2
+pytiled-parser==2.2.3
+tcod==16.2.1
+typing_extensions==4.9.0
