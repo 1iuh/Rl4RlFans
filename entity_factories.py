@@ -94,6 +94,6 @@ confusion_scroll = Item(
 
 fireball_scroll = Item(
         name="火球卷轴",
-        consumable=consumable.FireballConsumable(20, 2),
+        consumable=consumable.FireballConsumable(20, 1),
         sprite=sprites.potion_2(),
         )

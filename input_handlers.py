@@ -4,6 +4,7 @@ from typing import Callable, Optional, Tuple, TYPE_CHECKING
 from arcade import key as arcade_key
 import arcade
 import constants
+import math
 
 from actions import (
    Action,
@@ -378,8 +379,10 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         x, y = self.engine.mouse_location
 
         for i in range(self.radius):
-            for _x in range(x-self.radius+1, x + self.radius):
-                for _y in range(y-self.radius+1, y + self.radius):
+            for _x in range(x-self.radius, x + self.radius+1):
+                for _y in range(y-self.radius, y + self.radius+1):
+                    if (self.distance(x, y, _x, _y) > self.radius):
+                        continue
                     arcade.draw_rectangle_filled(
                             _x*constants.grid_size,
                             _y*constants.grid_size,
@@ -391,3 +394,10 @@ class AreaRangedAttackHandler(SelectIndexHandler):
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
+
+
+    def distance(self, x: int, y: int, _x:int, _y:int) -> float:
+        """
+        Return the distance between the current entity and the given (x, y) coordinate.
+        """
+        return math.sqrt((x - _x) ** 2 + (y - _y) ** 2)
