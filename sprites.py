@@ -66,14 +66,14 @@ class ConstructSprite(arcade.Sprite):
             else:
                 self.texture = self.dark_texture
 
-def wall_sprite(): 
+def floor_sprite(): 
      return ConstructSprite(
              tileset_textures[2],
              tileset_textures[1],
              tileset_textures[130],
              scale=0.5)
 
-def floor_sprite(): 
+def wall_sprite(): 
      return ConstructSprite(
              tileset_textures[12],
              tileset_textures[11],

@@ -34,9 +34,9 @@ class GameMap:
         for row in self.gamemap.tiles:
             for col in row: 
                 cons:Sprite
-                if col[2] == 1001:
+                if col[2] == constants.floor_tilecode:
                     cons = sprites.floor_sprite()
-                elif col[2] == 1002:
+                elif col[2] == constants.wall_tilecode:
                     cons = sprites.wall_sprite()
                 else:
                     continue

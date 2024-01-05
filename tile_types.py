@@ -1,11 +1,5 @@
-from typing import Tuple
-import tilesets
-
 import numpy as np  # type: ignore
-
-wall_tilecode = 1001
-floor_tilecode = 1002
-void = 1000
+import constants
 
 # Tile struct used for statically defined tile data.
 tile_dt = np.dtype(
@@ -15,10 +9,6 @@ tile_dt = np.dtype(
         ("tilecode", int),  # Graphics for when this tile is not in FOV.
     ]
 )
-
-# SHROUD represents unexplored, unseen tiles
-SHROUD = np.array((void), dtype=int)
-
 
 def new_tile(
     *,  # Enforce the use of keywords, so that parameter order doesn't matter.
@@ -33,10 +23,11 @@ def new_tile(
 floor = new_tile(
    walkable=True,
    transparent=True,
-   tilecode=floor_tilecode,
+   tilecode=constants.floor_tilecode,
 )
+
 wall = new_tile(
    walkable=False,
    transparent=False,
-   tilecode=wall_tilecode,
+   tilecode=constants.wall_tilecode,
 )

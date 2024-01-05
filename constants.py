@@ -9,8 +9,8 @@ max_items_per_room = 5
 
 grid_size = 24
 
-screen_width = grid_size * map_width
-screen_height = grid_size * map_height
+screen_width = grid_size * map_width + 5
+screen_height = grid_size * map_height + 5
 
 screen_title = "Roguelike For Roguelike Fans"
 
@@ -23,3 +23,7 @@ font_line_height = 16
 history_viewer_width = screen_width - 600 
 history_viewer_height = screen_height - 300
 history_viewer_lines = 28
+
+wall_tilecode = 1001
+floor_tilecode = 1002
+
