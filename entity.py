@@ -3,15 +3,14 @@ from __future__ import annotations
 import copy
 import math
 
-from typing import Tuple, TYPE_CHECKING, Optional, Union
-
-from render_order import RenderOrder
+from typing import TYPE_CHECKING, Optional, Union
 
 if TYPE_CHECKING:
     from game_map import GameMap
     from components.consumable import Consumable
     from components.inventory import Inventory
     from arcade import Sprite
+    from sprites import ActorSprite, ItemSprite
 
 
 class Entity:
@@ -26,21 +25,15 @@ class Entity:
         parent: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
-        char: str = "?",
-        color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
-        render_order: RenderOrder = RenderOrder.CORPSE,
         sprite: Optional[Sprite] = None,
     ):
 
         self.x = x
         self.y = y
-        self.char = char
-        self.color = color
         self.name = name
         self.blocks_movement = blocks_movement
-        self.render_order = render_order
         self.hasAnimation = False
         self.sprite = sprite
 
@@ -87,41 +80,37 @@ class Entity:
 
 class Actor(Entity):
 
-   def __init__(
-       self,
-       *,
-       x: int = 0,
-       y: int = 0,
-       char: str = "?",
-       color: Tuple[int, int, int] = (255, 255, 255),
-       name: str = "<Unnamed>",
-       sprite: Optional[Sprite] = None,
-       ai_cls,
-       fighter,
-       inventory
-   ):
-       super().__init__(
-           x=x,
-           y=y,
-           char=char,
-           color=color,
-           name=name,
-           blocks_movement=True,
-           render_order=RenderOrder.ACTOR,
-           sprite=sprite,
-       )
+    sprite: ActorSprite
 
-       self.ai = ai_cls(self)
-       self.char = char
-       self.fighter = fighter
-       self.fighter.parent = self
-       self.inventory = inventory
-       self.inventory.parent = self
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        name: str = "<Unnamed>",
+        sprite: ActorSprite,
+        ai_cls,
+        fighter,
+        inventory
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            name=name,
+            blocks_movement=True,
+            sprite=sprite,
+        )
 
-   @property
-   def is_alive(self) -> bool:
-       """Returns True as long as this actor can perform actions."""
-       return bool(self.ai)
+        self.ai = ai_cls(self)
+        self.fighter = fighter
+        self.fighter.parent = self
+        self.inventory = inventory
+        self.inventory.parent = self
+
+    @property
+    def is_alive(self) -> bool:
+        """Returns True as long as this actor can perform actions."""
+        return bool(self.ai)
 
 
 class Item(Entity):
@@ -130,20 +119,15 @@ class Item(Entity):
         *,
         x: int = 0,
         y: int = 0,
-        char: str = "?",
-        color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
-        sprite: Optional[Sprite] = None,
+        sprite: Optional[ItemSprite] = None,
         consumable: Consumable,
     ):
         super().__init__(
             x=x,
             y=y,
-            char=char,
-            color=color,
             name=name,
             blocks_movement=False,
-            render_order=RenderOrder.ITEM,
             sprite=sprite,
         )
 

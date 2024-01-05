@@ -102,10 +102,10 @@ class GameMap:
                 if col:
                     self.construct_sprites[i].set_is_seen(True) 
                 i += 1
-        entities_sorted_for_rendering = sorted(
-            self.entities, key=lambda x: x.render_order.value
-        )
-        for entity in entities_sorted_for_rendering:
+
+        self.entity_sprites.sort(key= lambda x: x.render_order.value)
+
+        for entity in self.entities:
             # Only print entities that are in the FOV
             entity.sprite.visible = self.visible[entity.x, entity.y]
             entity.sprite.center_x = entity.x * constants.grid_size

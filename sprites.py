@@ -1,17 +1,27 @@
 import arcade
 
+from render_order import RenderOrder
+
 tileset_textures = arcade.load_spritesheet("./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
 potions_textures = arcade.load_spritesheet("./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
 big_zombie_textures = arcade.load_texture("./asset/frames/big_zombie_run_anim_f0.png")
 chort_textures = arcade.load_texture("./asset/frames/chort_idle_anim_f0.png")
+
+class ItemSprite(arcade.Sprite):
+
+    render_order:RenderOrder = RenderOrder.ITEM
+
+    def __init__(self, path_or_texture, scale):
+        super().__init__(path_or_texture, scale)
 
 
 class ActorSprite(arcade.Sprite):
 
     corpse_texture = tileset_textures[100]
     is_alive = True
+    render_order:RenderOrder = RenderOrder.ACTOR
 
-    def __init__(self, filename:str, frame_number, scale):
+    def __init__(self, filename:str, frame_number, scale: float):
         self.frames = []
         for i in range(frame_number):
             texture = arcade.load_texture(filename.format(i))
@@ -99,13 +109,13 @@ def superlight():
     return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png", 4, scale=1)
 
 def potion_0(): 
-    return arcade.Sprite(path_or_texture=potions_textures[0], scale=0.4)
+    return ItemSprite(path_or_texture=potions_textures[0], scale=0.4)
 
 def potion_1(): 
-    return arcade.Sprite(path_or_texture=potions_textures[10], scale=0.4)
+    return ItemSprite(path_or_texture=potions_textures[10], scale=0.4)
 
 def potion_2(): 
-    return arcade.Sprite(path_or_texture=potions_textures[20], scale=0.4)
+    return ItemSprite(path_or_texture=potions_textures[20], scale=0.4)
 
 def potion_3(): 
-    return arcade.Sprite(path_or_texture=potions_textures[30], scale=0.4)
+    return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
