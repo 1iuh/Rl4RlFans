@@ -27,3 +27,5 @@ history_viewer_lines = 28
 wall_tilecode = 1001
 floor_tilecode = 1002
 
+inventory_window_width = screen_width - 800 
+inventory_window_height = screen_height - 600

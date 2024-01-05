@@ -121,5 +121,5 @@ fireball_scroll = Item(
         color=(255, 0, 0),
         name="火球卷轴",
         consumable=consumable.FireballConsumable(20, 2),
-        sprite=sprites.potion_3(),
+        sprite=sprites.potion_2(),
         )

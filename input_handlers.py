@@ -51,7 +51,7 @@ class EventHandler:
     def __init__(self, engine):
         self.engine = engine
 
-    def on_key_press(self, key):
+    def on_key_press(self, key) -> Optional[Action]:
         pass
 
     def handle_events(self, key) -> None:
@@ -83,10 +83,8 @@ class EventHandler:
 
 class MainGameEventHandler(EventHandler):
 
-    def on_key_press(self, key):
-
+    def on_key_press(self, key) -> Optional[Action] :
         action: Optional[Action] = None
-
         player = self.engine.player
 
         if key in MOVE_KEYS:
@@ -111,7 +109,7 @@ class MainGameEventHandler(EventHandler):
 
 class GameOverEventHandler(EventHandler):
 
-    def on_key_press(self, key):
+    def on_key_press(self, key) -> Optional[Action] :
         if key == arcade_key.ESCAPE:
             raise SystemExit()
 
@@ -154,7 +152,7 @@ class HistoryViewer(EventHandler):
                 cursor=self.cursor
         )
 
-    def on_key_press(self, key):
+    def on_key_press(self, key) -> Optional[Action] :
         # Fancy conditional movement to make it feel right.
         if key in CURSOR_Y_KEYS:
             adjust = CURSOR_Y_KEYS[key]
@@ -181,21 +179,8 @@ class AskUserEventHandler(EventHandler):
             return True
         return False
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+    def on_key_press(self, key) -> Optional[Action]:
         """By default any key exits this input handler."""
-        if event.sym in {  # Ignore modifier keys.
-            tcod.event.K_LSHIFT,
-            tcod.event.K_RSHIFT,
-            tcod.event.K_LCTRL,
-            tcod.event.K_RCTRL,
-            tcod.event.K_LALT,
-            tcod.event.K_RALT,
-        }:
-            return None
-        return self.on_exit()
-
-    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[Action]:
-        """By default any mouse click exits this input handler."""
         return self.on_exit()
 
     def on_exit(self) -> Optional[Action]:
@@ -215,12 +200,37 @@ class InventoryEventHandler(AskUserEventHandler):
 
     TITLE = "<missing title>"
 
-    def on_render(self, console: tcod.Console) -> None:
+    def __init__(self, engine):
+        super().__init__(engine)
+        self.title = arcade.Text(
+            f"{self.TITLE}",
+            int(constants.screen_center_x - constants.inventory_window_width/2),
+            int(constants.screen_center_y + constants.inventory_window_height/2)- constants.font_line_height,
+            arcade.color.WHITE, # type: ignore
+            constants.font_size,
+            font_name='stsong',
+            align='center',
+            width=constants.inventory_window_width,
+        )
+        self.content = arcade.Text(
+            "",
+            int(constants.screen_center_x - constants.inventory_window_width/2),
+            int(constants.screen_center_y + constants.inventory_window_height/2) - constants.font_line_height*4,
+            arcade.color.WHITE, # type: ignore
+            constants.font_size,
+            multiline = True,
+            font_name='stsong',
+            align='center',
+            width=constants.inventory_window_width,
+        )
+
+
+    def on_render(self) -> None:
         """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
         Will move to a different position based on where the player is located, so the player can always see where
         they are.
         """
-        super().on_render(console)
+        super().on_render()
         number_of_items_in_inventory = len(self.engine.player.inventory.items)
 
         height = number_of_items_in_inventory + 2
@@ -228,37 +238,29 @@ class InventoryEventHandler(AskUserEventHandler):
         if height <= 3:
             height = 3
 
-        if self.engine.player.x <= 20:
-            x = 35
-        else:
-            x = 0
+        arcade.draw_rectangle_filled(
+                constants.screen_center_x,
+                constants.screen_center_y,
+                constants.inventory_window_width,
+                constants.inventory_window_height,
+                arcade.color.BLACK_OLIVE
+                )
 
-        y = 0
-
-        width = len(self.TITLE) + 4
-
-        console.draw_frame(
-            x=x,
-            y=y,
-            width=width,
-            height=height,
-            title=self.TITLE,
-            clear=True,
-            fg=(255, 255, 255),
-            bg=(0, 0, 0),
-        )
-
+        
+        content = ''
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
-                console.print(x + 1, y + i + 1, f"({item_key}) {item.name}")
+                content += f'({item_key}) {item.name}\n'
+            self.content.text = content
         else:
-            console.print(x + 1, y + 1, "(Empty)")
+            self.content.text = '(空的)'
+        self.title.draw()
+        self.content.draw()
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+    def on_key_press(self, key) -> Optional[Action]:
         player = self.engine.player
-        key = event.sym
-        index = key - tcod.event.K_a
+        index = key - arcade_key.A
 
         if 0 <= index <= 26:
             try:
@@ -267,7 +269,7 @@ class InventoryEventHandler(AskUserEventHandler):
                 self.engine.message_log.add_message("Invalid entry.", color.invalid)
                 return None
             return self.on_item_selected(selected_item)
-        return super().ev_keydown(event)
+        return super().on_key_press(key)
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Called when the user selects a valid item."""
@@ -277,7 +279,7 @@ class InventoryEventHandler(AskUserEventHandler):
 class InventoryActivateHandler(InventoryEventHandler):
     """Handle using an inventory item."""
 
-    TITLE = "选择一个物品来使用"
+    TITLE = "背包"
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Return the action for the selected item."""
@@ -303,29 +305,25 @@ class SelectIndexHandler(AskUserEventHandler):
         player = self.engine.player
         engine.mouse_location = player.x, player.y # type: ignore
 
-    def on_render(self, console: tcod.Console) -> None:
+    def on_render(self) -> None:
         """Highlight the tile under the cursor."""
-        super().on_render(console)
+        super().on_render()
         x, y = self.engine.mouse_location
-        console.tiles_rgb["bg"][x, y] = color.white
-        console.tiles_rgb["fg"][x, y] = color.black
+        arcade.draw_rectangle_filled(
+                x*constants.grid_size,
+                y*constants.grid_size,
+                constants.grid_size,
+                constants.grid_size,
+                color.white_transparent
+                )
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+    def on_key_press(self, key) -> Optional[Action]:
         """Check for key movement or confirmation keys."""
-        key = event.sym
         if key in MOVE_KEYS:
-            modifier = 1  # Holding modifier keys will speed up key movement.
-            # if event.mod & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
-            #     modifier *= 5
-            # if event.mod & (tcod.event.KMOD_LCTRL | tcod.event.KMOD_RCTRL):
-            #     modifier *= 10
-            # if event.mod & (tcod.event.KMOD_LALT | tcod.event.KMOD_RALT):
-            #     modifier *= 20
-
             x, y = self.engine.mouse_location
             dx, dy = MOVE_KEYS[key]
-            x += dx * modifier
-            y += dy * modifier
+            x += dx 
+            y += dy
             # Clamp the cursor index to the map size.
             x = max(0, min(x, self.engine.game_map.width - 1))
             y = max(0, min(y, self.engine.game_map.height - 1))
@@ -333,14 +331,7 @@ class SelectIndexHandler(AskUserEventHandler):
             return None
         elif key in CONFIRM_KEYS:
             return self.on_index_selected(*self.engine.mouse_location)
-        return super().ev_keydown(event)
-
-    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[Action]:
-        """Left click confirms a selection."""
-        if self.engine.game_map.in_bounds(*event.tile):
-            if event.button == 1:
-                return self.on_index_selected(*event.tile)
-        return super().ev_mousebuttondown(event)
+        return super().on_key_press(key)
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         """Called when an index is selected."""
@@ -380,21 +371,22 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         self.radius = radius
         self.callback = callback
 
-    def on_render(self, console: tcod.Console) -> None:
+    def on_render(self) -> None:
         """Highlight the tile under the cursor."""
-        super().on_render(console)
+        super().on_render()
 
         x, y = self.engine.mouse_location
 
-        # Draw a rectangle around the targeted area, so the player can see the affected tiles.
-        console.draw_frame(
-            x=x - self.radius,
-            y=y - self.radius,
-            width=self.radius * 2 +1,
-            height=self.radius * 2 +1,
-            fg=color.red,
-            clear=False,
-        )
+        for i in range(self.radius):
+            for _x in range(x-self.radius+1, x + self.radius):
+                for _y in range(y-self.radius+1, y + self.radius):
+                    arcade.draw_rectangle_filled(
+                            _x*constants.grid_size,
+                            _y*constants.grid_size,
+                            constants.grid_size,
+                            constants.grid_size,
+                            color.white_transparent
+                            )
     
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
