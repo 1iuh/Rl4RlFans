@@ -150,7 +150,7 @@ class PickupAction(Action):
                 if len(inventory.items) >= inventory.capacity:
                     raise exceptions.Impossible("背包满了")
 
-                self.engine.game_map.entities.remove(item)
+                self.engine.game_map.despwan_entity(item)
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 

@@ -43,10 +43,10 @@ class Engine:
         self.game_map.explored |= self.game_map.visible
 
     def render(self) -> None:
-        self.game_map.arcade_render()
-        # self.message_log.render(x=14, y=720, lines=10)
-        # render_bar(
-        #     current_value=self.player.fighter.hp,
-        #     maximum_value=self.player.fighter.max_hp,
-        #     total_width=12,
-        # )
+        self.game_map.render()
+        self.message_log.render(x=14, y=720, lines=10)
+        render_bar(
+            current_value=self.player.fighter.hp,
+            maximum_value=self.player.fighter.max_hp,
+            total_width=12,
+        )

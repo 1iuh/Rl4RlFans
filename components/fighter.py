@@ -58,10 +58,9 @@ class Fighter(BaseComponent):
             death_message = f"{self.parent.name} 被杀死了!"
             death_message_color = color.enemy_die
  
-        self.parent.char = "%"
-        # self.parent.sprite = void 
         self.parent.color = (191, 0, 0)
         self.parent.blocks_movement = False
+        self.parent.sprite.is_alive = False
         self.parent.ai = None
         self.parent.name = f"{self.parent.name} 的残骸 "
         self.parent.render_order = RenderOrder.CORPSE

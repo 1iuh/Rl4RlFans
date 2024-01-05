@@ -3,16 +3,16 @@ from components.fighter import Fighter
 from components import consumable
 from components.ai import HostileEnemy
 from components.inventory import Inventory
-import tilesets
+import sprites
 
 player = Actor(
         char="@",
         color=(255, 255, 255),
         name="你",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=30, defense=2, power=5),
+        fighter=Fighter(hp=40, defense=2, power=10),
         inventory=Inventory(capacity=26),
-        sprite=tilesets.player
+        sprite=sprites.player_sprite()
         )
 
 a_tree = Actor(
@@ -22,7 +22,7 @@ a_tree = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=10, defense=4, power=1),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.big_zombie,
+        sprite=sprites.big_zombie(),
         )
 
 twoflower = Actor(
@@ -32,7 +32,7 @@ twoflower = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=15, defense=0, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.big_demon,
+        sprite=sprites.big_demon(),
         )
 
 sagancharum = Actor(
@@ -42,7 +42,7 @@ sagancharum = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.chort,
+        sprite=sprites.chort(),
         )
 feishiko = Actor(
         char="P",
@@ -51,7 +51,7 @@ feishiko = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.feishiko,
+        sprite=sprites.feishiko(),
         )
 toufu = Actor(
         char="P",
@@ -60,7 +60,7 @@ toufu = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.toufu,
+        sprite=sprites.toufu(),
         )
 silencess = Actor(
         char="P",
@@ -69,7 +69,7 @@ silencess = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.silencess,
+        sprite=sprites.silencess(),
         )
 
 superlight = Actor(
@@ -79,7 +79,7 @@ superlight = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3),
         inventory=Inventory(capacity=0),
-        sprite=tilesets.superlight,
+        sprite=sprites.superlight(),
         )
 
 all_entities = (a_tree, twoflower, sagancharum, feishiko, toufu, silencess, superlight) 
@@ -89,7 +89,7 @@ health_potion = Item(
         color=(127, 0, 255),
         name="生命药水",
         consumable=consumable.HealingConsumable(amount=4),
-        sprite=tilesets.player,
+        sprite=sprites.potion_0(),
         )
 
 health_potion = Item(
@@ -97,7 +97,7 @@ health_potion = Item(
         color=(127, 0, 255),
         name="生命药水",
         consumable=consumable.HealingConsumable(amount=4),
-        sprite=tilesets.potion_0,
+        sprite=sprites.potion_0(),
         )
 
 lightning_scroll = Item(
@@ -105,7 +105,7 @@ lightning_scroll = Item(
         color=(255, 255, 0),
         name="闪电卷轴",
         consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
-        sprite=tilesets.potion_1,
+        sprite=sprites.potion_1(),
         )
 
 confusion_scroll = Item(
@@ -113,7 +113,7 @@ confusion_scroll = Item(
         color=(207, 63, 255),
         name="迷惑卷轴",
         consumable=consumable.ConfusionConsumable(number_of_turns=10),
-        sprite=tilesets.potion_2,
+        sprite=sprites.potion_2(),
         )
 
 fireball_scroll = Item(
@@ -121,5 +121,5 @@ fireball_scroll = Item(
         color=(255, 0, 0),
         name="火球卷轴",
         consumable=consumable.FireballConsumable(20, 2),
-        sprite=tilesets.potion_3,
+        sprite=sprites.potion_3(),
         )

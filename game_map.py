@@ -1,13 +1,12 @@
-
 import numpy as np
 import tcod
 import random
 import entity_factories
-from entity import Actor, Item
-from arcade import SpriteList, Sprite, pause
+from entity import Actor, Item, Entity
+from arcade import SpriteList, Sprite
 
 import tile_types
-import tilesets
+import sprites
 import constants
 
 from typing import Iterator
@@ -22,27 +21,35 @@ class GameMap:
 
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
-        self.visual_effects = []
-        self.sprites = SpriteList() 
+        self.construct_sprites = SpriteList() 
+        self.entity_sprites = SpriteList() 
 
-    def init_sprites(self):
+    def despwan_entity(self, entity:Entity):
+        self.entities.remove(entity)
+        self.entity_sprites.remove(entity.sprite)
+
+    def init_construct_sprites(self):
         x = 0
         y = 0
         for row in self.gamemap.tiles:
             for col in row: 
                 cons:Sprite
                 if col[2] == 1001:
-                    cons = tilesets.FloorSprite()
+                    cons = sprites.floor_sprite()
                 elif col[2] == 1002:
-                    cons = tilesets.WallSprite()
+                    cons = sprites.wall_sprite()
                 else:
                     continue
                 cons.center_x = x * constants.grid_size
                 cons.center_y = y * constants.grid_size
-                self.gamemap.sprites.append(cons)
+                self.gamemap.construct_sprites.append(cons)
                 y += 1
             y = 0
             x += 1
+
+    def init_enetity_sprites(self):
+        for entity in self.entities:
+            self.entity_sprites.append(entity.sprite)
 
     @property
     def gamemap(self):
@@ -80,65 +87,32 @@ class GameMap:
 
         return None
 
-    def arcade_render(self):
-        # render_map
-        # now_map = np.select(
-        #     condlist=[self.visible, self.explored],
-        #     choicelist=[self.tiles["light"], self.tiles["dark"]],
-        #     default=tile_types.SHROUD,
-        # )
-
+    def render(self):
         i = 0
         for row in self.visible:
             for col in row:
                 if col:
-                    self.sprites[i].set_is_light(True) 
+                    self.construct_sprites[i].set_is_light(True) 
                 else:
-                    self.sprites[i].set_is_light(False) 
+                    self.construct_sprites[i].set_is_light(False) 
                 i += 1
         i = 0
         for row in self.explored:
             for col in row:
                 if col:
-                    self.sprites[i].set_is_seen(True) 
+                    self.construct_sprites[i].set_is_seen(True) 
                 i += 1
-        self.sprites.draw()
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
         )
         for entity in entities_sorted_for_rendering:
             # Only print entities that are in the FOV
-            if self.visible[entity.x, entity.y]:
-                entity.sprite.center_x = entity.x * 24
-                entity.sprite.center_y = entity.y * 24
-                entity.sprite.draw()
+            entity.sprite.visible = self.visible[entity.x, entity.y]
+            entity.sprite.center_x = entity.x * constants.grid_size
+            entity.sprite.center_y = entity.y * constants.grid_size
 
-    def render(self, console):
-        """
-        Renders the map.
- 
-        If a tile is in the "visible" array, then draw it with the "light" colors.
-        If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
-        Otherwise, the default is "SHROUD".
-        """
-        console.tiles_rgb[0:self.width, 0:self.height] = np.select(
-            condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
-            default=tile_types.SHROUD,
-        )
-        entities_sorted_for_rendering = sorted(
-            self.entities, key=lambda x: x.render_order.value
-        )
-        for entity in entities_sorted_for_rendering:
-            # Only print entities that are in the FOV
-            if self.visible[entity.x, entity.y]:
-
-                console.print(
-                        x=entity.x, y=entity.y, string=entity.char, fg=entity.color
-                )
-        self.visual_effects = [vfx for vfx in self.visual_effects if not vfx.isFinish]
-        for vfx in self.visual_effects:
-            vfx.render(console)
+        self.construct_sprites.draw()
+        self.entity_sprites.draw()
 
 
 class RectangularRoom:
@@ -174,14 +148,14 @@ def place_entities( room, dungeon, maximum_monsters, maximum_items):
    number_of_monsters = random.randint(0, maximum_monsters)
    number_of_items = random.randint(0, maximum_items)
 
-   for i in range(number_of_monsters):
+   for _ in range(number_of_monsters):
        x = random.randint(room.x1 + 1, room.x2 - 1)
        y = random.randint(room.y1 + 1, room.y2 - 1)
 
        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
            entity = random.choice(entity_factories.all_entities)
            entity.spawn(dungeon, x, y)
-   for i in range(number_of_items):
+   for _ in range(number_of_items):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
@@ -213,7 +187,7 @@ def generate_dungeon(
 
     rooms = []
 
-    for r in range(max_rooms):
+    for _ in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
 
@@ -239,12 +213,12 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        # place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
+        place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
-    dungeon.init_sprites()
-
+    dungeon.init_construct_sprites()
+    dungeon.init_enetity_sprites()
     return dungeon
 
 def tunnel_between(start, end):
