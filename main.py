@@ -35,7 +35,7 @@ class MyGame(arcade.Window):
             engine=self.engine,
             )
         self.engine.update_fov()
-        # arcade.load_font('./asset/stsong.ttf')
+        self.engine.on_start()
 
     def on_draw(self):
         """Render the screen."""

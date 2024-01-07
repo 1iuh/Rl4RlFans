@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from game_map import GameMap
     from components.consumable import Consumable
     from components.inventory import Inventory
+    from components.fighter import Fighter
     from arcade import Sprite
     from sprites import ActorSprite, ItemSprite, MissileSprite
 
@@ -104,8 +105,8 @@ class Actor(Entity):
         name: str = "<Unnamed>",
         sprite: ActorSprite,
         ai_cls,
-        fighter,
-        inventory
+        fighter:Fighter,
+        inventory: Inventory
     ):
         super().__init__(
             x=x,
@@ -223,8 +224,8 @@ class Missile(Entity):
         self.radius = radius
         self.damage = damage
         self.sprite.set_target(
-                target_x=target_xy[0],
-                target_y=target_xy[1],
+                target_x=target_xy[0] * constants.grid_size,
+                target_y=target_xy[1] * constants.grid_size,
                 )
 
     def register(self):

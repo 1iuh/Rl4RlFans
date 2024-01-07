@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import arcade
+import math
 
 from render_order import RenderOrder
 
@@ -103,12 +104,15 @@ class MissileSprite(arcade.Sprite):
         self.cur_frame_idx = 0
         self.time_counter = 0.0
 
-    def set_duration(self, duration:float = 0.2):
+    def set_duration(self, duration:float = 0.5):
         self.left_time = duration
 
-    def set_target(self, target_x, target_y, duration:float=0.2):
-        velocity_x = target_x * constants.grid_size - self.center_x
-        velocity_y = target_y * constants.grid_size - self.center_y
+    def set_target(self, target_x, target_y, duration:float=0.5):
+        velocity_x = target_x - self.center_x
+        velocity_y = target_y - self.center_y
+
+        self.angle = - math.degrees(math.atan2(velocity_y, velocity_x))
+
         self.velocity = velocity_x/duration, velocity_y/ duration
         self.left_time = duration
 

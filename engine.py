@@ -4,6 +4,7 @@ from tcod.map import compute_fov
 from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 from render_functions import render_bar, render_names_at_mouse_location
+from entity_factories import fireball_scroll
 import arcade
 import exceptions
 
@@ -31,6 +32,17 @@ class Engine:
                     entity.ai.perform()
                 except exceptions.Impossible:
                     pass
+
+    def on_start(self):
+        fireball_scroll.parent = self.player.inventory
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        self.player.inventory.items.append(fireball_scroll)
+        
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
