@@ -103,6 +103,9 @@ class MissileSprite(arcade.Sprite):
         self.cur_frame_idx = 0
         self.time_counter = 0.0
 
+    def set_duration(self, duration:float = 0.2):
+        self.left_time = duration
+
     def set_target(self, target_x, target_y, duration:float=0.2):
         velocity_x = target_x * constants.grid_size - self.center_x
         velocity_y = target_y * constants.grid_size - self.center_y
@@ -146,6 +149,7 @@ def wall_sprite():
              scale=0.5)
 
 def player_sprite():
+
     return ActorSprite("./asset/player_idle_f{0}.png", 3, scale=1)
 
 def big_demon(): 
@@ -176,4 +180,7 @@ def potion_3():
     return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
 
 def fireball_missile_sprite():
-    return MissileSprite("./asset/frames/imp_idle_anim_f{0}.png", 4, 1)
+    return MissileSprite("./asset/fireball/1_{0}.png", 20, 0.5)
+
+def flame_sprite():
+    return MissileSprite("./asset/FireVF/Fire+Sparks{0}.png", 4, 0.4)

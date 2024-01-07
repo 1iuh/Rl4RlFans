@@ -144,8 +144,7 @@ class FireballConsumable(Consumable):
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("不能选择没有视野的地方.")
-
-        self.missile = Missile(
+        Missile(
                 x = action.entity.x,
                 y = action.entity.y,
                 target_xy = action.target_xy,

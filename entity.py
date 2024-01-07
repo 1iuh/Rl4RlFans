@@ -4,6 +4,7 @@ import copy
 import math
 
 from typing import TYPE_CHECKING, Optional, Tuple, Union
+import sprites
 
 import constants
 
@@ -36,7 +37,6 @@ class Entity:
         self.y = y
         self.name = name
         self.blocks_movement = blocks_movement
-        self.hasAnimation = False
         self.sprite = sprite
 
         if parent:
@@ -149,6 +149,49 @@ class Item(Entity):
         self.consumable.parent = self
 
 
+class VisualEffects(Entity):
+
+    sprite: MissileSprite
+
+    def __init__(
+            self,
+            parent:GameMap,
+            sprite: MissileSprite,
+            x: int = 0,
+            y: int = 0,
+            name: str = "Missile",
+            ):
+        super().__init__(
+                parent=parent,
+                x=x,
+                y=y,
+                name=name,
+                blocks_movement=False,
+                sprite=sprite,
+                )
+        self.sprite.set_duration()
+
+    def register(self):
+        self.gamemap.missiles.append(self)
+        self.sprite.center_x = self.x * constants.grid_size
+        self.sprite.center_y = self.y * constants.grid_size
+        self.gamemap.missile_sprites.append(self.sprite)
+        return self
+
+    def on_update(self):
+        if (self.sprite.left_time < 0):
+            self.despawn()
+
+    def despawn(self): # type: ignore
+        """Spawn a copy of this instance at the given location."""
+        self.gamemap.missiles.remove(self)
+        self.gamemap.missile_sprites.remove(self.sprite)
+        self.on_despawn()
+
+    def on_despawn(self) -> None:
+        pass
+
+
 class Missile(Entity):
 
     sprite: MissileSprite
@@ -198,7 +241,6 @@ class Missile(Entity):
 
     def despawn(self): # type: ignore
         """Spawn a copy of this instance at the given location."""
-        print("despawn")
         self.gamemap.missiles.remove(self)
         self.gamemap.missile_sprites.remove(self.sprite)
         self.on_despawn()
@@ -210,3 +252,11 @@ class Missile(Entity):
                         f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"
                         )
                 actor.fighter.take_damage(self.damage)
+
+                VisualEffects(
+                        parent=self.gamemap,
+                        x = actor.x,
+                        y = actor.y,
+                        sprite=sprites.flame_sprite(),
+                        )
+
