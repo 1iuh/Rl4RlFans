@@ -42,7 +42,13 @@ class Entity:
         if parent:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
-            parent.entities.add(self)
+            self.register()
+
+    def register(self):
+        """Spawn a copy of this instance at the given location."""
+        self.gamemap.entities.add(self)
+        self.gamemap.entity_sprites.append(self.sprite)
+        return self
 
     @property
     def gamemap(self) -> GameMap:
@@ -152,19 +158,17 @@ class Missile(Entity):
 
     def __init__(
             self,
-            *,
-            x: int = 0,
-            y: int = 0,
+            parent:GameMap,
             target_xy: Tuple[int, int],
-            name: str = "Missile",
             sprite: MissileSprite,
             radius:int,
             damage:int,
+            x: int = 0,
+            y: int = 0,
+            name: str = "Missile",
             ):
-        self.target_xy = target_xy
-        self.radius = radius
-        self.damage = damage
         super().__init__(
+                parent=parent,
                 x=x,
                 y=y,
                 name=name,
@@ -172,25 +176,35 @@ class Missile(Entity):
                 sprite=sprite,
                 )
 
-    def register(self, gamemap:GameMap):
+        self.target_xy = target_xy
+        self.radius = radius
+        self.damage = damage
+        self.sprite.set_target(
+                target_x=target_xy[0],
+                target_y=target_xy[1],
+                )
+
+    def register(self):
         """Spawn a copy of this instance at the given location."""
-        gamemap.missiles.append(self)
+        self.gamemap.missiles.append(self)
         self.sprite.center_x = self.x * constants.grid_size
         self.sprite.center_y = self.y * constants.grid_size
-        self.sprite.change_x = 0.1
-        self.sprite.change_y = 0.1
-
-        gamemap.missile_sprites.append(self.sprite)
+        self.gamemap.missile_sprites.append(self.sprite)
         return self
 
-    def despawn(self, gamemap:GameMap):
-        """Spawn a copy of this instance at the given location."""
-        gamemap.missiles.remove(self)
-        gamemap.missile_sprites.remove(self.sprite)
-        self.on_despawn(gamemap)
+    def on_update(self):
+        if (self.sprite.left_time < 0):
+            self.despawn()
 
-    def on_despawn(self, gamemap:GameMap,) -> None:
-        for actor in gamemap.actors:
+    def despawn(self): # type: ignore
+        """Spawn a copy of this instance at the given location."""
+        print("despawn")
+        self.gamemap.missiles.remove(self)
+        self.gamemap.missile_sprites.remove(self.sprite)
+        self.on_despawn()
+
+    def on_despawn(self) -> None:
+        for actor in self.gamemap.actors:
             if actor.distance(*self.target_xy) <= self.radius:
                 self.gamemap.engine.message_log.add_message(
                         f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"

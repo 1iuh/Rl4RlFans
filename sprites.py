@@ -1,6 +1,15 @@
+from __future__ import annotations
+
 import arcade
 
 from render_order import RenderOrder
+
+from typing import TYPE_CHECKING
+import constants
+
+if TYPE_CHECKING:
+    from entity import Missile
+
 
 tileset_textures = arcade.load_spritesheet("./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
 potions_textures = arcade.load_spritesheet("./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
@@ -21,7 +30,7 @@ class ActorSprite(arcade.Sprite):
     is_alive = True
     render_order:RenderOrder = RenderOrder.ACTOR
 
-    def __init__(self, filename:str, frame_number, scale: float):
+    def __init__(self, filename:str, frame_number:int, scale: float):
         self.frames = []
         for i in range(frame_number):
             texture = arcade.load_texture(filename.format(i))
@@ -79,10 +88,11 @@ class ConstructSprite(arcade.Sprite):
 
 class MissileSprite(arcade.Sprite):
 
-    is_alive = True
+    left_time: float = 0
     render_order:RenderOrder = RenderOrder.Missile
+    entity: Missile
 
-    def __init__(self, filename:str, frame_number, scale: float):
+    def __init__(self, filename: str, frame_number: int, scale: float):
         self.frames = []
         for i in range(frame_number):
             texture = arcade.load_texture(filename.format(i))
@@ -92,6 +102,24 @@ class MissileSprite(arcade.Sprite):
         super().__init__(path_or_texture=self.frames[0].texture, scale=scale)
         self.cur_frame_idx = 0
         self.time_counter = 0.0
+
+    def set_target(self, target_x, target_y, duration:float=0.2):
+        velocity_x = target_x * constants.grid_size - self.center_x
+        velocity_y = target_y * constants.grid_size - self.center_y
+        self.velocity = velocity_x/duration, velocity_y/ duration
+        self.left_time = duration
+
+
+    def on_update(self, delta_time:float=1/60):
+        if self.left_time <= 0:
+            self.velocity = 0, 0
+        else:
+            self.position = (
+                self._position[0] + self.change_x * delta_time,
+                self._position[1] + self.change_y * delta_time,
+            )
+        self.left_time -= delta_time
+
 
     def update_animation(self, delta_time: float = 1 / 60):
         self.time_counter += delta_time
@@ -148,4 +176,4 @@ def potion_3():
     return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
 
 def fireball_missile_sprite():
-    return MissileSprite("./asset/frames/imp_idle_anim_f{0}.png", 4, scale=1)
+    return MissileSprite("./asset/frames/imp_idle_anim_f{0}.png", 4, 1)

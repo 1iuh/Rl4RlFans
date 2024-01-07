@@ -110,7 +110,6 @@ class GameMap:
 
         self.construct_sprites.draw()
         self.entity_sprites.draw()
-        self.missile_sprites.update()
         self.missile_sprites.draw()
 
 

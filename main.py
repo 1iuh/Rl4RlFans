@@ -45,8 +45,11 @@ class MyGame(arcade.Window):
         arcade.draw_text(arcade.get_fps(30), 100, 100)
 
     def on_update(self, delta_time):
+        self.engine.game_map.missile_sprites.on_update(delta_time)
         for entity in self.engine.game_map.entities:
             entity.sprite.update_animation(delta_time)
+        for entity in self.engine.game_map.missiles:
+            entity.on_update()
 
     def on_key_press(self, symbol, modifiers):
         """Called whenever a key is pressed. """

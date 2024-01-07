@@ -152,6 +152,6 @@ class FireballConsumable(Consumable):
                 sprite=sprites.fireball_missile_sprite(),
                 damage = self.damage,
                 radius = self.radius,
+                parent=self.engine.game_map,
                 )
-        self.missile.register(self.engine.game_map)
         self.consume()
