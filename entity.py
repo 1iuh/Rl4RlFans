@@ -3,14 +3,16 @@ from __future__ import annotations
 import copy
 import math
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Tuple, Union
+
+import constants
 
 if TYPE_CHECKING:
     from game_map import GameMap
     from components.consumable import Consumable
     from components.inventory import Inventory
     from arcade import Sprite
-    from sprites import ActorSprite, ItemSprite
+    from sprites import ActorSprite, ItemSprite, MissileSprite
 
 
 class Entity:
@@ -54,7 +56,13 @@ class Entity:
         clone.y = y
         clone.parent = gamemap
         gamemap.entities.add(clone)
+        gamemap.entity_sprites.append(clone.sprite)
         return clone
+
+    def despawn(self, gamemap:GameMap):
+        """Spawn a copy of this instance at the given location."""
+        gamemap.entities.remove(self)
+        gamemap.entity_sprites.remove(self.sprite)
 
     def place(self, x, y, gamemap):
         """Place this entity at a new location.  Handles moving across GameMaps."""
@@ -133,3 +141,58 @@ class Item(Entity):
 
         self.consumable = consumable
         self.consumable.parent = self
+
+
+class Missile(Entity):
+
+    sprite: MissileSprite
+    target_xy: Tuple[int, int]
+    radius: int
+    damage: int
+
+    def __init__(
+            self,
+            *,
+            x: int = 0,
+            y: int = 0,
+            target_xy: Tuple[int, int],
+            name: str = "Missile",
+            sprite: MissileSprite,
+            radius:int,
+            damage:int,
+            ):
+        self.target_xy = target_xy
+        self.radius = radius
+        self.damage = damage
+        super().__init__(
+                x=x,
+                y=y,
+                name=name,
+                blocks_movement=False,
+                sprite=sprite,
+                )
+
+    def register(self, gamemap:GameMap):
+        """Spawn a copy of this instance at the given location."""
+        gamemap.missiles.append(self)
+        self.sprite.center_x = self.x * constants.grid_size
+        self.sprite.center_y = self.y * constants.grid_size
+        self.sprite.change_x = 0.1
+        self.sprite.change_y = 0.1
+
+        gamemap.missile_sprites.append(self.sprite)
+        return self
+
+    def despawn(self, gamemap:GameMap):
+        """Spawn a copy of this instance at the given location."""
+        gamemap.missiles.remove(self)
+        gamemap.missile_sprites.remove(self.sprite)
+        self.on_despawn(gamemap)
+
+    def on_despawn(self, gamemap:GameMap,) -> None:
+        for actor in gamemap.actors:
+            if actor.distance(*self.target_xy) <= self.radius:
+                self.gamemap.engine.message_log.add_message(
+                        f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"
+                        )
+                actor.fighter.take_damage(self.damage)

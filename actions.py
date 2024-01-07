@@ -7,15 +7,19 @@ from typing import TYPE_CHECKING, Optional, Tuple
 
 
 if TYPE_CHECKING:
-    from entity import Actor, Entity, Item
+    from entity import Actor, Item
+    from engine import Engine
 
 class Action:
+
+    entity: Actor
+
     def __init__(self, entity):
         super().__init__()
         self.entity = entity
 
     @property
-    def engine(self):
+    def engine(self)->Engine:
         """Return the engine this action belongs to."""
         return self.entity.gamemap.engine
 
@@ -150,7 +154,7 @@ class PickupAction(Action):
                 if len(inventory.items) >= inventory.capacity:
                     raise exceptions.Impossible("背包满了")
 
-                self.engine.game_map.despwan_entity(item)
+                item.despawn(self.engine.game_map)
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 
@@ -161,5 +165,6 @@ class PickupAction(Action):
 
 
 class DropItem(ItemAction):
+
     def perform(self) -> None:
         self.entity.inventory.drop(self.item)

@@ -76,6 +76,33 @@ class ConstructSprite(arcade.Sprite):
             else:
                 self.texture = self.dark_texture
 
+
+class MissileSprite(arcade.Sprite):
+
+    is_alive = True
+    render_order:RenderOrder = RenderOrder.Missile
+
+    def __init__(self, filename:str, frame_number, scale: float):
+        self.frames = []
+        for i in range(frame_number):
+            texture = arcade.load_texture(filename.format(i))
+            keyframe = arcade.AnimationKeyframe(i, 100, texture)
+            self.frames.append(keyframe)
+
+        super().__init__(path_or_texture=self.frames[0].texture, scale=scale)
+        self.cur_frame_idx = 0
+        self.time_counter = 0.0
+
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.time_counter += delta_time
+        while self.time_counter > self.frames[self.cur_frame_idx].duration / 1000.0:
+            self.time_counter -= self.frames[self.cur_frame_idx].duration / 1000.0
+            self.cur_frame_idx += 1
+            if self.cur_frame_idx >= len(self.frames):
+                self.cur_frame_idx = 0
+
+            self.texture = self.frames[self.cur_frame_idx].texture
+
 def floor_sprite(): 
      return ConstructSprite(
              tileset_textures[2],
@@ -119,3 +146,6 @@ def potion_2():
 
 def potion_3(): 
     return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
+
+def fireball_missile_sprite():
+    return MissileSprite("./asset/frames/imp_idle_anim_f{0}.png", 4, scale=1)

@@ -1,8 +1,9 @@
 import numpy as np
 import tcod
 import random
+from engine import Engine
 import entity_factories
-from entity import Actor, Item, Entity
+from entity import Actor, Item, Entity, Missile
 from arcade import SpriteList, Sprite
 
 import tile_types
@@ -13,6 +14,8 @@ from typing import Iterator
 
 
 class GameMap:
+    engine: Engine
+
     def __init__(self, engine, width, height, entities):
         self.engine = engine
         self.width, self.height = width, height
@@ -23,10 +26,8 @@ class GameMap:
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
         self.construct_sprites = SpriteList() 
         self.entity_sprites = SpriteList() 
-
-    def despwan_entity(self, entity:Entity):
-        self.entities.remove(entity)
-        self.entity_sprites.remove(entity.sprite)
+        self.missile_sprites = SpriteList() 
+        self.missiles: list[Missile] = []
 
     def init_construct_sprites(self):
         x = 0
@@ -46,10 +47,6 @@ class GameMap:
                 y += 1
             y = 0
             x += 1
-
-    def init_enetity_sprites(self):
-        for entity in self.entities:
-            self.entity_sprites.append(entity.sprite)
 
     @property
     def gamemap(self):
@@ -113,6 +110,8 @@ class GameMap:
 
         self.construct_sprites.draw()
         self.entity_sprites.draw()
+        self.missile_sprites.update()
+        self.missile_sprites.draw()
 
 
 class RectangularRoom:
@@ -218,7 +217,8 @@ def generate_dungeon(
         rooms.append(new_room)
 
     dungeon.init_construct_sprites()
-    dungeon.init_enetity_sprites()
+    dungeon.entities.add(dungeon.engine.player)
+    dungeon.entity_sprites.append(dungeon.engine.player.sprite)
     return dungeon
 
 def tunnel_between(start, end):

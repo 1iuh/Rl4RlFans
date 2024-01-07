@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
 
 import actions
 import color
 import components.inventory
 import components.ai
 from components.base_component import BaseComponent
+from entity import Missile
+import sprites
 from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
+import constants
 
+from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from entity import Actor, Item
 
@@ -52,6 +55,8 @@ class HealingConsumable(Consumable):
             self.consume()
         else:
             raise Impossible(f"你的生命值是满的.")
+
+
 
 
 class LightningDamageConsumable(Consumable):
@@ -117,7 +122,9 @@ class ConfusionConsumable(Consumable):
         self.consume()
 
 
+
 class FireballConsumable(Consumable):
+
     def __init__(self, damage: int, radius: int):
         self.damage = damage
         self.radius = radius
@@ -134,14 +141,17 @@ class FireballConsumable(Consumable):
         return None
 
     def activate(self, action: actions.ItemAction) -> None:
-        target_xy = action.target_xy
-        if not self.engine.game_map.visible[target_xy]:
+
+        if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("不能选择没有视野的地方.")
 
-        for actor in self.engine.game_map.actors:
-            if actor.distance(*target_xy) <= self.radius:
-                self.engine.message_log.add_message(
-                    f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"
+        self.missile = Missile(
+                x = action.entity.x,
+                y = action.entity.y,
+                target_xy = action.target_xy,
+                sprite=sprites.fireball_missile_sprite(),
+                damage = self.damage,
+                radius = self.radius,
                 )
-                actor.fighter.take_damage(self.damage)
+        self.missile.register(self.engine.game_map)
         self.consume()
