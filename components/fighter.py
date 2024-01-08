@@ -14,11 +14,12 @@ class Fighter(BaseComponent):
 
     parent: Actor # type: ignore
 
-    def __init__(self, hp: int, defense: int, power: int):
+    def __init__(self, hp: int, defense: int, power: int, speed: int):
         self.max_hp = hp
         self._hp = hp
         self.defense = defense
         self.power = power
+        self.speed: int = speed
 
     @property
     def hp(self) -> int:

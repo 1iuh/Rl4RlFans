@@ -55,7 +55,6 @@ class Entity:
     def gamemap(self) -> GameMap:
         return self.parent.gamemap
 
-
     def spawn(self, gamemap, x, y):
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
@@ -66,7 +65,7 @@ class Entity:
         gamemap.entity_sprites.append(clone.sprite)
         return clone
 
-    def despawn(self, gamemap:GameMap):
+    def despawn(self, gamemap: GameMap):
         """Spawn a copy of this instance at the given location."""
         gamemap.entities.remove(self)
         gamemap.entity_sprites.remove(self.sprite)
@@ -85,7 +84,7 @@ class Entity:
         """
         Return the distance between the current entity and the given (x, y) coordinate.
         """
-        return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+        return math.sqrt((x - self.x)**2 + (y - self.y)**2)
 
     def move(self, dx: int, dy: int) -> None:
         # Move the entity by a given amount
@@ -97,17 +96,15 @@ class Actor(Entity):
 
     sprite: ActorSprite
 
-    def __init__(
-        self,
-        *,
-        x: int = 0,
-        y: int = 0,
-        name: str = "<Unnamed>",
-        sprite: ActorSprite,
-        ai_cls,
-        fighter:Fighter,
-        inventory: Inventory
-    ):
+    def __init__(self,
+                 *,
+                 x: int = 0,
+                 y: int = 0,
+                 name: str = "<Unnamed>",
+                 sprite: ActorSprite,
+                 ai_cls,
+                 fighter: Fighter,
+                 inventory: Inventory):
         super().__init__(
             x=x,
             y=y,
@@ -129,6 +126,7 @@ class Actor(Entity):
 
 
 class Item(Entity):
+
     def __init__(
         self,
         *,
@@ -155,21 +153,21 @@ class VisualEffects(Entity):
     sprite: MissileSprite
 
     def __init__(
-            self,
-            parent:GameMap,
-            sprite: MissileSprite,
-            x: int = 0,
-            y: int = 0,
-            name: str = "Missile",
-            ):
+        self,
+        parent: GameMap,
+        sprite: MissileSprite,
+        x: int = 0,
+        y: int = 0,
+        name: str = "Missile",
+    ):
         super().__init__(
-                parent=parent,
-                x=x,
-                y=y,
-                name=name,
-                blocks_movement=False,
-                sprite=sprite,
-                )
+            parent=parent,
+            x=x,
+            y=y,
+            name=name,
+            blocks_movement=False,
+            sprite=sprite,
+        )
         self.sprite.set_duration()
 
     def register(self):
@@ -183,7 +181,7 @@ class VisualEffects(Entity):
         if (self.sprite.left_time < 0):
             self.despawn()
 
-    def despawn(self): # type: ignore
+    def despawn(self):  # type: ignore
         """Spawn a copy of this instance at the given location."""
         self.gamemap.missiles.remove(self)
         self.gamemap.missile_sprites.remove(self.sprite)
@@ -201,32 +199,32 @@ class Missile(Entity):
     damage: int
 
     def __init__(
-            self,
-            parent:GameMap,
-            target_xy: Tuple[int, int],
-            sprite: MissileSprite,
-            radius:int,
-            damage:int,
-            x: int = 0,
-            y: int = 0,
-            name: str = "Missile",
-            ):
+        self,
+        parent: GameMap,
+        target_xy: Tuple[int, int],
+        sprite: MissileSprite,
+        radius: int,
+        damage: int,
+        x: int = 0,
+        y: int = 0,
+        name: str = "Missile",
+    ):
         super().__init__(
-                parent=parent,
-                x=x,
-                y=y,
-                name=name,
-                blocks_movement=False,
-                sprite=sprite,
-                )
+            parent=parent,
+            x=x,
+            y=y,
+            name=name,
+            blocks_movement=False,
+            sprite=sprite,
+        )
 
         self.target_xy = target_xy
         self.radius = radius
         self.damage = damage
         self.sprite.set_target(
-                target_x=target_xy[0] * constants.grid_size,
-                target_y=target_xy[1] * constants.grid_size,
-                )
+            target_x=target_xy[0] * constants.grid_size,
+            target_y=target_xy[1] * constants.grid_size,
+        )
 
     def register(self):
         """Spawn a copy of this instance at the given location."""
@@ -240,7 +238,7 @@ class Missile(Entity):
         if (self.sprite.left_time < 0):
             self.despawn()
 
-    def despawn(self): # type: ignore
+    def despawn(self):  # type: ignore
         """Spawn a copy of this instance at the given location."""
         self.gamemap.missiles.remove(self)
         self.gamemap.missile_sprites.remove(self.sprite)
@@ -250,14 +248,12 @@ class Missile(Entity):
         for actor in self.gamemap.actors:
             if actor.distance(*self.target_xy) <= self.radius:
                 self.gamemap.engine.message_log.add_message(
-                        f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!"
-                        )
+                    f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!")
                 actor.fighter.take_damage(self.damage)
 
                 VisualEffects(
-                        parent=self.gamemap,
-                        x = actor.x,
-                        y = actor.y,
-                        sprite=sprites.flame_sprite(),
-                        )
-
+                    parent=self.gamemap,
+                    x=actor.x,
+                    y=actor.y,
+                    sprite=sprites.flame_sprite(),
+                )

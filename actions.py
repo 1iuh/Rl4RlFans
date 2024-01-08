@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class Action:
 
     entity: Actor
+    speed: int =  1
 
     def __init__(self, entity):
         super().__init__()
@@ -35,54 +36,59 @@ class Action:
 
 
 class ActionWithDirection(Action):
-   def __init__(self, entity, dx, dy):
-       super().__init__(entity)
 
-       self.dx = dx
-       self.dy = dy
+    speed: int =  3
 
-   @property
-   def dest_xy(self):
-       """Returns this actions destination."""
-       return self.entity.x + self.dx, self.entity.y + self.dy
+    def __init__(self, entity, dx, dy):
+        super().__init__(entity)
 
-   @property
-   def blocking_entity(self):
-       """Return the blocking entity at this actions destination.."""
-       return self.engine.game_map.get_blocking_entity_at_location(*self.dest_xy)
+        self.dx = dx
+        self.dy = dy
 
-   @property
-   def target_actor(self):
-       """Return the actor at this actions destination."""
-       return self.engine.game_map.get_actor_at_location(*self.dest_xy)
+    @property
+    def dest_xy(self):
+        """Returns this actions destination."""
+        return self.entity.x + self.dx, self.entity.y + self.dy
 
-   def perform(self) -> None:
-      raise NotImplementedError()
+    @property
+    def blocking_entity(self):
+        """Return the blocking entity at this actions destination.."""
+        return self.engine.game_map.get_blocking_entity_at_location(*self.dest_xy)
+
+    @property
+    def target_actor(self):
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.dest_xy)
+
+    def perform(self) -> None:
+       raise NotImplementedError()
 
 
 class MeleeAction(ActionWithDirection):
 
-   def perform(self) -> None:
-       target = self.target_actor
-       if not target:
-           raise exceptions.Impossible("Nothing to attack.")
+    speed: int =  8
 
-       damage = self.entity.fighter.power - target.fighter.defense
-
-       attack_desc = f"{self.entity.name.capitalize()} 使用拳头攻击了 {target.name}"
-       if self.entity is self.engine.player:
-           attack_color = color.player_atk
-       else:
-           attack_color = color.enemy_atk
-       if damage > 0:
-           self.engine.message_log.add_message(
-               f"{attack_desc} 造成了 {damage} 物理伤害.", attack_color
-           )
-           target.fighter.hp -= damage
-       else:
-           self.engine.message_log.add_message(
-               f"{attack_desc} 但是毫无效果.", attack_color
-           )
+    def perform(self) -> None:
+        target = self.target_actor
+        if not target:
+            raise exceptions.Impossible("Nothing to attack.")
+ 
+        damage = self.entity.fighter.power - target.fighter.defense
+ 
+        attack_desc = f"{self.entity.name.capitalize()} 使用拳头攻击了 {target.name}"
+        if self.entity is self.engine.player:
+            attack_color = color.player_atk
+        else:
+            attack_color = color.enemy_atk
+        if damage > 0:
+            self.engine.message_log.add_message(
+                f"{attack_desc} 造成了 {damage} 物理伤害.", attack_color
+            )
+            target.fighter.hp -= damage
+        else:
+            self.engine.message_log.add_message(
+                f"{attack_desc} 但是毫无效果.", attack_color
+            )
 
 
 class MovementAction(ActionWithDirection):
@@ -105,8 +111,10 @@ class MovementAction(ActionWithDirection):
 
 
 class WaitAction(Action):
-   def perform(self):
-       pass
+    speed: int = 0
+
+    def perform(self):
+        pass
 
 
 class BumpAction(ActionWithDirection):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Optional, Tuple, TYPE_CHECKING
+from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 from arcade import key as arcade_key
 import arcade
 import constants
@@ -52,11 +52,11 @@ class EventHandler:
     def __init__(self, engine):
         self.engine = engine
 
-    def on_key_press(self, key) -> Optional[Action]:
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
         pass
 
-    def handle_events(self, key) -> None:
-        self.handle_action(self.on_key_press(key))
+    def handle_events(self, key, modifiers) -> None:
+        self.handle_action(self.on_key_press(key, modifiers))
 
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.
@@ -67,16 +67,20 @@ class EventHandler:
             return False
 
         try:
-            action.perform()
+            self.engine.action_queue.append(action)
         except exceptions.Impossible as exc:
             self.engine.message_log.add_message(exc.args[0], color.impossible)
             return False  # Skip enemy turn on exceptions.
 
         self.engine.handle_enemy_turns()
+        self.engine.action_queue.sort(key=lambda x: x.entity.fighter.speed - x.speed)
 
-        self.engine.update_fov()
-        self.engine.render()
         return True
+
+    def on_update(self):
+        if (len(self.engine.action_queue) > 0):
+            self.engine.action_queue.pop().perform()
+            self.engine.update_fov()
 
     def on_render(self) -> None:
         self.engine.render()
@@ -84,7 +88,7 @@ class EventHandler:
 
 class MainGameEventHandler(EventHandler):
 
-    def on_key_press(self, key) -> Optional[Action] :
+    def on_key_press(self, key, modifiers) -> Optional[Action] :
         action: Optional[Action] = None
         player = self.engine.player
 
@@ -110,7 +114,7 @@ class MainGameEventHandler(EventHandler):
 
 class GameOverEventHandler(EventHandler):
 
-    def on_key_press(self, key) -> Optional[Action] :
+    def on_key_press(self, key, modifiers) -> Optional[Action] :
         if key == arcade_key.ESCAPE:
             raise SystemExit()
 
@@ -153,7 +157,7 @@ class HistoryViewer(EventHandler):
                 cursor=self.cursor
         )
 
-    def on_key_press(self, key) -> Optional[Action] :
+    def on_key_press(self, key, modifiers) -> Optional[Action] :
         # Fancy conditional movement to make it feel right.
         if key in CURSOR_Y_KEYS:
             adjust = CURSOR_Y_KEYS[key]
@@ -180,7 +184,7 @@ class AskUserEventHandler(EventHandler):
             return True
         return False
 
-    def on_key_press(self, key) -> Optional[Action]:
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
         """By default any key exits this input handler."""
         return self.on_exit()
 
@@ -259,7 +263,7 @@ class InventoryEventHandler(AskUserEventHandler):
         self.title.draw()
         self.content.draw()
 
-    def on_key_press(self, key) -> Optional[Action]:
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
         player = self.engine.player
         index = key - arcade_key.A
 
@@ -270,7 +274,7 @@ class InventoryEventHandler(AskUserEventHandler):
                 self.engine.message_log.add_message("Invalid entry.", color.invalid)
                 return None
             return self.on_item_selected(selected_item)
-        return super().on_key_press(key)
+        return super().on_key_press(key, modifiers)
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Called when the user selects a valid item."""
@@ -318,7 +322,7 @@ class SelectIndexHandler(AskUserEventHandler):
                 color.white_transparent
                 )
 
-    def on_key_press(self, key) -> Optional[Action]:
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
         """Check for key movement or confirmation keys."""
         if key in MOVE_KEYS:
             x, y = self.engine.mouse_location
@@ -332,7 +336,7 @@ class SelectIndexHandler(AskUserEventHandler):
             return None
         elif key in CONFIRM_KEYS:
             return self.on_index_selected(*self.engine.mouse_location)
-        return super().on_key_press(key)
+        return super().on_key_press(key, modifiers)
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         """Called when an index is selected."""
@@ -378,7 +382,7 @@ class AreaRangedAttackHandler(SelectIndexHandler):
 
         x, y = self.engine.mouse_location
 
-        for i in range(self.radius):
+        for _ in range(self.radius):
             for _x in range(x-self.radius, x + self.radius+1):
                 for _y in range(y-self.radius, y + self.radius+1):
                     if (self.distance(x, y, _x, _y) > self.radius):

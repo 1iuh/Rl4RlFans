@@ -4,10 +4,10 @@ from engine import Engine
 from game_map import generate_dungeon
 import entity_factories
 import copy
-import time
 import constants
 
-arcade.enable_timings() 
+arcade.enable_timings()
+
 
 class MyGame(arcade.Window):
     """
@@ -17,11 +17,14 @@ class MyGame(arcade.Window):
     def __init__(self):
 
         # Call the parent class and set up the window
-        super().__init__(constants.screen_width, constants.screen_height, constants.screen_title, update_rate=1/30,
-                draw_rate=1/60) # type: ignore
-        arcade.set_background_color(arcade.csscolor.BLACK) # type: ignore
+        super().__init__(
+                constants.screen_width, constants.screen_height,
+                constants.screen_title, update_rate=1/60,
+                draw_rate=1/60)  # type: ignore
+        arcade.set_background_color(arcade.csscolor.BLACK)  # type: ignore
 
     def setup(self):
+
         self.player = copy.deepcopy(entity_factories.player)
         self.engine = Engine(player=self.player)
         self.engine.game_map = generate_dungeon(
@@ -42,9 +45,11 @@ class MyGame(arcade.Window):
 
         self.clear()
         self.engine.event_handler.on_render()
-        arcade.draw_text(arcade.get_fps(30), 100, 100)
+        arcade.draw_text("%.2f" % arcade.get_fps(30), 100, 100)
 
     def on_update(self, delta_time):
+
+        self.engine.event_handler.on_update()
         self.engine.game_map.missile_sprites.on_update(delta_time)
         for entity in self.engine.game_map.entities:
             entity.sprite.update_animation(delta_time)
@@ -52,8 +57,11 @@ class MyGame(arcade.Window):
             entity.on_update()
 
     def on_key_press(self, symbol, modifiers):
+        if len(self.engine.action_queue) > 0:
+            return
         """Called whenever a key is pressed. """
-        self.engine.event_handler.handle_events(symbol)
+        self.engine.event_handler.handle_events(symbol, modifiers)
+
 
 def main():
     """Main function"""

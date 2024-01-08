@@ -8,7 +8,7 @@ import sprites
 player = Actor(
         name="你",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=40, defense=2, power=10),
+        fighter=Fighter(hp=40, defense=2, power=10, speed=5),
         inventory=Inventory(capacity=26),
         sprite=sprites.player_sprite()
         )
@@ -16,7 +16,7 @@ player = Actor(
 a_tree = Actor(
         name="阿树",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=10, defense=4, power=1),
+        fighter=Fighter(hp=10, defense=4, power=1, speed=1),
         inventory=Inventory(capacity=0),
         sprite=sprites.big_zombie(),
         )
@@ -24,7 +24,7 @@ a_tree = Actor(
 twoflower = Actor(
         name="蓝猫",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=15, defense=0, power=3),
+        fighter=Fighter(hp=15, defense=0, power=3, speed=10),
         inventory=Inventory(capacity=0),
         sprite=sprites.big_demon(),
         )
@@ -32,28 +32,28 @@ twoflower = Actor(
 sagancharum = Actor(
         name="甘蔗",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=18, defense=2, power=3),
+        fighter=Fighter(hp=18, defense=2, power=3, speed=3),
         inventory=Inventory(capacity=0),
         sprite=sprites.chort(),
         )
 feishiko = Actor(
         name="feishiko",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=18, defense=2, power=3),
+        fighter=Fighter(hp=18, defense=2, power=3, speed=4),
         inventory=Inventory(capacity=0),
         sprite=sprites.feishiko(),
         )
 toufu = Actor(
         name="麻婆豆腐",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=18, defense=2, power=3),
+        fighter=Fighter(hp=18, defense=2, power=3, speed=5),
         inventory=Inventory(capacity=0),
         sprite=sprites.toufu(),
         )
 silencess = Actor(
         name="言静",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=18, defense=2, power=3),
+        fighter=Fighter(hp=18, defense=2, power=3, speed=7),
         inventory=Inventory(capacity=0),
         sprite=sprites.silencess(),
         )
@@ -61,7 +61,7 @@ silencess = Actor(
 superlight = Actor(
         name="科学超电灯泡",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=18, defense=2, power=3),
+        fighter=Fighter(hp=18, defense=2, power=3, speed=8),
         inventory=Inventory(capacity=0),
         sprite=sprites.superlight(),
         )
