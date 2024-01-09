@@ -33,7 +33,7 @@ class Engine:
         for entity in set(self.game_map.actors) - {self.player}:
             if entity.ai:
                 try:
-                    self.action_queue.append(entity.ai.perform)
+                    self.action_queue.append(entity.ai.perform())
                 except exceptions.Impossible:
                     pass
 

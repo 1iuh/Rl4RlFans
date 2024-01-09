@@ -69,9 +69,18 @@ class MeleeAction(ActionWithDirection):
     speed: int =  8
 
     def perform(self) -> None:
+
+        if not self.entity.fighter.is_alive:
+            return
+
         target = self.target_actor
+
         if not target:
-            raise exceptions.Impossible("Nothing to attack.")
+            attack_color = color.player_atk
+            self.engine.message_log.add_message(
+                f"{self.entity.name.capitalize()} 近战攻击但是落空了", attack_color
+            )
+            return
  
         damage = self.entity.fighter.power - target.fighter.defense
  
@@ -99,13 +108,17 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            raise exceptions.Impossible("那里没路。")
+            self.engine.message_log.add_message( f"那里没路")
+            return
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is out of bounds.
-            raise exceptions.Impossible("那里没路。")
+            self.engine.message_log.add_message( f"那里没路")
+            return
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is out of bounds.
-            raise exceptions.Impossible("那里没路。")
+            self.engine.message_log.add_message( f"那里没路")
+            return
+
 
         self.entity.move(self.dx, self.dy)
 
@@ -169,7 +182,7 @@ class PickupAction(Action):
                 self.engine.message_log.add_message(f"你 拾取了 {item.name}!")
                 return
 
-        raise exceptions.Impossible("地上没东西！")
+        self.engine.message_log.add_message(f"地上没东西!")
 
 
 class DropItem(ItemAction):

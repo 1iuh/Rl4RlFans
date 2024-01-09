@@ -16,6 +16,7 @@ screen_title = "Roguelike For Roguelike Fans"
 
 screen_center_x = screen_width / 2
 screen_center_y = screen_height / 2
+seconds_per_action = 0.2
 
 font_size = 12
 font_line_height = 16

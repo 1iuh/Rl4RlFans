@@ -47,6 +47,7 @@ CONFIRM_KEYS = {
 }
 
 class EventHandler:
+    delta_time = 0.0
     engine: Engine
 
     def __init__(self, engine):
@@ -77,10 +78,19 @@ class EventHandler:
 
         return True
 
-    def on_update(self):
-        if (len(self.engine.action_queue) > 0):
-            self.engine.action_queue.pop().perform()
-            self.engine.update_fov()
+    def on_update(self, delta_time):
+        self.delta_time += delta_time
+        if (self.delta_time > constants.seconds_per_action and len(self.engine.action_queue) > 0):
+            self.delta_time = 0
+            while len(self.engine.action_queue) > 0:
+                action = self.engine.action_queue.pop()
+                action.perform()
+                self.engine.update_fov()
+                if (len(self.engine.action_queue) == 0):
+                    self.delta_time = constants.seconds_per_action + 0.1
+                if self.engine.game_map.visible[action.entity.x, action.entity.y]:
+                    return
+
 
     def on_render(self) -> None:
         self.engine.render()
