@@ -50,11 +50,11 @@ class MyGame(arcade.Window):
     def on_update(self, delta_time):
 
         self.engine.event_handler.on_update(delta_time)
-        self.engine.game_map.missile_sprites.on_update(delta_time)
-        for entity in self.engine.game_map.entities:
-            entity.sprite.update_animation(delta_time)
-        for entity in self.engine.game_map.missiles:
-            entity.on_update()
+        #  self.engine.game_map.missile_sprites.on_update(delta_time)
+        #  for entity in self.engine.game_map.entities:
+            #  entity.sprite.update_animation(delta_time)
+        #  for entity in self.engine.game_map.missiles:
+            #  entity.on_update()
 
     def on_key_press(self, symbol, modifiers):
         if len(self.engine.action_queue) > 0:

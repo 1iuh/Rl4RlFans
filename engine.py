@@ -4,7 +4,6 @@ from tcod.map import compute_fov
 from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 from render_functions import render_bar
-from entity_factories import fireball_scroll
 import exceptions
 
 from typing import TYPE_CHECKING
@@ -24,7 +23,6 @@ class Engine:
 
         self.event_handler: EventHandler = MainGameEventHandler(self)
         self.message_log = MessageLog()
-        self.mouse_location = (0, 0)
         self.player = player
         self.action_queue: list[Action] = []
 
@@ -38,15 +36,8 @@ class Engine:
                     pass
 
     def on_start(self):
+        pass
 
-        fireball_scroll.parent = self.player.inventory
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
-        self.player.inventory.items.append(fireball_scroll)
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""

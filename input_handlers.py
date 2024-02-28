@@ -80,6 +80,15 @@ class EventHandler:
 
     def on_update(self, delta_time):
         self.delta_time += delta_time
+        if  self.engine.game_map.missiles:
+            pass
+            
+        #  self.engine.game_map.missile_sprites.on_update(delta_time)
+        #  for entity in self.engine.game_map.entities:
+            #  entity.sprite.update_animation(delta_time)
+        #  for entity in self.engine.game_map.missiles:
+            #  entity.on_update()
+
         if (self.delta_time > constants.seconds_per_action and len(self.engine.action_queue) > 0):
             self.delta_time = 0
             while len(self.engine.action_queue) > 0:
