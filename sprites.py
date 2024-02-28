@@ -6,7 +6,6 @@ import math
 from render_order import RenderOrder
 
 from typing import TYPE_CHECKING
-import constants
 
 if TYPE_CHECKING:
     from entity import Missile

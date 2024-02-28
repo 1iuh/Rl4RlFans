@@ -1,6 +1,6 @@
 import arcade
 
-from engine import Engine
+from engine import GameEngine, StartMenuEngine
 from game_map import generate_dungeon
 import entity_factories
 import copy
@@ -24,9 +24,25 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.csscolor.BLACK)  # type: ignore
 
     def setup(self):
+        self.engine = StartMenuEngine(self)
+        self.engine.on_start()
 
-        self.player = copy.deepcopy(entity_factories.player)
-        self.engine = Engine(player=self.player)
+    def on_draw(self):
+        """Render the screen."""
+
+        self.clear()
+        self.engine.on_render()
+        arcade.draw_text("%.2f" % arcade.get_fps(30), 100, 100)
+
+    def on_update(self, delta_time):
+        self.engine.on_update(delta_time)
+
+    def on_key_press(self, symbol, modifiers):
+        self.engine.on_key_press(symbol, modifiers)
+
+    def start_new_game(self):
+        player = copy.deepcopy(entity_factories.player)
+        self.engine = GameEngine(player, self)
         self.engine.game_map = generate_dungeon(
             constants.map_width,
             constants.map_height,
@@ -37,31 +53,8 @@ class MyGame(arcade.Window):
             constants.max_items_per_room,
             engine=self.engine,
             )
-        self.engine.update_fov()
         self.engine.on_start()
-
-    def on_draw(self):
-        """Render the screen."""
-
-        self.clear()
-        self.engine.event_handler.on_render()
-        arcade.draw_text("%.2f" % arcade.get_fps(30), 100, 100)
-
-    def on_update(self, delta_time):
-
-        self.engine.event_handler.on_update(delta_time)
-        #  self.engine.game_map.missile_sprites.on_update(delta_time)
-        #  for entity in self.engine.game_map.entities:
-            #  entity.sprite.update_animation(delta_time)
-        #  for entity in self.engine.game_map.missiles:
-            #  entity.on_update()
-
-    def on_key_press(self, symbol, modifiers):
-        if len(self.engine.action_queue) > 0:
-            return
-        """Called whenever a key is pressed. """
-        self.engine.event_handler.handle_events(symbol, modifiers)
-
+    
 
 def main():
     """Main function"""

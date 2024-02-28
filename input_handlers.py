@@ -17,7 +17,7 @@ import color
 import exceptions
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from engine import GameEngine, StartMenuEngine
     from entity import Item
 
 MOVE_KEYS = {
@@ -48,7 +48,7 @@ CONFIRM_KEYS = {
 
 class EventHandler:
     delta_time = 0.0
-    engine: Engine
+    engine: GameEngine
 
     def __init__(self, engine):
         self.engine = engine
@@ -141,7 +141,7 @@ class GameOverEventHandler(EventHandler):
 class HistoryViewer(EventHandler):
     """Print the history on a larger window which can be navigated."""
 
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: GameEngine):
         super().__init__(engine)
         self.log_length = len(engine.message_log.messages)
         self.cursor = self.log_length
@@ -323,7 +323,7 @@ class InventoryDropHandler(InventoryEventHandler):
 class SelectIndexHandler(AskUserEventHandler):
     """Handles asking the user for an index on the map."""
 
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: GameEngine):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
@@ -374,7 +374,7 @@ class SingleRangedAttackHandler(SelectIndexHandler):
     """Handles targeting a single enemy. Only the enemy selected will be affected."""
 
     def __init__(
-        self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
+        self, engine: GameEngine, callback: Callable[[Tuple[int, int]], Optional[Action]]
     ):
         super().__init__(engine)
 
@@ -388,7 +388,7 @@ class AreaRangedAttackHandler(SelectIndexHandler):
     """Handles targeting an area within a given radius. Any entity within the area will be affected."""
 
     def __init__(
-            self, engine: Engine, radius: int, callback: Callable[[Tuple[int, int]], Optional[Action]]
+            self, engine: GameEngine, radius: int, callback: Callable[[Tuple[int, int]], Optional[Action]]
     ):
         super().__init__(engine)
 
@@ -424,3 +424,19 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         Return the distance between the current entity and the given (x, y) coordinate.
         """
         return math.sqrt((x - _x) ** 2 + (y - _y) ** 2)
+
+
+class StartMenuEventHandler:
+    engine: StartMenuEngine
+
+    def __init__(self, engine):
+        self.engine = engine
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade_key.K:
+            self.engine.cursor_index -= 1
+        elif key == arcade_key.J:
+            self.engine.cursor_index += 1
+        elif key in CONFIRM_KEYS:
+            return self.engine.excute_option()
+
