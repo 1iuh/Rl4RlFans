@@ -73,7 +73,7 @@ class StartMenuEngine(Engine):
             arcade.draw_text(
                 option, 
                 int(constants.screen_center_x), 
-                int(constants.screen_center_y - 200 - 26*i),
+                int(constants.screen_center_y - 50 - 26*i),
                 arcade.color.WHITE, 22, anchor_x='center'
             )
             i += 1
