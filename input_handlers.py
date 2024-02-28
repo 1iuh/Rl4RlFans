@@ -126,7 +126,7 @@ class MainGameEventHandler(EventHandler):
         elif key == arcade_key.SLASH:
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.ESCAPE:
-            raise SystemExit()
+            self.engine.event_handler = EscMenuHandler(self.engine)
 
         # No valid key was pressed
         return action
@@ -370,6 +370,55 @@ class LookHandler(SelectIndexHandler):
         self.engine.event_handler = MainGameEventHandler(self.engine)
 
 
+class EscMenuHandler(AskUserEventHandler):
+    options = ['Resume', 'Save & Quit']
+    cursor_index = 0
+
+    def __init__(self, engine: GameEngine):
+        """Sets the cursor to the player when this handler is constructed."""
+        super().__init__(engine)
+        player = self.engine.player
+
+    def on_render(self) -> None:
+        """Highlight the tile under the cursor."""
+        super().on_render()
+        arcade.draw_lrbt_rectangle_filled(
+                0,
+                constants.screen_width,
+                0,
+                constants.screen_height,
+                color.black_transparent
+        )
+        self.cursor_index %= len(self.options)
+        i = 0
+        for option in self.options:
+            if i == self.cursor_index:
+                option = f'=> {option} <='
+            arcade.draw_text(
+                    option,
+                    constants.screen_center_x,
+                    constants.screen_center_y - i* 28,
+                             anchor_x='center',
+                             font_size=24
+             )
+            i += 1
+
+    def on_key_press(self, key, modifiers):
+        if key in (arcade_key.K, arcade_key.UP):
+            self.cursor_index -= 1
+        elif key in (arcade_key.J, arcade_key.DOWN):
+            self.cursor_index += 1
+        elif key in CONFIRM_KEYS:
+            return self.on_index_selected()
+
+    def on_index_selected(self) -> None:
+        """Return to main handler."""
+        if self.cursor_index == 1:
+            self.engine.save_and_quit()
+        else:
+            self.engine.event_handler = MainGameEventHandler(self.engine)
+
+
 class SingleRangedAttackHandler(SelectIndexHandler):
     """Handles targeting a single enemy. Only the enemy selected will be affected."""
 
@@ -433,9 +482,9 @@ class StartMenuEventHandler:
         self.engine = engine
 
     def on_key_press(self, key, modifiers):
-        if key == arcade_key.K:
+        if key in (arcade_key.K, arcade_key.UP):
             self.engine.cursor_index -= 1
-        elif key == arcade_key.J:
+        elif key in (arcade_key.J, arcade_key.DOWN):
             self.engine.cursor_index += 1
         elif key in CONFIRM_KEYS:
             return self.engine.excute_option()

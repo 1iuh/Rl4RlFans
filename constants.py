@@ -14,8 +14,8 @@ screen_height = grid_size * map_height + 5
 
 screen_title = "Roguelike For Roguelike Fans"
 
-screen_center_x = screen_width / 2
-screen_center_y = screen_height / 2
+screen_center_x = int(screen_width / 2)
+screen_center_y = int(screen_height / 2)
 seconds_per_action = 0.2
 
 font_size = 12

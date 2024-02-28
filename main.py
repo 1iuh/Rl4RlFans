@@ -24,8 +24,7 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.csscolor.BLACK)  # type: ignore
 
     def setup(self):
-        self.engine = StartMenuEngine(self)
-        self.engine.on_start()
+        self.goto_start_menu()
 
     def on_draw(self):
         """Render the screen."""
@@ -39,6 +38,10 @@ class MyGame(arcade.Window):
 
     def on_key_press(self, symbol, modifiers):
         self.engine.on_key_press(symbol, modifiers)
+
+    def goto_start_menu(self):
+        self.engine = StartMenuEngine(self)
+        self.engine.on_start()
 
     def start_new_game(self):
         player = copy.deepcopy(entity_factories.player)

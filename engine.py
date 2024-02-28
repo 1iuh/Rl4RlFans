@@ -156,3 +156,9 @@ class GameEngine(Engine):
             maximum_value=self.player.fighter.max_hp,
             total_width=12,
         )
+
+    def save_and_quit(self):
+        # TODO: save data
+
+        self.window.goto_start_menu()
+        
