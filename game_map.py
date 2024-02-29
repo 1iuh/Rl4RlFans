@@ -3,12 +3,14 @@ import tcod
 import random
 from engine import Engine
 import entity_factories
-from entity import Actor, Item, Entity, Missile
+from entity import Actor, Item, Missile
 from arcade import SpriteList, Sprite
 
 import tile_types
 import sprites
 import constants
+import pickle
+from base64 import b64decode, b64encode
 
 from typing import Iterator
 
@@ -32,6 +34,7 @@ class GameMap:
     def init_construct_sprites(self):
         x = 0
         y = 0
+        self.gamemap.construct_sprites.clear()
         for row in self.gamemap.tiles:
             for col in row: 
                 cons:Sprite
@@ -111,6 +114,19 @@ class GameMap:
         self.construct_sprites.draw()
         self.entity_sprites.draw()
         self.missile_sprites.draw()
+
+    def to_dict(self):
+        return dict(
+                tiles = b64encode(pickle.dumps(self.tiles)).decode('ascii'),
+                visible = b64encode(pickle.dumps(self.visible)).decode('ascii'),
+                explored = b64encode(pickle.dumps(self.explored)).decode('ascii'),
+                )
+
+    def load_dict(self, d):
+        self.tiles =  pickle.loads(b64decode(d['tiles']))
+        self.visible =  pickle.loads(b64decode(d['visible']))
+        self.explored =  pickle.loads(b64decode(d['explored']))
+        self.init_construct_sprites()
 
 
 class RectangularRoom:
@@ -236,3 +252,5 @@ def tunnel_between(start, end):
        yield x, y
    for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
        yield x, y
+
+

@@ -91,6 +91,14 @@ class Entity:
         self.x += dx
         self.y += dy
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Don't pickle baz
+        return state
+
+    def to_dict(self):
+        return {}
+
 
 class Actor(Entity):
 

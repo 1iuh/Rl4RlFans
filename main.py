@@ -43,6 +43,10 @@ class MyGame(arcade.Window):
         self.engine = StartMenuEngine(self)
         self.engine.on_start()
 
+    def continue_last_game(self):
+        self.start_new_game()
+        self.engine.continue_last_game()
+
     def start_new_game(self):
         player = copy.deepcopy(entity_factories.player)
         self.engine = GameEngine(player, self)

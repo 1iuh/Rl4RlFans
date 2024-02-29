@@ -7,6 +7,8 @@ from render_functions import render_bar
 import constants 
 import exceptions
 import arcade
+import json
+
 
 from typing import TYPE_CHECKING
 
@@ -21,6 +23,7 @@ if TYPE_CHECKING:
 class Engine:
 
     window: MyGame
+
     def __init__(self, window):
         self.window = window
 
@@ -89,7 +92,8 @@ class StartMenuEngine(Engine):
     def excute_option(self):
         if self.cursor_index == 0:
             self.window.start_new_game()
-            
+        elif self.cursor_index == 1:
+            self.window.continue_last_game()
         elif self.cursor_index == 3:
             arcade.exit()
 
@@ -157,8 +161,20 @@ class GameEngine(Engine):
             total_width=12,
         )
 
-    def save_and_quit(self):
-        # TODO: save data
+    def continue_last_game(self):
+        with open('./saves/savegame.sav', "r") as f:
+            game_data = json.loads(f.read())
+            self.game_map.load_dict(game_data['game_map'])
 
+
+    def save_and_quit(self):
+        save_data = json.dumps(self.to_dict())
+        with open('./saves/savegame.sav', "wb") as f:
+            f.write(save_data.encode("utf8"))
         self.window.goto_start_menu()
-        
+
+
+    def to_dict(self) -> dict:
+        return dict(
+                game_map = self.game_map.to_dict()
+                )
