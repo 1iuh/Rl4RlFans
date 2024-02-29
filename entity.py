@@ -23,9 +23,11 @@ class Entity:
     """
 
     parent: Union[GameMap, Inventory]
+    entity_id: int
 
     def __init__(
         self,
+        entity_id: int = 0, 
         parent: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
@@ -91,13 +93,8 @@ class Entity:
         self.x += dx
         self.y += dy
 
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        # Don't pickle baz
-        return state
-
     def to_dict(self):
-        return {}
+        raise NotImplementedError
 
 
 class Actor(Entity):
@@ -106,6 +103,7 @@ class Actor(Entity):
 
     def __init__(self,
                  *,
+                 entity_id: int = 0,
                  x: int = 0,
                  y: int = 0,
                  name: str = "<Unnamed>",
@@ -113,7 +111,9 @@ class Actor(Entity):
                  ai_cls,
                  fighter: Fighter,
                  inventory: Inventory):
+
         super().__init__(
+            entity_id=entity_id,
             x=x,
             y=y,
             name=name,
@@ -132,12 +132,22 @@ class Actor(Entity):
         """Returns True as long as this actor can perform actions."""
         return bool(self.ai)
 
+    def to_dict(self):
+        return dict(
+                x = self.x,
+                y = self.y,
+                name = self.name,
+                fighter = self.fighter.to_dict(),
+                inventory = self.inventory,
+                )
+
 
 class Item(Entity):
 
     def __init__(
         self,
         *,
+        entity_id: int = 0,
         x: int = 0,
         y: int = 0,
         name: str = "<Unnamed>",
@@ -145,6 +155,7 @@ class Item(Entity):
         consumable: Consumable,
     ):
         super().__init__(
+            entity_id=entity_id,
             x=x,
             y=y,
             name=name,
@@ -155,6 +166,13 @@ class Item(Entity):
         self.consumable = consumable
         self.consumable.parent = self
 
+    def to_dict(self):
+        return dict(
+                x = self.x,
+                y = self.y,
+                name = self.name,
+                )
+
 
 class VisualEffects(Entity):
 
@@ -162,6 +180,7 @@ class VisualEffects(Entity):
 
     def __init__(
         self,
+        entity_id: int,
         parent: GameMap,
         sprite: MissileSprite,
         x: int = 0,
@@ -169,6 +188,7 @@ class VisualEffects(Entity):
         name: str = "Missile",
     ):
         super().__init__(
+            entity_id=entity_id,
             parent=parent,
             x=x,
             y=y,
@@ -208,6 +228,7 @@ class Missile(Entity):
 
     def __init__(
         self,
+        entity_id:int,
         parent: GameMap,
         target_xy: Tuple[int, int],
         sprite: MissileSprite,
@@ -218,6 +239,7 @@ class Missile(Entity):
         name: str = "Missile",
     ):
         super().__init__(
+            entity_id=entity_id,
             parent=parent,
             x=x,
             y=y,
@@ -258,8 +280,8 @@ class Missile(Entity):
                 self.gamemap.engine.message_log.add_message(
                     f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!")
                 actor.fighter.take_damage(self.damage)
-
                 VisualEffects(
+                    -1,
                     parent=self.gamemap,
                     x=actor.x,
                     y=actor.y,

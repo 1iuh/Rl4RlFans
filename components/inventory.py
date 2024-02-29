@@ -23,3 +23,15 @@ class Inventory(BaseComponent):
         item.place(self.parent.x, self.parent.y, self.gamemap)
 
         self.engine.message_log.add_message(f"你把 {item.name} 丢在了地上.")
+
+    def to_dict(self):
+        return dict(
+                capacity = self.capacity,
+                items = [i.to_dict() for i in self.items]
+                )
+
+    def load_dict(self, d):
+        self.capacity = d['capacity']
+        items = d['items']
+        # TODO
+        return 

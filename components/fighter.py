@@ -13,13 +13,18 @@ if TYPE_CHECKING:
 class Fighter(BaseComponent):
 
     parent: Actor # type: ignore
+    max_hp: int
+    _hp: int
+    defense: int
+    power: int
+    speed: int
 
     def __init__(self, hp: int, defense: int, power: int, speed: int):
         self.max_hp = hp
         self._hp = hp
         self.defense = defense
         self.power = power
-        self.speed: int = speed
+        self.speed = speed
 
     @property
     def hp(self) -> int:
@@ -69,3 +74,19 @@ class Fighter(BaseComponent):
         self.parent.name = f"{self.parent.name} 的残骸 "
         self.parent.sprite.render_order = RenderOrder.CORPSE
         self.engine.message_log.add_message(death_message, death_message_color)
+
+    def to_dict(self):
+        return dict(
+                max_hp = self.max_hp,
+                hp = self._hp,
+                defense = self.defense ,
+                power = self.power,
+                speed = self.speed,
+                )
+
+    def load_dict(self, d):
+        self.max_hp = d['max_hp']
+        self._hp = d['hp']
+        self.defense = d['defense']
+        self.power = d['power']
+        self.speed = d['speed']
