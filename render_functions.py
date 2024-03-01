@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING
 
 import arcade
 
-import color
-
 if TYPE_CHECKING:
     from tcod import Console
     from engine import Engine

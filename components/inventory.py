@@ -5,7 +5,7 @@ from typing import List, TYPE_CHECKING
 from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
-    from entity import Actor, Item
+    from entities.entity import Actor, Item
 
 
 class Inventory(BaseComponent):
@@ -22,7 +22,7 @@ class Inventory(BaseComponent):
         self.items.remove(item)
         item.place(self.parent.x, self.parent.y, self.gamemap)
 
-        self.engine.message_log.add_message(f"你把 {item.name} 丢在了地上.")
+        self.engine.message_log.add_message(f"你把 {item.name} 丢在了地上.") # type: ignore
 
     def to_dict(self):
         return dict(
@@ -32,6 +32,6 @@ class Inventory(BaseComponent):
 
     def load_dict(self, d):
         self.capacity = d['capacity']
-        items = d['items']
         # TODO
+        items = d['items']
         return 

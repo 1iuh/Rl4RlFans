@@ -8,7 +8,7 @@ from render_order import RenderOrder
 import color
 
 if TYPE_CHECKING:
-   from entity import Actor
+   from entities.entity import Actor
 
 class Fighter(BaseComponent):
 

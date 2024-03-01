@@ -2,7 +2,7 @@ import arcade
 
 from engine import GameEngine, StartMenuEngine
 from game_map import generate_dungeon
-import entity_factories
+from entities import actors
 import copy
 import constants
 
@@ -15,7 +15,6 @@ class MyGame(arcade.Window):
     """
 
     def __init__(self):
-
         # Call the parent class and set up the window
         super().__init__(
                 constants.screen_width, constants.screen_height,
@@ -46,9 +45,10 @@ class MyGame(arcade.Window):
     def continue_last_game(self):
         self.start_new_game()
         self.engine.continue_last_game()
+        self.engine.on_start()
 
     def start_new_game(self):
-        player = copy.deepcopy(entity_factories.player)
+        player = copy.deepcopy(actors.player)
         self.engine = GameEngine(player, self)
         self.engine.game_map = generate_dungeon(
             constants.map_width,
@@ -61,7 +61,7 @@ class MyGame(arcade.Window):
             engine=self.engine,
             )
         self.engine.on_start()
-    
+
 
 def main():
     """Main function"""

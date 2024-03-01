@@ -8,7 +8,7 @@ from render_order import RenderOrder
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from entity import Missile
+    from entities.entity import Missile
 
 
 tileset_textures = arcade.load_spritesheet("./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)

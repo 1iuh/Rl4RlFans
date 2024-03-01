@@ -4,7 +4,7 @@ from tcod.map import compute_fov
 from input_handlers import MainGameEventHandler, StartMenuEventHandler
 from message_log import MessageLog
 from render_functions import render_bar
-import constants 
+import constants
 import exceptions
 import arcade
 import json
@@ -13,7 +13,7 @@ import json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from entity import Actor
+    from entities.entity import Actor
     from game_map import GameMap
     from input_handlers import EventHandler
     from actions import Action
@@ -42,30 +42,36 @@ class Engine:
 
 class StartMenuEngine(Engine):
 
-    cursor_index:int = 0
+    cursor_index: int = 0
     window: MyGame
     title = 'Roguelike For Roguelike Fans'
     options = [
-            'New Game',
-            'Continue',
-            'Config',
-            'Exit',
-            ]
+        'New Game',
+        'Continue',
+        'Config',
+        'Exit',
+    ]
 
     def __init__(self, window):
         self.window = window
         self.event_handler = StartMenuEventHandler(self)
-        
+
     def on_start(self):
-        self.background = arcade.load_texture("./asset/Background/background_0.png")
+        self.background = arcade.load_texture(
+            "./asset/Background/background_0.png")
 
     def on_render(self):
         # draw background
-        arcade.draw_lrwh_rectangle_textured(200, 50,
-                                            constants.screen_width - 400, constants.screen_height - 100,
-                                            self.background)
+        arcade.draw_lrwh_rectangle_textured(
+            200, 50,
+            constants.screen_width - 400, constants.screen_height - 100,
+            self.background
+        )
         # draw tile
-        arcade.draw_text(self.title, 150, 500, arcade.color.WHITE, 36, font_name="Kenney Blocks")
+        arcade.draw_text(
+            self.title, 150, 500, arcade.color.WHITE, 36,
+            font_name="Kenney Blocks"
+        )
 
         # draw options
         self.cursor_index %= len(self.options)
@@ -74,20 +80,18 @@ class StartMenuEngine(Engine):
             if i == self.cursor_index:
                 option = f"=> {option} <="
             arcade.draw_text(
-                option, 
-                int(constants.screen_center_x), 
+                option,
+                int(constants.screen_center_x),
                 int(constants.screen_center_y - 50 - 26*i),
                 arcade.color.WHITE, 22, anchor_x='center'
             )
             i += 1
-
 
     def on_update(self, delta_time):
         pass
 
     def on_key_press(self, symbol, modifiers):
         self.event_handler.on_key_press(symbol, modifiers)
-
 
     def excute_option(self):
         if self.cursor_index == 0:
@@ -99,7 +103,6 @@ class StartMenuEngine(Engine):
 
 
 class GameEngine(Engine):
- 
 
     game_map: GameMap
 
@@ -136,15 +139,13 @@ class GameEngine(Engine):
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
 
-
     def on_update(self, delta_time):
         self.event_handler.on_update(delta_time)
         #  self.engine.game_map.missile_sprites.on_update(delta_time)
         #  for entity in self.engine.game_map.entities:
-            #  entity.sprite.update_animation(delta_time)
+        #      entity.sprite.update_animation(delta_time)
         #  for entity in self.engine.game_map.missiles:
-            #  entity.on_update()
-
+        #      entity.on_update()
 
     def on_render(self):
         self.event_handler.on_render()
@@ -165,7 +166,7 @@ class GameEngine(Engine):
         with open('./saves/savegame.sav', "r") as f:
             game_data = json.loads(f.read())
             self.game_map.load_dict(game_data['game_map'])
-
+            self.player = self.player.load_dict(game_data['player'])
 
     def save_and_quit(self):
         save_data = json.dumps(self.to_dict())
@@ -173,8 +174,8 @@ class GameEngine(Engine):
             f.write(save_data.encode("utf8"))
         self.window.goto_start_menu()
 
-
     def to_dict(self) -> dict:
         return dict(
-                game_map = self.game_map.to_dict()
-                )
+                player=self.player.to_dict(),
+                game_map=self.game_map.to_dict()
+        )

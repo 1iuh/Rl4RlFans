@@ -6,15 +6,14 @@ import color
 import components.inventory
 import components.ai
 from components.base_component import BaseComponent
-from entity import Missile
+from entities.entity import Missile
 import sprites
 from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
-import constants
 
 from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
-    from entity import Actor, Item
+    from entities.entity import Actor, Item
 
 
 class Consumable(BaseComponent):
@@ -145,6 +144,7 @@ class FireballConsumable(Consumable):
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("不能选择没有视野的地方.")
         Missile(
+                entity_id=-1,
                 x = action.entity.x,
                 y = action.entity.y,
                 target_xy = action.target_xy,

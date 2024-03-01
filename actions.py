@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional, Tuple
 
 
 if TYPE_CHECKING:
-    from entity import Actor, Item
+    from entities.entity import Actor, Item
     from engine import Engine
 
 class Action:

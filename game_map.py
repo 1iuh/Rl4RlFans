@@ -1,34 +1,39 @@
 import numpy as np
 import tcod
 import random
-from engine import Engine
-import entity_factories
-from entity import Actor, Item, Missile
+from engine import GameEngine
 from arcade import SpriteList, Sprite
 
+from entities import actors, items, entity_dict
+from entities.entity import Actor, Item
 import tile_types
 import sprites
 import constants
 import pickle
 from base64 import b64decode, b64encode
 
-from typing import Iterator
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from entities.entity import Missile, Entity
 
 
 class GameMap:
-    engine: Engine
+    engine: GameEngine
 
     def __init__(self, engine, width, height, entities):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
+        self.tiles = np.full(
+            (width, height), fill_value=tile_types.wall, order="F")
 
-        self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
-        self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
-        self.construct_sprites = SpriteList() 
-        self.entity_sprites = SpriteList() 
-        self.missile_sprites = SpriteList() 
+        self.visible = np.full((width, height), fill_value=False, order="F")
+        # Tiles the player has seen before
+        self.explored = np.full((width, height), fill_value=False, order="F")
+        self.construct_sprites = SpriteList()
+        self.entity_sprites = SpriteList()
+        self.missile_sprites = SpriteList()
         self.missiles: list[Missile] = []
 
     def init_construct_sprites(self):
@@ -36,8 +41,8 @@ class GameMap:
         y = 0
         self.gamemap.construct_sprites.clear()
         for row in self.gamemap.tiles:
-            for col in row: 
-                cons:Sprite
+            for col in row:
+                cons: Sprite
                 if col[2] == constants.floor_tilecode:
                     cons = sprites.floor_sprite()
                 elif col[2] == constants.wall_tilecode:
@@ -65,9 +70,9 @@ class GameMap:
         )
 
     @property
-    def items(self) -> Iterator[Item]:
-        yield from (entity for entity in self.entities if isinstance(entity, Item))
-
+    def items(self):
+        yield from (
+            entity for entity in self.entities if isinstance(entity, Item))
 
     def in_bounds(self, x, y):
         """Return True if x and y are inside of the bounds of this map."""
@@ -75,7 +80,9 @@ class GameMap:
 
     def get_blocking_entity_at_location(self, location_x, location_y):
         for entity in self.entities:
-            if entity.blocks_movement and entity.x == location_x and entity.y == location_y:
+            if (entity.blocks_movement
+                    and entity.x == location_x
+                    and entity.y == location_y):
                 return entity
 
         return None
@@ -92,18 +99,18 @@ class GameMap:
         for row in self.visible:
             for col in row:
                 if col:
-                    self.construct_sprites[i].set_is_light(True) 
+                    self.construct_sprites[i].set_is_light(True)
                 else:
-                    self.construct_sprites[i].set_is_light(False) 
+                    self.construct_sprites[i].set_is_light(False)
                 i += 1
         i = 0
         for row in self.explored:
             for col in row:
                 if col:
-                    self.construct_sprites[i].set_is_seen(True) 
+                    self.construct_sprites[i].set_is_seen(True)
                 i += 1
 
-        self.entity_sprites.sort(key= lambda x: x.render_order.value)
+        self.entity_sprites.sort(key=lambda x: x.render_order.value)
 
         for entity in self.entities:
             # Only print entities that are in the FOV
@@ -117,16 +124,27 @@ class GameMap:
 
     def to_dict(self):
         return dict(
-                tiles = b64encode(pickle.dumps(self.tiles)).decode('ascii'),
-                visible = b64encode(pickle.dumps(self.visible)).decode('ascii'),
-                explored = b64encode(pickle.dumps(self.explored)).decode('ascii'),
-                )
+            tiles=b64encode(pickle.dumps(self.tiles)).decode('ascii'),
+            visible=b64encode(pickle.dumps(self.visible)).decode('ascii'),
+            explored=b64encode(pickle.dumps(self.explored)).decode('ascii'),
+            entities=[e.to_dict() for e in self.entities]
+        )
 
     def load_dict(self, d):
-        self.tiles =  pickle.loads(b64decode(d['tiles']))
-        self.visible =  pickle.loads(b64decode(d['visible']))
-        self.explored =  pickle.loads(b64decode(d['explored']))
+        self.tiles = pickle.loads(b64decode(d['tiles']))
+        self.visible = pickle.loads(b64decode(d['visible']))
+        self.explored = pickle.loads(b64decode(d['explored']))
         self.init_construct_sprites()
+        self.entities.clear()
+        self.entity_sprites.clear()
+        self.missile_sprites.clear()
+        self.entities.clear()
+        for entity_data in d['entities']:
+            if entity_data['entity_id'] == 0:
+                continue
+            entity: Entity = entity_dict[entity_data['entity_id']]
+            entity.parent = self
+            entity.load_dict(entity_data)
 
 
 class RectangularRoom:
@@ -158,32 +176,35 @@ class RectangularRoom:
         )
 
 
-def place_entities( room, dungeon, maximum_monsters, maximum_items):
-   number_of_monsters = random.randint(0, maximum_monsters)
-   number_of_items = random.randint(0, maximum_items)
+def place_entities(room, dungeon, maximum_monsters, maximum_items):
+    number_of_monsters = random.randint(0, maximum_monsters)
+    number_of_items = random.randint(0, maximum_items)
 
-   for _ in range(number_of_monsters):
-       x = random.randint(room.x1 + 1, room.x2 - 1)
-       y = random.randint(room.y1 + 1, room.y2 - 1)
-
-       if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-           entity = random.choice(entity_factories.all_entities)
-           entity.spawn(dungeon, x, y)
-   for _ in range(number_of_items):
+    for _ in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
-        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+        if not any(entity.x == x and entity.y == y
+                   for entity in dungeon.entities):
+            entity = actors.a_tree
+            entity.spawn(dungeon, x, y)
+    for _ in range(number_of_items):
+        x = random.randint(room.x1 + 1, room.x2 - 1)
+        y = random.randint(room.y1 + 1, room.y2 - 1)
+
+        if not any(entity.x == x and entity.y == y
+                   for entity in dungeon.entities):
             item_chance = random.random()
 
             if item_chance < 0.2:
-                entity_factories.health_potion.spawn(dungeon, x, y)
+                items.health_potion.spawn(dungeon, x, y)
             elif item_chance < 0.4:
-               entity_factories.fireball_scroll.spawn(dungeon, x, y)
+                items.fireball_scroll.spawn(dungeon, x, y)
             elif item_chance < 0.6:
-               entity_factories.lightning_scroll.spawn(dungeon, x, y)
+                items.lightning_scroll.spawn(dungeon, x, y)
             else:
-                entity_factories.fireball_scroll.spawn(dungeon, x, y)
+                items.fireball_scroll.spawn(dungeon, x, y)
+
 
 def generate_dungeon(
         map_width,
@@ -194,7 +215,7 @@ def generate_dungeon(
         max_monsters_per_room,
         max_items_per_room,
         engine,
-        ):
+):
     """Generate a new dungeon map."""
     player = engine.player
     dungeon = GameMap(engine, map_width, map_height, entities=[player])
@@ -227,7 +248,8 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
+        place_entities(new_room, dungeon, max_monsters_per_room,
+                       max_items_per_room)
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
@@ -236,21 +258,20 @@ def generate_dungeon(
     dungeon.entity_sprites.append(dungeon.engine.player.sprite)
     return dungeon
 
+
 def tunnel_between(start, end):
-   """Return an L-shaped tunnel between these two points."""
-   x1, y1 = start
-   x2, y2 = end
-   if random.random() < 0.5:  # 50% chance.
-       # Move horizontally, then vertically.
-       corner_x, corner_y = x2, y1
-   else:
-       # Move vertically, then horizontally.
-       corner_x, corner_y = x1, y2
+    """Return an L-shaped tunnel between these two points."""
+    x1, y1 = start
+    x2, y2 = end
+    if random.random() < 0.5:  # 50% chance.
+        # Move horizontally, then vertically.
+        corner_x, corner_y = x2, y1
+    else:
+        # Move vertically, then horizontally.
+        corner_x, corner_y = x1, y2
 
-   # Generate the coordinates for this tunnel.
-   for x, y in tcod.los.bresenham((x1, y1), (corner_x, corner_y)).tolist():
-       yield x, y
-   for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
-       yield x, y
-
-
+    # Generate the coordinates for this tunnel.
+    for x, y in tcod.los.bresenham((x1, y1), (corner_x, corner_y)).tolist():
+        yield x, y
+    for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
+        yield x, y

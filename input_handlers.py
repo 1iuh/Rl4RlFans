@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Callable, Optional, Tuple, TYPE_CHECKING
 from arcade import key as arcade_key
 import arcade
 import constants
@@ -18,7 +18,7 @@ import exceptions
 
 if TYPE_CHECKING:
     from engine import GameEngine, StartMenuEngine
-    from entity import Item
+    from entities.entity import Item
 
 MOVE_KEYS = {
     arcade_key.H: (-1, 0),

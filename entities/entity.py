@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import copy
 import math
-
-from typing import TYPE_CHECKING, Optional, Tuple, Union
 import sprites
-
 import constants
 
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 if TYPE_CHECKING:
     from game_map import GameMap
     from components.consumable import Consumable
@@ -27,7 +25,7 @@ class Entity:
 
     def __init__(
         self,
-        entity_id: int = 0, 
+        entity_id: int = 0,
         parent: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
@@ -36,6 +34,7 @@ class Entity:
         sprite: Optional[Sprite] = None,
     ):
 
+        self.entity_id = entity_id
         self.x = x
         self.y = y
         self.name = name
@@ -59,6 +58,7 @@ class Entity:
 
     def spawn(self, gamemap, x, y):
         """Spawn a copy of this instance at the given location."""
+        self.parent = None
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
@@ -73,7 +73,8 @@ class Entity:
         gamemap.entity_sprites.remove(self.sprite)
 
     def place(self, x, y, gamemap):
-        """Place this entity at a new location.  Handles moving across GameMaps."""
+        """Place this entity at a new location.
+           Handles moving across GameMaps."""
         self.x = x
         self.y = y
         if gamemap:
@@ -84,7 +85,8 @@ class Entity:
 
     def distance(self, x: int, y: int) -> float:
         """
-        Return the distance between the current entity and the given (x, y) coordinate.
+        Return the distance between the current entity and
+        the given (x, y) coordinate.
         """
         return math.sqrt((x - self.x)**2 + (y - self.y)**2)
 
@@ -134,11 +136,25 @@ class Actor(Entity):
 
     def to_dict(self):
         return dict(
-                x = self.x,
-                y = self.y,
-                name = self.name,
-                fighter = self.fighter.to_dict(),
-                inventory = self.inventory,
+            entity_id=self.entity_id,
+            x=self.x,
+            y=self.y,
+            name=self.name,
+            fighter=self.fighter.to_dict(),
+            inventory=self.inventory.to_dict(),
+        )
+
+    def load_dict(self, d):
+        self.entity_id = d['entity_id']
+        self.x = d['x']
+        self.y = d['y']
+        self.name = d['name']
+        self.fighter.load_dict(d['fighter'])
+        self.inventory.load_dict(d['inventory'])
+        return self.spawn(
+                self.gamemap,
+                self.x,
+                self.y,
                 )
 
 
@@ -168,9 +184,18 @@ class Item(Entity):
 
     def to_dict(self):
         return dict(
-                x = self.x,
-                y = self.y,
-                name = self.name,
+            entity_id=self.entity_id,
+            x=self.x,
+            y=self.y,
+        )
+
+    def load_dict(self, d):
+        self.x = d['x']
+        self.y = d['y']
+        self.spawn(
+                self.gamemap,
+                self.x,
+                self.y,
                 )
 
 
@@ -199,7 +224,7 @@ class VisualEffects(Entity):
         self.sprite.set_duration()
 
     def register(self):
-        self.gamemap.missiles.append(self)
+        self.gamemap.missiles.append(self)  # type: ignore
         self.sprite.center_x = self.x * constants.grid_size
         self.sprite.center_y = self.y * constants.grid_size
         self.gamemap.missile_sprites.append(self.sprite)
@@ -211,7 +236,7 @@ class VisualEffects(Entity):
 
     def despawn(self):  # type: ignore
         """Spawn a copy of this instance at the given location."""
-        self.gamemap.missiles.remove(self)
+        self.gamemap.missiles.remove(self)  # type: ignore
         self.gamemap.missile_sprites.remove(self.sprite)
         self.on_despawn()
 
@@ -228,7 +253,7 @@ class Missile(Entity):
 
     def __init__(
         self,
-        entity_id:int,
+        entity_id: int,
         parent: GameMap,
         target_xy: Tuple[int, int],
         sprite: MissileSprite,
