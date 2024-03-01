@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from components.base_component import BaseComponent
+import copy
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
 
 
 class Inventory(BaseComponent):
-    parent: Actor # type: ignore
+    parent: Actor  # type: ignore
 
     def __init__(self, capacity: int):
         self.capacity = capacity
@@ -22,16 +23,20 @@ class Inventory(BaseComponent):
         self.items.remove(item)
         item.place(self.parent.x, self.parent.y, self.gamemap)
 
-        self.engine.message_log.add_message(f"你把 {item.name} 丢在了地上.") # type: ignore
+        self.engine.message_log.add_message(
+            f"你把 {item.name} 丢在了地上.")  # type: ignore
 
     def to_dict(self):
         return dict(
-                capacity = self.capacity,
-                items = [i.to_dict() for i in self.items]
-                )
+            capacity=self.capacity,
+            items=[i.to_dict() for i in self.items]
+        )
 
     def load_dict(self, d):
+        from entities import entity_dict
         self.capacity = d['capacity']
-        # TODO
-        items = d['items']
-        return 
+        for item_data in d['items']:
+            entity = entity_dict[item_data['entity_id']]
+            clone = copy.deepcopy(entity)
+            clone.parent = self
+            self.items.append(clone)
