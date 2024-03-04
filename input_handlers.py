@@ -80,9 +80,6 @@ class EventHandler:
 
     def on_update(self, delta_time):
         self.delta_time += delta_time
-        if  self.engine.game_map.missiles:
-            pass
-            
         #  self.engine.game_map.missile_sprites.on_update(delta_time)
         #  for entity in self.engine.game_map.entities:
             #  entity.sprite.update_animation(delta_time)

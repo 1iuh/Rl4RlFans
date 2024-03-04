@@ -15,7 +15,7 @@ from base64 import b64decode, b64encode
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from entities.entity import Missile, Entity
+    from entities.entity import Entity
 
 
 class GameMap:
@@ -33,8 +33,15 @@ class GameMap:
         self.explored = np.full((width, height), fill_value=False, order="F")
         self.construct_sprites = SpriteList()
         self.entity_sprites = SpriteList()
-        self.missile_sprites = SpriteList()
-        self.missiles: list[Missile] = []
+
+    def spawn_entity(self, entity):
+        entity.parent = self
+        self.entities.add(entity)
+        self.entity_sprites.append(entity.sprite)
+
+    def despawn_entity(self, entity):
+        self.entities.remove(entity)
+        self.entity_sprites.remove(entity.sprite)
 
     def init_construct_sprites(self):
         x = 0
@@ -120,7 +127,6 @@ class GameMap:
 
         self.construct_sprites.draw()
         self.entity_sprites.draw()
-        self.missile_sprites.draw()
 
     def to_dict(self):
         return dict(
@@ -137,14 +143,12 @@ class GameMap:
         self.init_construct_sprites()
         self.entities.clear()
         self.entity_sprites.clear()
-        self.missile_sprites.clear()
-        self.entities.clear()
         for entity_data in d['entities']:
             if entity_data['entity_id'] == 0:
                 continue
-            entity: Entity = entity_dict[entity_data['entity_id']]
-            entity.parent = self
+            entity: Entity = entity_dict[entity_data['entity_id']].copy()
             entity.load_dict(entity_data)
+            self.spawn_entity(entity)
 
 
 class RectangularRoom:
@@ -186,8 +190,11 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items):
 
         if not any(entity.x == x and entity.y == y
                    for entity in dungeon.entities):
-            entity = actors.a_tree
-            entity.spawn(dungeon, x, y)
+            entity = actors.a_tree.copy()
+            entity.x = x
+            entity.y = y
+            dungeon.spawn_entity(entity)
+
     for _ in range(number_of_items):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
@@ -197,13 +204,25 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items):
             item_chance = random.random()
 
             if item_chance < 0.2:
-                items.health_potion.spawn(dungeon, x, y)
+                item = items.health_potion.copy()
+                item.x = x
+                item.y = y
+                dungeon.spawn_entity(item)
             elif item_chance < 0.4:
-                items.fireball_scroll.spawn(dungeon, x, y)
+                item = items.fireball_scroll.copy()
+                item.x = x
+                item.y = y
+                dungeon.spawn_entity(item)
             elif item_chance < 0.6:
-                items.lightning_scroll.spawn(dungeon, x, y)
+                item = items.lightning_scroll.copy()
+                item.x = x
+                item.y = y
+                dungeon.spawn_entity(item)
             else:
-                items.fireball_scroll.spawn(dungeon, x, y)
+                item = items.fireball_scroll.copy()
+                item.x = x
+                item.y = y
+                dungeon.spawn_entity(item)
 
 
 def generate_dungeon(

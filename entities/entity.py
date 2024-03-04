@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import copy
 import math
 import sprites
 import constants
+import copy
 
 from typing import TYPE_CHECKING, Optional, Tuple, Union
 if TYPE_CHECKING:
@@ -44,33 +44,16 @@ class Entity:
         if parent:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
-            self.register()
-
-    def register(self):
-        """Spawn a copy of this instance at the given location."""
-        self.gamemap.entities.add(self)
-        self.gamemap.entity_sprites.append(self.sprite)
-        return self
 
     @property
     def gamemap(self) -> GameMap:
         return self.parent.gamemap
 
-    def spawn(self, gamemap, x, y):
+    def copy(self):
         """Spawn a copy of this instance at the given location."""
         self.parent = None
         clone = copy.deepcopy(self)
-        clone.x = x
-        clone.y = y
-        clone.parent = gamemap
-        gamemap.entities.add(clone)
-        gamemap.entity_sprites.append(clone.sprite)
         return clone
-
-    def despawn(self, gamemap: GameMap):
-        """Spawn a copy of this instance at the given location."""
-        gamemap.entities.remove(self)
-        gamemap.entity_sprites.remove(self.sprite)
 
     def place(self, x, y, gamemap):
         """Place this entity at a new location.
@@ -151,11 +134,7 @@ class Actor(Entity):
         self.name = d['name']
         self.fighter.load_dict(d['fighter'])
         self.inventory.load_dict(d['inventory'])
-        return self.spawn(
-                self.gamemap,
-                self.x,
-                self.y,
-                )
+        return
 
 
 class Item(Entity):
@@ -192,11 +171,6 @@ class Item(Entity):
     def load_dict(self, d):
         self.x = d['x']
         self.y = d['y']
-        self.spawn(
-                self.gamemap,
-                self.x,
-                self.y,
-                )
 
 
 class VisualEffects(Entity):
@@ -223,12 +197,12 @@ class VisualEffects(Entity):
         )
         self.sprite.set_duration()
 
-    def register(self):
-        self.gamemap.missiles.append(self)  # type: ignore
-        self.sprite.center_x = self.x * constants.grid_size
-        self.sprite.center_y = self.y * constants.grid_size
-        self.gamemap.missile_sprites.append(self.sprite)
-        return self
+    # def register(self):
+    #     self.gamemap.missiles.append(self)  # type: ignore
+    #     self.sprite.center_x = self.x * constants.grid_size
+    #     self.sprite.center_y = self.y * constants.grid_size
+    #     self.gamemap.missile_sprites.append(self.sprite)
+    #     return self
 
     def on_update(self):
         if (self.sprite.left_time < 0):
@@ -281,13 +255,13 @@ class Missile(Entity):
             target_y=target_xy[1] * constants.grid_size,
         )
 
-    def register(self):
-        """Spawn a copy of this instance at the given location."""
-        self.gamemap.missiles.append(self)
-        self.sprite.center_x = self.x * constants.grid_size
-        self.sprite.center_y = self.y * constants.grid_size
-        self.gamemap.missile_sprites.append(self.sprite)
-        return self
+    # def register(self):
+    #     """Spawn a copy of this instance at the given location."""
+    #     self.gamemap.missiles.append(self)
+    #     self.sprite.center_x = self.x * constants.grid_size
+    #     self.sprite.center_y = self.y * constants.grid_size
+    #     self.gamemap.missile_sprites.append(self.sprite)
+    #     return self
 
     def on_update(self):
         if (self.sprite.left_time < 0):

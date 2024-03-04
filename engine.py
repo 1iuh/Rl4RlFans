@@ -166,7 +166,8 @@ class GameEngine(Engine):
         with open('./saves/savegame.sav', "r") as f:
             game_data = json.loads(f.read())
             self.game_map.load_dict(game_data['game_map'])
-            self.player = self.player.load_dict(game_data['player'])
+            self.player.load_dict(game_data['player'])
+            self.game_map.spawn_entity(self.player)
 
     def save_and_quit(self):
         save_data = json.dumps(self.to_dict())

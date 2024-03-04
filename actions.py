@@ -174,8 +174,7 @@ class PickupAction(Action):
             if actor_location_x == item.x and actor_location_y == item.y:
                 if len(inventory.items) >= inventory.capacity:
                     raise exceptions.Impossible("背包满了")
-
-                item.despawn(self.engine.game_map)
+                self.engine.game_map.despawn_entity(item)
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 
