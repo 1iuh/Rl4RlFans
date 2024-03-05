@@ -3,9 +3,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from components.base_component import BaseComponent
+from entities.gear import GearParts
 
 if TYPE_CHECKING:
-    from entities.entity import Actor, Item
+    from entities.entity import Actor
+    from entities.gear import Gear
 
 
 class Equipment(BaseComponent):
@@ -31,10 +33,11 @@ class Equipment(BaseComponent):
                 ('right_hand', self.right_hand),
                 ]
 
-    def wear(self, item: Item) -> None:
-        # TODO
+    def wear(self, gear: Gear) -> None:
+        if gear.part == GearParts.RIGHT_HAND:
+            self.left_hand = gear
         self.engine.message_log.add_message(
-            f"You're equipped with {item.name}.")  # type: ignore
+            f"You're equipped with {gear.name}.")  # type: ignore
 
     def to_dict(self):
         pass

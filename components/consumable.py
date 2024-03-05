@@ -20,7 +20,7 @@ class Consumable(BaseComponent):
 
     def get_action(self, consumer: Actor) -> Optional[actions.Action]:
         """Try to return the action for this item."""
-        return actions.ItemAction(consumer, self.parent)
+        return actions.ItemAction(consumer, self.parent, None)
 
     def activate(self, action: actions.ItemAction) -> None:
         """Invoke this items ability.
@@ -35,6 +35,13 @@ class Consumable(BaseComponent):
         inventory = entity.parent
         if isinstance(inventory, components.inventory.Inventory):
             inventory.items.remove(entity)  # type: ignore
+
+
+class GearConsumable(Consumable):
+
+    def activate(self, action: actions.ItemAction) -> None:
+        self.parent.wear()
+        self.consume()
 
 
 class HealingConsumable(Consumable):

@@ -212,3 +212,8 @@ def fireball_missile_sprite():
 
 def flame_sprite():
     return MissileSprite("./asset/FireVF/Fire+Sparks{0}.png", 4, 0.4)
+
+
+def sword_sprite():
+    return ItemSprite(path_or_texture='./asset/frames/weapon_anime_sword.png',
+                      scale=0.6)

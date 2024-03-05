@@ -5,8 +5,9 @@ from engine import GameEngine
 from arcade import SpriteList, Sprite
 
 from entities import entity_dict
-from entities.factors import actors, items
+from entities.factors import actors, items, gears
 from entities.entity import Item
+from entities.gear import Gear
 from entities.actor import Actor
 import tile_types
 import sprites
@@ -83,7 +84,8 @@ class GameMap:
     @property
     def items(self):
         yield from (
-            entity for entity in self.entities if isinstance(entity, Item))
+            entity for entity in self.entities if isinstance(entity,
+                                                             (Item, Gear)))
 
     def in_bounds(self, x, y):
         """Return True if x and y are inside of the bounds of this map."""
@@ -223,7 +225,7 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items):
                 item.y = y
                 dungeon.spawn_entity(item)
             else:
-                item = items.fireball_scroll.copy()
+                item = gears.sword.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)

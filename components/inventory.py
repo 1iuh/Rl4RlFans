@@ -8,6 +8,7 @@ import copy
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
+    from entities.gear import Gear
 
 
 class Inventory(BaseComponent):
@@ -16,6 +17,9 @@ class Inventory(BaseComponent):
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.items: List[Item] = []
+
+    def wear(self, gear: Gear) -> None:
+        self.parent.equipment.wear(gear)
 
     def drop(self, item: Item) -> None:
         """
