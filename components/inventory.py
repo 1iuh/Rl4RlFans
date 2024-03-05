@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from components.base_component import BaseComponent
+import entities
 import copy
 
 if TYPE_CHECKING:
@@ -33,10 +34,9 @@ class Inventory(BaseComponent):
         )
 
     def load_dict(self, d):
-        from entities import entity_dict
         self.capacity = d['capacity']
         for item_data in d['items']:
-            entity = entity_dict[item_data['entity_id']]
+            entity = entities.entity_dict[item_data['entity_id']]
             clone = copy.deepcopy(entity)
             clone.parent = self
             self.items.append(clone)

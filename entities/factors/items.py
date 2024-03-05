@@ -1,4 +1,4 @@
-from .entity import Item
+from ..entity import Item
 from components import consumable
 import sprites
 

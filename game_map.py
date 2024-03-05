@@ -4,8 +4,10 @@ import random
 from engine import GameEngine
 from arcade import SpriteList, Sprite
 
-from entities import actors, items, entity_dict
-from entities.entity import Actor, Item
+from entities import entity_dict
+from entities.factors import actors, items
+from entities.entity import Item
+from entities.actor import Actor
 import tile_types
 import sprites
 import constants

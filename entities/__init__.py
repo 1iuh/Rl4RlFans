@@ -1,6 +1,4 @@
-from entities import actors
-from entities import items
-from entities import others
+from .factors import actors, items, others
 from entities.entity import Entity
 
 
@@ -17,8 +15,3 @@ entity_dict = {}
 add_entity_to_dict(actors)
 add_entity_to_dict(items)
 add_entity_to_dict(others)
-
-
-if __name__ == '__main__':
-    entity_dict
-    print(entity_dict[9000].copy())

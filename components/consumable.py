@@ -8,7 +8,7 @@ import components.ai
 from components.base_component import BaseComponent
 from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
-from entities.others import fireball_missile
+from entities.factors.others import fireball_missile
 
 from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:

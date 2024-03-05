@@ -122,6 +122,8 @@ class MainGameEventHandler(EventHandler):
             action = PickupAction(player)
         elif key == arcade_key.I:
             self.engine.event_handler = InventoryActivateHandler(self.engine)
+        elif key == arcade_key.E:
+            self.engine.event_handler = EquipmentEventHandler(self.engine)
         elif key == arcade_key.D:
             self.engine.event_handler = InventoryDropHandler(self.engine)
         elif key == arcade_key.SLASH:
@@ -315,7 +317,7 @@ class InventoryEventHandler(AskUserEventHandler):
 class InventoryActivateHandler(InventoryEventHandler):
     """Handle using an inventory item."""
 
-    TITLE = "背包"
+    TITLE = "Inventory"
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Return the action for the selected item."""
@@ -325,7 +327,7 @@ class InventoryActivateHandler(InventoryEventHandler):
 class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
 
-    TITLE = "选择一个物品来摧毁"
+    TITLE = "Select a item to drop."
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Drop this item."""
@@ -496,3 +498,87 @@ class StartMenuEventHandler:
             self.engine.cursor_index += 1
         elif key in CONFIRM_KEYS:
             return self.engine.excute_option()
+
+
+class EquipmentEventHandler(AskUserEventHandler):
+
+    TITLE = "Equipment"
+
+    def __init__(self, engine):
+        super().__init__(engine)
+        self.title = arcade.Text(
+            f"{self.TITLE}",
+            int(constants.screen_center_x
+                - constants.inventory_window_width/2),
+            (int(constants.screen_center_y
+                 + constants.inventory_window_height/2)
+             - constants.font_line_height),
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            font_name='stsong',
+            align='center',
+            width=constants.inventory_window_width,
+        )
+        self.content = arcade.Text(
+            "",
+            int(constants.screen_center_x
+                - constants.inventory_window_width/2),
+            int(constants.screen_center_y + constants.inventory_window_height /
+                2) - constants.font_line_height*4,
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            multiline=True,
+            font_name='stsong',
+            align='center',
+            width=constants.inventory_window_width,
+        )
+
+    def on_render(self) -> None:
+        super().on_render()
+        number_of_items_in_inventory = len(self.engine.player.equipment.gears)
+
+        height = number_of_items_in_inventory + 2
+
+        if height <= 3:
+            height = 3
+
+        arcade.draw_rectangle_filled(
+            constants.screen_center_x,
+            constants.screen_center_y,
+            constants.inventory_window_width,
+            constants.inventory_window_height,
+            arcade.color.BLACK_OLIVE
+        )
+
+        content = ''
+        for i, t in enumerate(self.engine.player.equipment.gears):
+            key = t[0]
+            val = t[1]
+            if val is None:
+                gear_name = 'null'
+            else:
+                gear_name = val.name
+
+            item_key = chr(ord("a") + i)
+            content += f'({item_key}) {key}: {gear_name}\n'
+        self.content.text = content
+        self.title.draw()
+        self.content.draw()
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        player = self.engine.player
+        index = key - arcade_key.A
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = player.inventory.items[index]
+            except IndexError:
+                self.engine.message_log.add_message(
+                    "Invalid entry.", color.invalid)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().on_key_press(key, modifiers)
+
+    def on_item_selected(self, item: Item) -> Optional[Action]:
+        """Called when the user selects a valid item."""
+        raise NotImplementedError()

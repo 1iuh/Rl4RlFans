@@ -1,7 +1,7 @@
 import sprites
 from components.ai import HostileEnemy
 from components.inventory import Inventory
-from .entity import Actor
+from ..actor import Actor
 from components.fighter import Fighter
 
 
