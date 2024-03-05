@@ -5,7 +5,6 @@ from input_handlers import MainGameEventHandler, StartMenuEventHandler
 from message_log import MessageLog
 from render_functions import render_bar
 import constants
-import exceptions
 import arcade
 import json
 
@@ -115,15 +114,6 @@ class GameEngine(Engine):
         self.player = player
         self.action_queue: list[Action] = []
         super().__init__(window)
-
-    def handle_enemy_turns(self) -> None:
-
-        for entity in set(self.game_map.actors) - {self.player}:
-            if entity.ai:
-                try:
-                    self.action_queue.append(entity.ai.perform())
-                except exceptions.Impossible:
-                    pass
 
     def on_start(self):
         self.update_fov()

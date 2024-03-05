@@ -16,17 +16,17 @@ screen_title = "Roguelike For Roguelike Fans"
 
 screen_center_x = int(screen_width / 2)
 screen_center_y = int(screen_height / 2)
-seconds_per_action = 0.2
+seconds_per_action = 0.05
 
 font_size = 12
 font_line_height = 16
 
-history_viewer_width = screen_width - 600 
+history_viewer_width = screen_width - 600
 history_viewer_height = screen_height - 300
 history_viewer_lines = 28
 
 wall_tilecode = 1001
 floor_tilecode = 1002
 
-inventory_window_width = screen_width - 800 
+inventory_window_width = screen_width - 800
 inventory_window_height = screen_height - 600

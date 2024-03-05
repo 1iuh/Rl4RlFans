@@ -147,8 +147,8 @@ class GameMap:
             if entity_data['entity_id'] == 0:
                 continue
             entity: Entity = entity_dict[entity_data['entity_id']].copy()
-            entity.load_dict(entity_data)
             self.spawn_entity(entity)
+            entity.load_dict(entity_data)
 
 
 class RectangularRoom:

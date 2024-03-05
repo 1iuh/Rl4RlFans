@@ -1,26 +1,31 @@
-from __future__  import annotations
+from __future__ import annotations
 
 import color
 import exceptions
 
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional
 
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
     from engine import Engine
 
+
 class Action:
 
     entity: Actor
-    speed: int =  1
+    speed: int = 1
 
     def __init__(self, entity):
         super().__init__()
         self.entity = entity
 
     @property
-    def engine(self)->Engine:
+    def final_speed(self):
+        return self.speed - self.entity.fighter.speed
+
+    @property
+    def engine(self) -> Engine:
         """Return the engine this action belongs to."""
         return self.entity.gamemap.engine
 
@@ -37,7 +42,7 @@ class Action:
 
 class ActionWithDirection(Action):
 
-    speed: int =  3
+    speed: int = 3
 
     def __init__(self, entity, dx, dy):
         super().__init__(entity)
@@ -53,7 +58,8 @@ class ActionWithDirection(Action):
     @property
     def blocking_entity(self):
         """Return the blocking entity at this actions destination.."""
-        return self.engine.game_map.get_blocking_entity_at_location(*self.dest_xy)
+        return self.engine.game_map.get_blocking_entity_at_location(
+                *self.dest_xy)
 
     @property
     def target_actor(self):
@@ -61,12 +67,12 @@ class ActionWithDirection(Action):
         return self.engine.game_map.get_actor_at_location(*self.dest_xy)
 
     def perform(self) -> None:
-       raise NotImplementedError()
+        raise NotImplementedError()
 
 
 class MeleeAction(ActionWithDirection):
 
-    speed: int =  8
+    speed: int = 8
 
     def perform(self) -> None:
 
@@ -81,9 +87,9 @@ class MeleeAction(ActionWithDirection):
                 f"{self.entity.name.capitalize()} 近战攻击但是落空了", attack_color
             )
             return
- 
+
         damage = self.entity.fighter.power - target.fighter.defense
- 
+
         attack_desc = f"{self.entity.name.capitalize()} 使用拳头攻击了 {target.name}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
@@ -104,21 +110,20 @@ class MovementAction(ActionWithDirection):
 
     def perform(self):
         dest_x, dest_y = self.dest_xy
-        
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message( f"那里没路")
+            self.engine.message_log.add_message("那里没路")
             return
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is out of bounds.
-            self.engine.message_log.add_message( f"那里没路")
+            self.engine.message_log.add_message("那里没路")
             return
-        if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
+        if self.engine.game_map.get_blocking_entity_at_location(
+                dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message( f"那里没路")
+            self.engine.message_log.add_message("那里没路")
             return
-
 
         self.entity.move(self.dx, self.dy)
 
@@ -132,17 +137,15 @@ class WaitAction(Action):
 
 class BumpAction(ActionWithDirection):
 
-   def perform(self):
-    if self.target_actor:
-        return MeleeAction(self.entity, self.dx, self.dy).perform()
-    else:
-        return MovementAction(self.entity, self.dx, self.dy).perform()
+    def perform(self):
+        if self.target_actor:
+            return MeleeAction(self.entity, self.dx, self.dy).perform()
+        else:
+            return MovementAction(self.entity, self.dx, self.dy).perform()
 
 
 class ItemAction(Action):
-    def __init__(
-        self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
-    ):
+    def __init__(self, entity: Actor, item: Item, target_xy):
         super().__init__(entity)
         self.item = item
         if not target_xy:
@@ -155,7 +158,9 @@ class ItemAction(Action):
         return self.engine.game_map.get_actor_at_location(*self.target_xy)
 
     def perform(self) -> None:
-        """Invoke the items ability, this action will be given to provide context."""
+        """Invoke the items ability,
+        this action will be given to provide context.
+        """
         self.item.consumable.activate(self)
 
 
@@ -181,7 +186,8 @@ class PickupAction(Action):
                 self.engine.message_log.add_message(f"你 拾取了 {item.name}!")
                 return
 
-        self.engine.message_log.add_message(f"地上没东西!")
+        self.engine.message_log.add_message(
+                "地上没东西!")
 
 
 class DropItem(ItemAction):

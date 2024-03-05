@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class Consumable(BaseComponent):
-    parent: Item # type: ignore
+    parent: Item  # type: ignore
 
     def get_action(self, consumer: Actor) -> Optional[actions.Action]:
         """Try to return the action for this item."""
@@ -35,7 +35,7 @@ class Consumable(BaseComponent):
         entity = self.parent
         inventory = entity.parent
         if isinstance(inventory, components.inventory.Inventory):
-            inventory.items.remove(entity) # type: ignore
+            inventory.items.remove(entity)  # type: ignore
 
 
 class HealingConsumable(Consumable):
@@ -53,9 +53,7 @@ class HealingConsumable(Consumable):
             )
             self.consume()
         else:
-            raise Impossible(f"你的生命值是满的.")
-
-
+            raise Impossible("你的生命值是满的.")
 
 
 class LightningDamageConsumable(Consumable):
@@ -116,10 +114,10 @@ class ConfusionConsumable(Consumable):
             color.status_effect_applied,
         )
         target.ai = components.ai.ConfusedEnemy(
-            entity=target, previous_ai=target.ai, turns_remaining=self.number_of_turns,
+            entity=target, previous_ai=target.ai,
+            turns_remaining=self.number_of_turns,
         )
         self.consume()
-
 
 
 class FireballConsumable(Consumable):
@@ -143,14 +141,15 @@ class FireballConsumable(Consumable):
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("不能选择没有视野的地方.")
-        Missile(
-                entity_id=-1,
-                x = action.entity.x,
-                y = action.entity.y,
-                target_xy = action.target_xy,
-                sprite=sprites.fireball_missile_sprite(),
-                damage = self.damage,
-                radius = self.radius,
-                parent=self.engine.game_map,
-                )
+        missile = Missile(
+            entity_id=-1,
+            x=action.entity.x,
+            y=action.entity.y,
+            target_xy=action.target_xy,
+            sprite=sprites.fireball_missile_sprite(),
+            damage=self.damage,
+            radius=self.radius,
+            parent=self.engine.game_map,
+        )
+        self.engine.game_map.spawn_entity(missile)
         self.consume()

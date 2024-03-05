@@ -8,11 +8,12 @@ from render_order import RenderOrder
 import color
 
 if TYPE_CHECKING:
-   from entities.entity import Actor
+    from entities.entity import Actor
+
 
 class Fighter(BaseComponent):
 
-    parent: Actor # type: ignore
+    parent: Actor  # type: ignore
     max_hp: int
     _hp: int
     defense: int
@@ -41,6 +42,10 @@ class Fighter(BaseComponent):
         if self._hp == 0 and self.parent.ai:
             self.die()
 
+    @hp.getter
+    def hp(self) -> int:
+        return self._hp
+
     def heal(self, amount: int) -> int:
         if self.hp == self.max_hp:
             return 0
@@ -58,7 +63,7 @@ class Fighter(BaseComponent):
 
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
- 
+
     def die(self) -> None:
         if self.engine.player is self.parent:
             death_message = "你 死掉了！"
@@ -67,7 +72,7 @@ class Fighter(BaseComponent):
         else:
             death_message = f"{self.parent.name} 被杀死了!"
             death_message_color = color.enemy_die
- 
+
         self.parent.blocks_movement = False
         self.parent.sprite.is_alive = False
         self.parent.ai = None
@@ -77,16 +82,16 @@ class Fighter(BaseComponent):
 
     def to_dict(self):
         return dict(
-                max_hp = self.max_hp,
-                hp = self._hp,
-                defense = self.defense ,
-                power = self.power,
-                speed = self.speed,
-                )
+            max_hp=self.max_hp,
+            hp=self.hp,
+            defense=self.defense,
+            power=self.power,
+            speed=self.speed,
+        )
 
     def load_dict(self, d):
         self.max_hp = d['max_hp']
-        self._hp = d['hp']
+        self.hp = d['hp']
         self.defense = d['defense']
         self.power = d['power']
         self.speed = d['speed']
