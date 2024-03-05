@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import math
 import sprites
-import constants
 import copy
+from components.ai import VfxAI
 
 from typing import TYPE_CHECKING, Optional, Tuple, Union
+import constants
+
 if TYPE_CHECKING:
     from game_map import GameMap
     from components.consumable import Consumable
     from components.inventory import Inventory
     from components.fighter import Fighter
-    from arcade import Sprite
-    from sprites import ActorSprite, ItemSprite, MissileSprite
+    from sprites import ActorSprite, MissileSprite
 
 
 class Entity:
@@ -31,7 +32,7 @@ class Entity:
         y: int = 0,
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
-        sprite: Optional[Sprite] = None,
+        sprite_f=None,
     ):
 
         self.entity_id = entity_id
@@ -39,11 +40,14 @@ class Entity:
         self.y = y
         self.name = name
         self.blocks_movement = blocks_movement
-        self.sprite = sprite
+        self.sprite_f = sprite_f
 
         if parent:
             # If parent isn't provided now then it will be set later.
             self.parent = parent
+
+    def on_spawn(self):
+        pass
 
     @property
     def gamemap(self) -> GameMap:
@@ -92,7 +96,7 @@ class Actor(Entity):
                  x: int = 0,
                  y: int = 0,
                  name: str = "<Unnamed>",
-                 sprite: ActorSprite,
+                 sprite_f,
                  ai_cls,
                  fighter: Fighter,
                  inventory: Inventory):
@@ -103,7 +107,7 @@ class Actor(Entity):
             y=y,
             name=name,
             blocks_movement=True,
-            sprite=sprite,
+            sprite_f=sprite_f,
         )
 
         self.ai = ai_cls(self)
@@ -146,7 +150,7 @@ class Item(Entity):
         x: int = 0,
         y: int = 0,
         name: str = "<Unnamed>",
-        sprite: Optional[ItemSprite] = None,
+        sprite_f=None,
         consumable: Consumable,
     ):
         super().__init__(
@@ -155,7 +159,7 @@ class Item(Entity):
             y=y,
             name=name,
             blocks_movement=False,
-            sprite=sprite,
+            sprite_f=sprite_f,
         )
 
         self.consumable = consumable
@@ -180,42 +184,37 @@ class VisualEffects(Entity):
     def __init__(
         self,
         entity_id: int,
-        parent: GameMap,
-        sprite: MissileSprite,
+        sprite_f,
+        ai_cls,
         x: int = 0,
         y: int = 0,
         name: str = "Missile",
     ):
         super().__init__(
             entity_id=entity_id,
-            parent=parent,
+            parent=None,
             x=x,
             y=y,
             name=name,
             blocks_movement=False,
-            sprite=sprite,
+            sprite_f=sprite_f,
         )
-        self.sprite.set_duration()
+        self.ai = ai_cls(self)
 
-    # def register(self):
-    #     self.gamemap.missiles.append(self)  # type: ignore
-    #     self.sprite.center_x = self.x * constants.grid_size
-    #     self.sprite.center_y = self.y * constants.grid_size
-    #     self.gamemap.missile_sprites.append(self.sprite)
-    #     return self
+    def activate(self):
+        self.gamemap.despawn_entity(self)
 
-    def on_update(self):
-        if (self.sprite.left_time < 0):
-            self.despawn()
+    def to_dict(self):
+        return dict(
+            entity_id=self.entity_id,
+            x=self.x,
+            y=self.y,
+            name=self.name,
+        )
 
-    def despawn(self):  # type: ignore
-        """Spawn a copy of this instance at the given location."""
-        self.gamemap.missiles.remove(self)  # type: ignore
-        self.gamemap.missile_sprites.remove(self.sprite)
-        self.on_despawn()
-
-    def on_despawn(self) -> None:
-        pass
+    def load_dict(self, d):
+        self.x = d['x']
+        self.y = d['y']
 
 
 class Missile(Entity):
@@ -230,9 +229,10 @@ class Missile(Entity):
         entity_id: int,
         parent: GameMap,
         target_xy: Tuple[int, int],
-        sprite: MissileSprite,
+        sprite_f,
         radius: int,
         damage: int,
+        ai_cls,
         x: int = 0,
         y: int = 0,
         name: str = "Missile",
@@ -244,45 +244,64 @@ class Missile(Entity):
             y=y,
             name=name,
             blocks_movement=False,
-            sprite=sprite,
+            sprite_f=sprite_f,
         )
 
+        self.ai = ai_cls(self)
         self.target_xy = target_xy
         self.radius = radius
         self.damage = damage
+
+    def on_spawn(self):
         self.sprite.set_target(
-            target_x=target_xy[0] * constants.grid_size,
-            target_y=target_xy[1] * constants.grid_size,
+                self.x,
+                self.y,
+                self.target_xy[0],
+                self.target_xy[1],
         )
 
-    # def register(self):
-    #     """Spawn a copy of this instance at the given location."""
-    #     self.gamemap.missiles.append(self)
-    #     self.sprite.center_x = self.x * constants.grid_size
-    #     self.sprite.center_y = self.y * constants.grid_size
-    #     self.gamemap.missile_sprites.append(self.sprite)
-    #     return self
+    def distance2target(self):
+        return self.distance(self.target_xy[0], self.target_xy[1])
 
-    def on_update(self):
-        if (self.sprite.left_time < 0):
-            self.despawn()
-
-    def despawn(self):  # type: ignore
-        """Spawn a copy of this instance at the given location."""
-        self.gamemap.missiles.remove(self)
-        self.gamemap.missile_sprites.remove(self.sprite)
-        self.on_despawn()
-
-    def on_despawn(self) -> None:
+    def activate(self):
+        self.gamemap.despawn_entity(self)
+        vfxs = []
         for actor in self.gamemap.actors:
             if actor.distance(*self.target_xy) <= self.radius:
                 self.gamemap.engine.message_log.add_message(
                     f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!")
                 actor.fighter.take_damage(self.damage)
-                VisualEffects(
-                    -1,
-                    parent=self.gamemap,
+                vfx = VisualEffects(
+                    9000,
                     x=actor.x,
                     y=actor.y,
-                    sprite=sprites.flame_sprite(),
+                    sprite_f=sprites.flame_sprite,
+                    ai_cls=VfxAI
                 )
+                vfxs.append(vfx)
+        for v in vfxs:
+            self.gamemap.spawn_entity(v)
+
+    def copy(self):
+        """Spawn a copy of this instance at the given location."""
+        clone = copy.deepcopy(self)
+        return clone
+
+    def to_dict(self):
+        return dict(
+            entity_id=self.entity_id,
+            x=self.x,
+            y=self.y,
+            target_xy=self.target_xy,
+            damage=self.damage,
+            radius=self.radius,
+            name=self.name,
+        )
+
+    def load_dict(self, d):
+        self.x = d['x']
+        self.y = d['y']
+        self.target_xy = d['target_xy']
+        self.damage = d['damage']
+        self.radius = d['radius']
+        self.name = d['name']

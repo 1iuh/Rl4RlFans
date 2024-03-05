@@ -11,14 +11,18 @@ if TYPE_CHECKING:
     from entities.entity import Missile
 
 
-tileset_textures = arcade.load_spritesheet("./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
-potions_textures = arcade.load_spritesheet("./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
-big_zombie_textures = arcade.load_texture("./asset/frames/big_zombie_run_anim_f0.png")
+tileset_textures = arcade.load_spritesheet(
+    "./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
+potions_textures = arcade.load_spritesheet(
+    "./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
+big_zombie_textures = arcade.load_texture(
+    "./asset/frames/big_zombie_run_anim_f0.png")
 chort_textures = arcade.load_texture("./asset/frames/chort_idle_anim_f0.png")
+
 
 class ItemSprite(arcade.Sprite):
 
-    render_order:RenderOrder = RenderOrder.ITEM
+    render_order: RenderOrder = RenderOrder.ITEM
 
     def __init__(self, path_or_texture, scale):
         super().__init__(path_or_texture, scale)
@@ -28,9 +32,9 @@ class ActorSprite(arcade.Sprite):
 
     corpse_texture = tileset_textures[100]
     is_alive = True
-    render_order:RenderOrder = RenderOrder.ACTOR
+    render_order: RenderOrder = RenderOrder.ACTOR
 
-    def __init__(self, filename:str, frame_number:int, scale: float):
+    def __init__(self, filename: str, frame_number: int, scale: float):
         self.frames = []
         for i in range(frame_number):
             texture = arcade.load_texture(filename.format(i))
@@ -55,10 +59,11 @@ class ActorSprite(arcade.Sprite):
 
             self.texture = self.frames[self.cur_frame_idx].texture
 
+
 class ConstructSprite(arcade.Sprite):
 
-    def __init__(self, dark_texture: arcade.Texture, light_texture:arcade.Texture, void_texture: arcade.Texture,
-                 scale:float):
+    def __init__(self, dark_texture: arcade.Texture, light_texture: arcade.Texture, void_texture: arcade.Texture,
+                 scale: float):
 
         super().__init__(scale=scale)
         self.is_seen = False
@@ -89,7 +94,7 @@ class ConstructSprite(arcade.Sprite):
 class MissileSprite(arcade.Sprite):
 
     left_time: float = 0
-    render_order:RenderOrder = RenderOrder.Missile
+    render_order: RenderOrder = RenderOrder.Missile
     entity: Missile
 
     def __init__(self, filename: str, frame_number: int, scale: float):
@@ -103,20 +108,19 @@ class MissileSprite(arcade.Sprite):
         self.cur_frame_idx = 0
         self.time_counter = 0.0
 
-    def set_duration(self, duration:float = 0.5):
+    def set_duration(self, duration: float = 0.5):
         self.left_time = duration
 
-    def set_target(self, target_x, target_y, duration:float=0.5):
-        velocity_x = target_x - self.center_x
-        velocity_y = target_y - self.center_y
+    def set_target(self, x, y, target_x, target_y, duration: float = 0.5):
+        velocity_x = target_x - x
+        velocity_y = target_y - y
 
         self.angle = - math.degrees(math.atan2(velocity_y, velocity_x))
 
-        self.velocity = velocity_x/duration, velocity_y/ duration
+        self.velocity = velocity_x/duration, velocity_y / duration
         self.left_time = duration
 
-
-    def on_update(self, delta_time:float=1/60):
+    def on_update(self, delta_time: float = 1/60):
         if self.left_time <= 0:
             self.velocity = 0, 0
         else:
@@ -125,7 +129,6 @@ class MissileSprite(arcade.Sprite):
                 self._position[1] + self.change_y * delta_time,
             )
         self.left_time -= delta_time
-
 
     def update_animation(self, delta_time: float = 1 / 60):
         self.time_counter += delta_time
@@ -137,53 +140,75 @@ class MissileSprite(arcade.Sprite):
 
             self.texture = self.frames[self.cur_frame_idx].texture
 
-def floor_sprite(): 
-     return ConstructSprite(
-             tileset_textures[2],
-             tileset_textures[1],
-             tileset_textures[130],
-             scale=0.5)
 
-def wall_sprite(): 
-     return ConstructSprite(
-             tileset_textures[12],
-             tileset_textures[11],
-             tileset_textures[130],
-             scale=0.5)
+def floor_sprite():
+    return ConstructSprite(
+        tileset_textures[2],
+        tileset_textures[1],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def wall_sprite():
+    return ConstructSprite(
+        tileset_textures[12],
+        tileset_textures[11],
+        tileset_textures[130],
+        scale=0.5)
+
 
 def player_sprite():
 
     return ActorSprite("./asset/player_idle_f{0}.png", 3, scale=1)
 
-def big_demon(): 
+
+def big_demon():
     return ActorSprite("./asset/frames/big_demon_idle_anim_f{0}.png", 4, scale=0.666)
-def big_zombie(): 
+
+
+def big_zombie():
     return ActorSprite("./asset/frames/big_zombie_idle_anim_f{0}.png", 4, scale=0.666)
-def chort(): 
+
+
+def chort():
     return ActorSprite("./asset/frames/chort_idle_anim_f{0}.png", 4, scale=1)
-def toufu(): 
+
+
+def toufu():
     return ActorSprite("./asset/frames/dwarf_m_idle_anim_f{0}.png", 4, scale=1)
-def feishiko(): 
+
+
+def feishiko():
     return ActorSprite("./asset/frames/lizard_m_idle_anim_f{0}.png", 4, scale=1)
-def silencess(): 
+
+
+def silencess():
     return ActorSprite("./asset/frames/wizzard_m_idle_anim_f{0}.png", 4, scale=1)
-def superlight(): 
+
+
+def superlight():
     return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png", 4, scale=1)
 
-def potion_0(): 
+
+def potion_0():
     return ItemSprite(path_or_texture=potions_textures[0], scale=0.4)
 
-def potion_1(): 
+
+def potion_1():
     return ItemSprite(path_or_texture=potions_textures[10], scale=0.4)
 
-def potion_2(): 
+
+def potion_2():
     return ItemSprite(path_or_texture=potions_textures[20], scale=0.4)
 
-def potion_3(): 
+
+def potion_3():
     return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
+
 
 def fireball_missile_sprite():
     return MissileSprite("./asset/fireball/1_{0}.png", 20, 0.5)
+
 
 def flame_sprite():
     return MissileSprite("./asset/FireVF/Fire+Sparks{0}.png", 4, 0.4)

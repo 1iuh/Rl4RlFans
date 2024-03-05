@@ -3,8 +3,10 @@ from __future__ import annotations
 import numpy as np  # type: ignore
 import tcod
 import random
+import constants
 
-from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
+from actions import (Action, BumpAction, MeleeAction, MovementAction,
+                     WaitAction, MissileActivateAction, TPAction)
 
 from typing import Optional, TYPE_CHECKING
 
@@ -56,6 +58,23 @@ class BaseAI:
 
         # Convert from List[List[int]] to List[Tuple[int, int]].
         return [(index[0], index[1]) for index in path]
+
+
+class MissileAI(BaseAI):
+
+    def perform(self) -> Action:
+        if self.entity.distance2target() < constants.missile_move_speed:
+            return MissileActivateAction(self.entity, self.entity.target_xy)
+        else:
+            path = self.get_path_to(self.entity.target_xy[0],
+                                    self.entity.target_xy[1])
+            return TPAction(self.entity, path[constants.missile_move_speed-1])
+
+
+class VfxAI(BaseAI):
+
+    def perform(self) -> Action:
+        return MissileActivateAction(self.entity, (0, 0))
 
 
 class HostileEnemy(BaseAI):

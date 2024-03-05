@@ -75,7 +75,10 @@ class MainGameEventHandler(EventHandler):
     def handle_enemy_turns(self, player_action) -> None:
         self.engine.message_log.add_message("============New Turn============")
         action_queue = [player_action]
-        for entity in set(self.engine.game_map.actors) - {self.engine.player}:
+        for entity in set(
+                self.engine.game_map.entities) - {self.engine.player}:
+            if not hasattr(entity, 'ai'):
+                continue
             if entity.ai:
                 try:
                     action_queue.append(entity.ai.perform())
@@ -84,6 +87,8 @@ class MainGameEventHandler(EventHandler):
                             exc.args[0], color.impossible)
         action_queue.sort(key=lambda x: x.final_speed)
         for act in action_queue:
+            if hasattr(act.entity, 'is_alive') and not act.entity.is_alive:
+                continue
             act.perform()
         self.engine.update_fov()
 

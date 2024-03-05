@@ -36,8 +36,10 @@ class GameMap:
 
     def spawn_entity(self, entity):
         entity.parent = self
+        entity.sprite = entity.sprite_f()
         self.entities.add(entity)
         self.entity_sprites.append(entity.sprite)
+        entity.on_spawn()
 
     def despawn_entity(self, entity):
         self.entities.remove(entity)
@@ -274,6 +276,7 @@ def generate_dungeon(
 
     dungeon.init_construct_sprites()
     dungeon.entities.add(dungeon.engine.player)
+    dungeon.engine.player.sprite = dungeon.engine.player.sprite_f()
     dungeon.entity_sprites.append(dungeon.engine.player.sprite)
     return dungeon
 

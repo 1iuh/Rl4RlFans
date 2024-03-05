@@ -6,10 +6,9 @@ import color
 import components.inventory
 import components.ai
 from components.base_component import BaseComponent
-from entities.entity import Missile
-import sprites
 from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
+from entities.others import fireball_missile
 
 from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
@@ -67,7 +66,8 @@ class LightningDamageConsumable(Consumable):
         closest_distance = self.maximum_range + 1.0
 
         for actor in self.engine.game_map.actors:
-            if actor is not consumer and self.parent.gamemap.visible[actor.x, actor.y]:
+            if (actor is not consumer
+                    and self.parent.gamemap.visible[actor.x, actor.y]):
                 distance = consumer.distance(actor.x, actor.y)
 
                 if distance < closest_distance:
@@ -141,15 +141,13 @@ class FireballConsumable(Consumable):
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("不能选择没有视野的地方.")
-        missile = Missile(
-            entity_id=-1,
-            x=action.entity.x,
-            y=action.entity.y,
-            target_xy=action.target_xy,
-            sprite=sprites.fireball_missile_sprite(),
-            damage=self.damage,
-            radius=self.radius,
-            parent=self.engine.game_map,
-        )
+        missile = fireball_missile.copy()
+        missile.x = action.entity.x
+        missile.y = action.entity.y
+        missile.target_xy = action.target_xy
+        missile.damage = self.damage
+        missile.radius = self.radius
         self.engine.game_map.spawn_entity(missile)
         self.consume()
+        action = missile.ai.perform()
+        action.perform()

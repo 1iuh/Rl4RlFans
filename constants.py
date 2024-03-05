@@ -30,3 +30,5 @@ floor_tilecode = 1002
 
 inventory_window_width = screen_width - 800
 inventory_window_height = screen_height - 600
+
+missile_move_speed = 4

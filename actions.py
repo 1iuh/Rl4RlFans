@@ -22,7 +22,9 @@ class Action:
 
     @property
     def final_speed(self):
-        return self.speed - self.entity.fighter.speed
+        if hasattr(self.entity, 'fighter'):
+            return self.speed - self.entity.fighter.speed
+        return 0
 
     @property
     def engine(self) -> Engine:
@@ -164,6 +166,27 @@ class ItemAction(Action):
         self.item.consumable.activate(self)
 
 
+class TPAction(Action):
+
+    def __init__(self, entity, target_xy):
+        super().__init__(entity)
+        self.target_xy = target_xy
+
+    def perform(self) -> None:
+        self.entity.x = self.target_xy[0]
+        self.entity.y = self.target_xy[1]
+
+
+class MissileActivateAction(Action):
+
+    def __init__(self, entity, target_xy):
+        super().__init__(entity)
+        self.target_xy = target_xy
+
+    def perform(self) -> None:
+        self.entity.activate()
+
+
 class PickupAction(Action):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
@@ -178,19 +201,18 @@ class PickupAction(Action):
         for item in self.engine.game_map.items:
             if actor_location_x == item.x and actor_location_y == item.y:
                 if len(inventory.items) >= inventory.capacity:
-                    raise exceptions.Impossible("背包满了")
+                    raise exceptions.Impossible("inventory is full.")
                 self.engine.game_map.despawn_entity(item)
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 
-                self.engine.message_log.add_message(f"你 拾取了 {item.name}!")
+                self.engine.message_log.add_message(f"you pickup {item.name}!")
                 return
 
         self.engine.message_log.add_message(
-                "地上没东西!")
+                "there is nothing!")
 
 
 class DropItem(ItemAction):
-
     def perform(self) -> None:
         self.entity.inventory.drop(self.item)

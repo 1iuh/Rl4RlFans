@@ -11,7 +11,7 @@ player = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=40, defense=2, power=10, speed=5),
         inventory=Inventory(capacity=26),
-        sprite=sprites.player_sprite()
+        sprite_f=sprites.player_sprite
         )
 
 a_tree = Actor(
@@ -20,7 +20,7 @@ a_tree = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=10, defense=4, power=1, speed=1),
         inventory=Inventory(capacity=0),
-        sprite=sprites.big_zombie(),
+        sprite_f=sprites.big_zombie,
         )
 
 twoflower = Actor(
@@ -29,7 +29,7 @@ twoflower = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=15, defense=0, power=3, speed=10),
         inventory=Inventory(capacity=0),
-        sprite=sprites.big_demon(),
+        sprite_f=sprites.big_demon,
         )
 
 sagancharum = Actor(
@@ -38,7 +38,7 @@ sagancharum = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=3),
         inventory=Inventory(capacity=0),
-        sprite=sprites.chort(),
+        sprite_f=sprites.chort,
         )
 feishiko = Actor(
         entity_id=1003,
@@ -46,7 +46,7 @@ feishiko = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=4),
         inventory=Inventory(capacity=0),
-        sprite=sprites.feishiko(),
+        sprite_f=sprites.feishiko,
         )
 toufu = Actor(
         entity_id=1004,
@@ -54,7 +54,7 @@ toufu = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=5),
         inventory=Inventory(capacity=0),
-        sprite=sprites.toufu(),
+        sprite_f=sprites.toufu,
         )
 silencess = Actor(
         entity_id=1005,
@@ -62,7 +62,7 @@ silencess = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=7),
         inventory=Inventory(capacity=0),
-        sprite=sprites.silencess(),
+        sprite_f=sprites.silencess,
         )
 
 superlight = Actor(
@@ -71,5 +71,5 @@ superlight = Actor(
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=8),
         inventory=Inventory(capacity=0),
-        sprite=sprites.superlight(),
+        sprite_f=sprites.superlight,
         )
