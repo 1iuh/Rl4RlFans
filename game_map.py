@@ -222,7 +222,7 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                 item.y = y
                 dungeon.spawn_entity(item)
             else:
-                item = gears.sword.copy()
+                item = gears.wand.copy()
                 item.level = level
                 item.x = x
                 item.y = y

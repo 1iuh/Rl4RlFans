@@ -13,6 +13,15 @@ sword = Gear(
         stats=gear_data.sword_data
         )
 
+wand = Gear(
+        part=GearParts.HANDS,
+        consumable=GearConsumable(),
+        entity_id=10001,
+        name="wand",
+        sprite_f=sprites.sword_sprite,
+        stats=gear_data.wand_data
+        )
+
 boots = Gear(
         part=GearParts.FOOT,
         consumable=GearConsumable(),

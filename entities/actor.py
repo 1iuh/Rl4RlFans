@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from entities.entity import Entity
 from components.equipment import Equipment
+from entities.factors.skills import fireball_skill
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
 class Actor(Entity):
 
     sprite: ActorSprite
+    skills: list
 
     def __init__(self,
                  *,
@@ -41,6 +43,9 @@ class Actor(Entity):
         self.inventory = inventory
         self.inventory.parent = self
         self.equipment = Equipment(self)
+
+        self.skills = []
+        self.skills.append(fireball_skill(self))
 
     @property
     def is_alive(self) -> bool:

@@ -22,9 +22,13 @@ if TYPE_CHECKING:
 
 MOVE_KEYS = {
     arcade_key.H: (-1, 0),
+    arcade_key.LEFT:  (-1, 0),
     arcade_key.J: (0, -1),
+    arcade_key.DOWN: (0, -1),
     arcade_key.K: (0, 1),
+    arcade_key.UP: (0, 1),
     arcade_key.L: (1, 0),
+    arcade_key.RIGHT:  (1, 0),
 }
 
 CURSOR_Y_KEYS = {
@@ -91,6 +95,7 @@ class MainGameEventHandler(EventHandler):
                 continue
             act.perform()
         self.engine.update_fov()
+        self.engine.update_camera()
 
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.
@@ -126,6 +131,8 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = EquipmentEventHandler(self.engine)
         elif key == arcade_key.D:
             self.engine.event_handler = InventoryDropHandler(self.engine)
+        elif key == arcade_key.S:
+            self.engine.event_handler = SkillHandler(self.engine)
         elif key == arcade_key.SLASH:
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.ESCAPE:
@@ -312,6 +319,63 @@ class InventoryEventHandler(AskUserEventHandler):
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Called when the user selects a valid item."""
         raise NotImplementedError()
+
+
+class SkillHandler(InventoryEventHandler):
+
+    TITLE = "Skills"
+
+    def on_render(self) -> None:
+        super().on_render()
+        number_of_items = len(self.engine.player.skills)
+
+        height = number_of_items + 2
+
+        if height <= 3:
+            height = 3
+
+        arcade.draw_rectangle_filled(
+            constants.screen_center_x,
+            constants.screen_center_y,
+            constants.inventory_window_width,
+            constants.inventory_window_height,
+            arcade.color.BLACK_OLIVE
+        )
+
+        content = ''
+        if number_of_items > 0:
+            for i, item in enumerate(self.engine.player.skills):
+                item_key = chr(ord("a") + i)
+                content += f'({item_key}) {item.name}\n'
+            self.content.text = content
+        else:
+            self.content.text = '(null)'
+        self.title.draw()
+        self.content.draw()
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        player = self.engine.player
+        index = key - arcade_key.A
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = player.skills[index]
+            except IndexError:
+                self.engine.message_log.add_message(
+                    "Invalid entry.", color.invalid)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().on_key_press(key, modifiers)
+
+    def on_item_selected(self, skill) -> Optional[Action]:
+        """Called when the user selects a valid item."""
+        if self.engine.player.fighter.mp < skill.mana_cost:
+            self.engine.message_log.add_message(
+                "Mana Not Enough.", color.invalid)
+            return None
+        else:
+            self.engine.player.fighter.mp -= skill.mana_cost
+            return skill.consumable.get_action(self.engine.player)
 
 
 class InventoryActivateHandler(InventoryEventHandler):

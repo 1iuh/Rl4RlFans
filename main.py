@@ -24,6 +24,8 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.goto_start_menu()
+        # self.camera = arcade.SimpleCamera(viewport=(
+        #    100, 0, constants.screen_width, constants.screen_height))
 
     def on_draw(self):
         """Render the screen."""

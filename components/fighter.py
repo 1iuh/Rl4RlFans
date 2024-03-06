@@ -70,6 +70,10 @@ class Fighter(BaseComponent):
     def is_alive(self) -> bool:
         return self._hp > 0
 
+    @mp.setter
+    def mp(self, value):
+        self._mp = max(0, min(value, self.max_mp))
+
     @hp.setter
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))

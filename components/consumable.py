@@ -135,7 +135,7 @@ class FireballConsumable(Consumable):
 
     def get_action(self, consumer: Actor) -> Optional[actions.Action]:
         self.engine.message_log.add_message(
-            "选择目标.", color.needs_target
+            "Choice target.", color.needs_target
         )
         self.engine.event_handler = AreaRangedAttackHandler(
             self.engine,
@@ -147,12 +147,45 @@ class FireballConsumable(Consumable):
     def activate(self, action: actions.ItemAction) -> None:
 
         if not self.engine.game_map.visible[action.target_xy]:
-            raise Impossible("不能选择没有视野的地方.")
+            raise Impossible("You can`t see there.")
         missile = fireball_missile.copy()
         missile.x = action.entity.x
         missile.y = action.entity.y
         missile.target_xy = action.target_xy
         missile.damage = self.damage
+        missile.radius = self.radius
+        self.engine.game_map.spawn_entity(missile)
+        self.consume()
+        action = missile.ai.perform()
+        action.perform()
+
+
+class FireballSkillConsumable(Consumable):
+
+    def __init__(self, base_damage: int, radius: int):
+        self.base_damage = base_damage
+        self.radius = radius
+
+    def get_action(self, consumer: Actor) -> Optional[actions.Action]:
+        self.engine.message_log.add_message(
+            "Choice target.", color.needs_target
+        )
+        self.engine.event_handler = AreaRangedAttackHandler(
+            self.engine,
+            radius=self.radius,
+            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+        )
+        return None
+
+    def activate(self, action: actions.ItemAction) -> None:
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You can`t see there.")
+        missile = fireball_missile.copy()
+        missile.x = action.entity.x
+        missile.y = action.entity.y
+        missile.target_xy = action.target_xy
+        missile.damage = self.base_damage + self.parent.parent.fighter.magic
         missile.radius = self.radius
         self.engine.game_map.spawn_entity(missile)
         self.consume()

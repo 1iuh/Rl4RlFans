@@ -129,13 +129,13 @@ class GameEngine(Engine):
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
 
+    def update_camera(self):
+        # self.window.camera.center(self.player.sprite.position)
+        # self.window.camera.use()
+        pass
+
     def on_update(self, delta_time):
         self.event_handler.on_update(delta_time)
-        #  self.engine.game_map.missile_sprites.on_update(delta_time)
-        #  for entity in self.engine.game_map.entities:
-        #      entity.sprite.update_animation(delta_time)
-        #  for entity in self.engine.game_map.missiles:
-        #      entity.on_update()
 
     def on_render(self):
         self.event_handler.on_render()
@@ -163,7 +163,7 @@ class GameEngine(Engine):
                          10,
                          constants.screen_height-60
                          )
-        arcade.draw_text(f'Magic: {self.player.fighter.power}',
+        arcade.draw_text(f'Magic: {self.player.fighter.magic}',
                          10,
                          constants.screen_height-80
                          )
