@@ -57,17 +57,6 @@ class Entity:
         clone = copy.deepcopy(self)
         return clone
 
-    def place(self, x, y, gamemap):
-        """Place this entity at a new location.
-           Handles moving across GameMaps."""
-        self.x = x
-        self.y = y
-        if gamemap:
-            if hasattr(self, "parent"):  # Possibly uninitialized.
-                if self.parent is self.gamemap:
-                    self.gamemap.entities.remove(self)
-            self.parent = gamemap
-
     def distance(self, x: int, y: int) -> float:
         """
         Return the distance between the current entity and

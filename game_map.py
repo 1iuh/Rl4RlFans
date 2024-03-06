@@ -5,7 +5,7 @@ from engine import GameEngine
 from arcade import SpriteList, Sprite
 
 from entities import entity_dict
-from entities.factors import actors, items, gears
+from entities.factors import actors, gears
 from entities.entity import Item
 from entities.gear import Gear
 from entities.actor import Actor
@@ -186,7 +186,7 @@ class RectangularRoom:
         )
 
 
-def place_entities(room, dungeon, maximum_monsters, maximum_items):
+def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
     number_of_monsters = random.randint(0, maximum_monsters)
     number_of_items = random.randint(0, maximum_items)
 
@@ -209,23 +209,21 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < 0.2:
-                item = items.health_potion.copy()
+            if item_chance < 0.4:
+                item = gears.boots.copy()
+                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            elif item_chance < 0.4:
-                item = items.fireball_scroll.copy()
-                item.x = x
-                item.y = y
-                dungeon.spawn_entity(item)
-            elif item_chance < 0.6:
-                item = items.lightning_scroll.copy()
+            elif item_chance < 0.8:
+                item = gears.plate_mail.copy()
+                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
             else:
                 item = gears.sword.copy()
+                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
@@ -239,6 +237,7 @@ def generate_dungeon(
         max_rooms,
         max_monsters_per_room,
         max_items_per_room,
+        level,
         engine,
 ):
     """Generate a new dungeon map."""
@@ -267,14 +266,16 @@ def generate_dungeon(
 
         if len(rooms) == 0:
             # The first room, where the player starts.
-            player.place(*new_room.center, dungeon)
+            player.x = new_room.center[0]
+            player.y = new_room.center[1]
+            dungeon.spawn_entity(player)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
         place_entities(new_room, dungeon, max_monsters_per_room,
-                       max_items_per_room)
+                       max_items_per_room, level)
         # Finally, append the new room to the list.
         rooms.append(new_room)
 

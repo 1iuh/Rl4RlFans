@@ -151,6 +151,26 @@ class GameEngine(Engine):
             maximum_value=self.player.fighter.max_hp,
             total_width=12,
         )
+        arcade.draw_text(f'Power: {self.player.fighter.power}',
+                         10,
+                         constants.screen_height-20
+                         )
+        arcade.draw_text(f'Defense: {self.player.fighter.defense}',
+                         10,
+                         constants.screen_height-40
+                         )
+        arcade.draw_text(f'Speed: {self.player.fighter.speed}',
+                         10,
+                         constants.screen_height-60
+                         )
+        arcade.draw_text(f'Magic: {self.player.fighter.power}',
+                         10,
+                         constants.screen_height-80
+                         )
+        arcade.draw_text(f'Mp: {self.player.fighter.mp}',
+                         10,
+                         constants.screen_height-100
+                         )
 
     def continue_last_game(self):
         with open('./saves/savegame.sav', "r") as f:

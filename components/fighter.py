@@ -14,22 +14,57 @@ if TYPE_CHECKING:
 class Fighter(BaseComponent):
 
     parent: Actor  # type: ignore
-    max_hp: int
+    _max_hp: int
     _hp: int
-    defense: int
-    power: int
-    speed: int
+    _defense: int
+    _magic: int
+    _power: int
+    _speed: int
+    _max_mp: int
+    _mp: int
 
-    def __init__(self, hp: int, defense: int, power: int, speed: int):
-        self.max_hp = hp
+    def __init__(self, hp: int, defense: int, power: int,
+                 speed: int):
+        self._max_hp = hp
         self._hp = hp
-        self.defense = defense
-        self.power = power
-        self.speed = speed
+        self._defense = defense
+        self._power = power
+        self._speed = speed
+        self._magic = 0
+        self._max_mp = 20
+        self._mp = 20
+
+    @property
+    def max_hp(self) -> int:
+        return self._max_hp + self.parent.equipment.get_stat('max_hp')
+
+    @property
+    def defense(self) -> int:
+        return self._defense + self.parent.equipment.get_stat('defense')
+
+    @property
+    def power(self) -> int:
+        return self._power + self.parent.equipment.get_stat('power')
+
+    @property
+    def speed(self) -> int:
+        return self._speed + self.parent.equipment.get_stat('speed')
+
+    @property
+    def magic(self) -> int:
+        return self._magic + self.parent.equipment.get_stat('magic')
+
+    @property
+    def max_mp(self) -> int:
+        return self._max_mp + self.parent.equipment.get_stat('max_mp')
 
     @property
     def hp(self) -> int:
         return self._hp
+
+    @property
+    def mp(self) -> int:
+        return self._mp
 
     @property
     def is_alive(self) -> bool:
@@ -41,10 +76,6 @@ class Fighter(BaseComponent):
 
         if self._hp == 0 and self.parent.ai:
             self.die()
-
-    @hp.getter
-    def hp(self) -> int:
-        return self._hp
 
     def heal(self, amount: int) -> int:
         if self.hp == self.max_hp:
@@ -66,7 +97,7 @@ class Fighter(BaseComponent):
 
     def die(self) -> None:
         if self.engine.player is self.parent:
-            death_message = "你 死掉了！"
+            death_message = "You die."
             death_message_color = color.player_die
             self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
@@ -82,16 +113,22 @@ class Fighter(BaseComponent):
 
     def to_dict(self):
         return dict(
-            max_hp=self.max_hp,
-            hp=self.hp,
-            defense=self.defense,
-            power=self.power,
-            speed=self.speed,
+            max_hp=self._max_hp,
+            hp=self._hp,
+            defense=self._defense,
+            power=self._power,
+            speed=self._speed,
+            magic=self._magic,
+            max_mp=self._max_mp,
+            mp=self._mp,
         )
 
     def load_dict(self, d):
-        self.max_hp = d['max_hp']
-        self.hp = d['hp']
-        self.defense = d['defense']
-        self.power = d['power']
-        self.speed = d['speed']
+        self._max_hp = d['max_hp']
+        self._hp = d['hp']
+        self._defense = d['defense']
+        self._power = d['power']
+        self._speed = d['speed']
+        self._magic = d['magic']
+        self._max_mp = d['max_mp']
+        self._mp = d['mp']

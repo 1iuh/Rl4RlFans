@@ -12,30 +12,52 @@ if TYPE_CHECKING:
 
 class Equipment(BaseComponent):
     parent: Actor  # type: ignore
-    helmet = None
     body = None
-    leg = None
     foot = None
-    left_hand = None
-    right_hand = None
+    hands = None
 
     def __init__(self, parent):
         self.parent = parent
 
+    def get_stat(self, name):
+        value = 0
+        if self.body is not None:
+            value += getattr(self.body, name)
+        if self.foot is not None:
+            value += getattr(self.foot, name)
+        if self.hands is not None:
+            value += getattr(self.hands, name)
+        return value
+
     @property
     def gears(self):
         return [
-                ('helmet', self.helmet),
+                ('hands', self.hands),
                 ('body', self.body),
-                ('leg', self.leg),
                 ('foot', self.foot),
-                ('letf_hand', self.left_hand),
-                ('right_hand', self.right_hand),
                 ]
 
-    def wear(self, gear: Gear) -> None:
-        if gear.part == GearParts.RIGHT_HAND:
-            self.left_hand = gear
+    def put_down(self, part):
+        if part == GearParts.BODY:
+            gear = self.body
+            self.body = None
+        elif part == GearParts.FOOT:
+            gear = self.foot
+            self.foot = None
+        elif part == GearParts.HANDS:
+            gear = self.hands
+            self.hands = None
+        self.parent.inventory.put_donw(gear)
+
+    def put_on(self, gear: Gear) -> None:
+        if gear.part == GearParts.HANDS:
+            self.hands = gear
+        elif gear.part == GearParts.BODY:
+            self.body = gear
+        elif gear.part == GearParts.FOOT:
+            self.foot = gear
+
+        gear.parent = self
         self.engine.message_log.add_message(
             f"You're equipped with {gear.name}.")  # type: ignore
 

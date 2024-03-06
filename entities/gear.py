@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from entities.entity import Entity
 
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,6 +10,13 @@ if TYPE_CHECKING:
 
 
 class Gear(Entity):
+    level = 1
+    power = 0
+    max_hp = 0
+    magic = 0
+    defense = 0
+    max_mp = 0
+    speed = 0
 
     def __init__(
         self,
@@ -19,12 +27,9 @@ class Gear(Entity):
         x: int = 0,
         y: int = 0,
         name: str = "<Unnamed>",
+        stats: dict,
         sprite_f=None,
     ):
-        self.part = part
-        self.consumable = consumable
-        self.consumable.parent = self
-
         super().__init__(
             entity_id=entity_id,
             x=x,
@@ -33,6 +38,15 @@ class Gear(Entity):
             blocks_movement=False,
             sprite_f=sprite_f,
         )
+        self.part = part
+        self.consumable = consumable
+        self.consumable.parent = self
+        self.stats = stats
+
+    def on_spawn(self):
+        self.name = self.name + f' +{self.level}'
+        for attr, value in self.stats[self.level].items():
+            setattr(self, attr, value)
 
     def to_dict(self):
         return dict(
@@ -45,14 +59,14 @@ class Gear(Entity):
         self.x = d['x']
         self.y = d['y']
 
-    def wear(self):
-        self.parent.wear(self)
+    def put_down(self):
+        self.parent.put_down(self)
+
+    def put_on(self):
+        self.parent.put_on(self)
 
 
 class GearParts:
-    HELMET = 0
-    BODY = 1
-    LEG = 2
-    FOOT = 3
-    LEFT_HAND = 4
-    RIGHT_HAND = 5
+    BODY = 0
+    FOOT = 1
+    HANDS = 2

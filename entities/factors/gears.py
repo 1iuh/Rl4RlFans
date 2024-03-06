@@ -1,36 +1,32 @@
 from ..gear import Gear, GearParts
 from components.consumable import GearConsumable
+from entities import gear_data
 import sprites
 
 
 sword = Gear(
-        part=GearParts.RIGHT_HAND,
+        part=GearParts.HANDS,
         consumable=GearConsumable(),
         entity_id=10000,
-        name="sword ",
+        name="sword",
         sprite_f=sprites.sword_sprite,
-        )
-
-shield = Gear(
-        part=GearParts.LEFT_HAND,
-        consumable=GearConsumable(),
-        entity_id=10001,
-        name="shield",
-        sprite_f=sprites.potion_1,
+        stats=gear_data.sword_data
         )
 
 boots = Gear(
         part=GearParts.FOOT,
         consumable=GearConsumable(),
         entity_id=10002,
-        name="boots",
-        sprite_f=sprites.potion_2,
+        name="iron boots",
+        sprite_f=sprites.iron_boot_sprite,
+        stats=gear_data.iron_boots_data
         )
 
-helmet = Gear(
-        part=GearParts.HELMET,
+plate_mail = Gear(
+        part=GearParts.BODY,
         consumable=GearConsumable(),
         entity_id=10003,
-        name="helmet",
-        sprite_f=sprites.potion_2,
+        name="iron armor",
+        sprite_f=sprites.iron_armor_sprite,
+        stats=gear_data.armor_data
         )

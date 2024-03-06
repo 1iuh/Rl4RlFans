@@ -40,7 +40,7 @@ class Consumable(BaseComponent):
 class GearConsumable(Consumable):
 
     def activate(self, action: actions.ItemAction) -> None:
-        self.parent.wear()
+        self.parent.put_on()
         self.consume()
 
 

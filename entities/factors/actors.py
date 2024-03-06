@@ -9,7 +9,7 @@ player = Actor(
         entity_id=0,
         name="你",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=40, defense=2, power=10, speed=5),
+        fighter=Fighter(hp=40, defense=2, power=8, speed=5),
         inventory=Inventory(capacity=26),
         sprite_f=sprites.player_sprite
         )
@@ -18,7 +18,7 @@ a_tree = Actor(
         entity_id=1000,
         name="阿树",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=10, defense=4, power=1, speed=1),
+        fighter=Fighter(hp=10, defense=4, power=5, speed=8),
         inventory=Inventory(capacity=0),
         sprite_f=sprites.big_zombie,
         )

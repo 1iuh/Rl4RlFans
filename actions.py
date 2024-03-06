@@ -214,5 +214,9 @@ class PickupAction(Action):
 
 
 class DropItem(ItemAction):
+
+    def __init__(self, actor, item):
+        super().__init__(actor, item, (0, 0))
+
     def perform(self) -> None:
         self.entity.inventory.drop(self.item)

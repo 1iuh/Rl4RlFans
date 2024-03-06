@@ -150,7 +150,7 @@ class HistoryViewer(EventHandler):
         self.log_length = len(engine.message_log.messages)
         self.cursor = self.log_length
         self.title = arcade.Text(
-            "┤消息记录├",
+            "┤Message History├",
             int(constants.screen_center_x - constants.history_viewer_width/2),
             (int(constants.screen_center_y + constants.history_viewer_height/2)
                 - 24),

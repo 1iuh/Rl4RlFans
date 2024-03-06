@@ -217,3 +217,18 @@ def flame_sprite():
 def sword_sprite():
     return ItemSprite(path_or_texture='./asset/frames/weapon_anime_sword.png',
                       scale=0.6)
+
+
+def iron_helmet_sprite():
+    return ItemSprite(path_or_texture='./asset/Equipment/Iron Helmet.png',
+                      scale=0.6)
+
+
+def iron_armor_sprite():
+    return ItemSprite(path_or_texture='./asset/Equipment/Iron Armor.png',
+                      scale=0.6)
+
+
+def iron_boot_sprite():
+    return ItemSprite(path_or_texture='./asset/Equipment/Iron Boot.png',
+                      scale=0.6)

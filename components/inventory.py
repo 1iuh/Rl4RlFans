@@ -18,16 +18,23 @@ class Inventory(BaseComponent):
         self.capacity = capacity
         self.items: List[Item] = []
 
-    def wear(self, gear: Gear) -> None:
-        self.parent.equipment.wear(gear)
+    def put_on(self, gear: Gear) -> None:
+        self.items.remove(gear)
+        self.parent.equipment.put_on(gear)
+
+    def put_donw(self, gear: Gear) -> None:
+        gear.parent = self
+        self.items.append(gear)
 
     def drop(self, item: Item) -> None:
         """
-        Removes an item from the inventory and restores it to the game map, at the player's current location.
+        Removes an item from the inventory and restores it to the game map,
+        at the player's current location.
         """
         self.items.remove(item)
-        item.place(self.parent.x, self.parent.y, self.gamemap)
-
+        item.x = self.parent.x
+        item.y = self.parent.y
+        self.gamemap.spawn_entity(item)
         self.engine.message_log.add_message(
             f"你把 {item.name} 丢在了地上.")  # type: ignore
 

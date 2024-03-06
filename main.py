@@ -58,6 +58,7 @@ class MyGame(arcade.Window):
             constants.max_rooms,
             constants.max_monsters_per_room,
             constants.max_items_per_room,
+            1,
             engine=self.engine,
             )
         self.engine.on_start()
