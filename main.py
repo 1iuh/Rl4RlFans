@@ -47,6 +47,25 @@ class MyGame(arcade.Window):
         self.engine.continue_last_game()
         self.engine.on_start()
 
+    def enter_next_level(self):
+        player = self.engine.player
+        player.hp = player.max_hp
+        player.mp = player.max_mp
+        level = self.engine.game_map.level + 1
+        self.engine = GameEngine(player, self)
+        self.engine.game_map = generate_dungeon(
+            constants.map_width,
+            constants.map_height,
+            constants.room_min_size,
+            constants.room_max_size,
+            constants.max_rooms,
+            constants.max_monsters_per_room,
+            constants.max_items_per_room,
+            level,
+            engine=self.engine,
+            )
+        self.engine.on_start()
+
     def start_new_game(self):
         player = copy.deepcopy(actors.player)
         self.engine = GameEngine(player, self)

@@ -251,6 +251,11 @@ class GameEngine(Engine):
             f.write(save_data.encode("utf8"))
         self.window.goto_start_menu()
 
+    def enter_next_level(self):
+        if (self.game_map.tiles[self.player.x, self.player.y][2] ==
+                constants.down_stair_tilecode):
+            self.window.enter_next_level()
+
     def to_dict(self) -> dict:
         return dict(
             player=self.player.to_dict(),

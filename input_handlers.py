@@ -135,6 +135,8 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = SkillHandler(self.engine)
         elif key == arcade_key.SLASH:
             self.engine.event_handler = LookHandler(self.engine)
+        elif key == arcade_key.GREATER:
+            self.engine.enter_next_level()
         elif key == arcade_key.ESCAPE:
             self.engine.event_handler = EscMenuHandler(self.engine)
 

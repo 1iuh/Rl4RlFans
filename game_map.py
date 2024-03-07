@@ -23,11 +23,13 @@ if TYPE_CHECKING:
 
 class GameMap:
     engine: GameEngine
+    level: int
 
-    def __init__(self, engine, width, height, entities):
+    def __init__(self, engine, width, height, entities, level):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
+        self.level = level
         self.tiles = np.full(
             (width, height), fill_value=tile_types.wall, order="F")
 
@@ -59,6 +61,8 @@ class GameMap:
                     cons = sprites.floor_sprite()
                 elif col[2] == constants.wall_tilecode:
                     cons = sprites.wall_sprite()
+                elif col[2] == constants.down_stair_tilecode:
+                    cons = sprites.down_stair_sprite()
                 else:
                     continue
                 cons.center_x = x * constants.grid_size
@@ -209,21 +213,21 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < 0.4:
+            if item_chance < 0.1:
+                gears.boots.level = level
                 item = gears.boots.copy()
-                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            elif item_chance < 0.8:
+            elif item_chance < 0.2:
+                gears.plate_mail.level = level
                 item = gears.plate_mail.copy()
-                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            else:
+            elif item_chance < 0.3:
+                gears.wand.level = level
                 item = gears.wand.copy()
-                item.level = level
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
@@ -242,7 +246,8 @@ def generate_dungeon(
 ):
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    dungeon = GameMap(engine, map_width, map_height,
+                      entities=[player], level=level)
 
     rooms = []
 
@@ -250,8 +255,8 @@ def generate_dungeon(
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
 
-        x = random.randint(5, dungeon.width - room_width - 1)
-        y = random.randint(5, dungeon.height - room_height - 1)
+        x = random.randint(8, dungeon.width - room_width - 1)
+        y = random.randint(0, dungeon.height - room_height - 1)
 
         # "RectangularRoom" class makes rectangles easier to work with
         new_room = RectangularRoom(x, y, room_width, room_height)
@@ -276,13 +281,15 @@ def generate_dungeon(
 
         place_entities(new_room, dungeon, max_monsters_per_room,
                        max_items_per_room, level)
+
         # Finally, append the new room to the list.
         rooms.append(new_room)
 
+    # put stair
+    room = random.choice(rooms)
+    dungeon.tiles[room.center] = tile_types.down_stair
+
     dungeon.init_construct_sprites()
-    dungeon.entities.add(dungeon.engine.player)
-    dungeon.engine.player.sprite = dungeon.engine.player.sprite_f()
-    dungeon.entity_sprites.append(dungeon.engine.player.sprite)
     return dungeon
 
 

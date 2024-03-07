@@ -29,7 +29,6 @@ class MessageLog:
             0,
             arcade.color.WHITE,  # type: ignore
             12,
-            font_name='stsong',
             multiline=True,
             width=175,
         )
