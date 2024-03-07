@@ -4,7 +4,7 @@ map_height = 35
 room_max_size = 10
 room_min_size = 6
 max_rooms = 30
-max_monsters_per_room = 5
+max_monsters_per_room = 1
 max_items_per_room = 5
 
 grid_size = 24
@@ -29,6 +29,15 @@ wall_tilecode = 1001
 floor_tilecode = 1002
 
 inventory_window_width = screen_width - 800
-inventory_window_height = screen_height - 600
+inventory_window_height = screen_height - 300
 
 missile_move_speed = 4
+
+actor_stats_keys = [
+        'power',
+        'max_hp',
+        'magic',
+        'defense',
+        'max_mp',
+        'speed',
+        ]

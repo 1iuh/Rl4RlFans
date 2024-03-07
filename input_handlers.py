@@ -163,7 +163,6 @@ class HistoryViewer(EventHandler):
                 - 24),
             arcade.color.WHITE,  # type: ignore
             constants.font_size,
-            font_name='stsong',
             align='center',
             width=constants.history_viewer_width,
         )
@@ -251,21 +250,19 @@ class InventoryEventHandler(AskUserEventHandler):
              - constants.font_line_height),
             arcade.color.WHITE,  # type: ignore
             constants.font_size,
-            font_name='stsong',
             align='center',
             width=constants.inventory_window_width,
         )
         self.content = arcade.Text(
             "",
             int(constants.screen_center_x
-                - constants.inventory_window_width/2),
+                - constants.inventory_window_width/2 + 30),
             int(constants.screen_center_y + constants.inventory_window_height /
                 2) - constants.font_line_height*4,
             arcade.color.WHITE,  # type: ignore
             constants.font_size,
             multiline=True,
-            font_name='stsong',
-            align='center',
+            align='left',
             width=constants.inventory_window_width,
         )
 
@@ -295,10 +292,10 @@ class InventoryEventHandler(AskUserEventHandler):
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
-                content += f'({item_key}) {item.name}\n'
+                content += f'({item_key}) {item.name}\n        └ {item.attributes}\n'
             self.content.text = content
         else:
-            self.content.text = '(空的)'
+            self.content.text = '(empty)'
         self.title.draw()
         self.content.draw()
 
@@ -566,7 +563,7 @@ class StartMenuEventHandler:
 
 class EquipmentEventHandler(AskUserEventHandler):
 
-    TITLE = "Equipment"
+    TITLE = "Put Off Equipment"
 
     def __init__(self, engine):
         super().__init__(engine)
@@ -579,7 +576,6 @@ class EquipmentEventHandler(AskUserEventHandler):
              - constants.font_line_height),
             arcade.color.WHITE,  # type: ignore
             constants.font_size,
-            font_name='stsong',
             align='center',
             width=constants.inventory_window_width,
         )
@@ -592,7 +588,6 @@ class EquipmentEventHandler(AskUserEventHandler):
             arcade.color.WHITE,  # type: ignore
             constants.font_size,
             multiline=True,
-            font_name='stsong',
             align='center',
             width=constants.inventory_window_width,
         )
@@ -618,13 +613,12 @@ class EquipmentEventHandler(AskUserEventHandler):
         for i, t in enumerate(self.engine.player.equipment.gears):
             key = t[0]
             val = t[1]
-            if val is None:
-                gear_name = 'null'
-            else:
-                gear_name = val.name
-
             item_key = chr(ord("a") + i)
-            content += f'({item_key}) {key}: {gear_name}\n'
+            if val is None:
+                content += f'({item_key}) {key}: null\n'
+            else:
+                content += f'({item_key}) {key}: {val.name}\n        └ {val.attributes}\n'
+
         self.content.text = content
         self.title.draw()
         self.content.draw()

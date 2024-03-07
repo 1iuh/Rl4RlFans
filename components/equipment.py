@@ -22,11 +22,11 @@ class Equipment(BaseComponent):
     def get_stat(self, name):
         value = 0
         if self.body is not None:
-            value += getattr(self.body, name)
+            value += self.body.get_stats(name)
         if self.foot is not None:
-            value += getattr(self.foot, name)
+            value += self.foot.get_stats(name)
         if self.hands is not None:
-            value += getattr(self.hands, name)
+            value += self.hands.get_stats(name)
         return value
 
     @property
