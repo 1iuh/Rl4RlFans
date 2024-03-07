@@ -133,7 +133,7 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = InventoryDropHandler(self.engine)
         elif key == arcade_key.S:
             self.engine.event_handler = SkillHandler(self.engine)
-        elif key == arcade_key.SLASH:
+        elif key == arcade_key.SPACE:
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.GREATER:
             self.engine.enter_next_level()
@@ -439,8 +439,76 @@ class SelectIndexHandler(AskUserEventHandler):
         raise NotImplementedError()
 
 
-class LookHandler(SelectIndexHandler):
-    """Lets the player look around using the keyboard."""
+class LookHandler(AskUserEventHandler):
+    TITLE = 'Monsters'
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+        self.x_offset = 300
+        if self.engine.player.x >= constants.map_width/2:
+            self.x_offset = -self.x_offset
+
+        self.title = arcade.Text(
+            f"{self.TITLE}",
+            int(constants.screen_center_x
+                - constants.inventory_window_width/2) + self.x_offset,
+            (int(constants.screen_center_y
+                 + constants.inventory_window_height/2)
+             - constants.font_line_height),
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            align='center',
+            width=constants.inventory_window_width,
+        )
+        self.content = arcade.Text(
+            "",
+            int(constants.screen_center_x + 30
+                - constants.inventory_window_width/2) + self.x_offset,
+            int(constants.screen_center_y + constants.inventory_window_height /
+                2) - constants.font_line_height*4,
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            multiline=True,
+            align='left',
+            width=constants.inventory_window_width,
+        )
+
+    def on_render(self) -> None:
+        super().on_render()
+        number_of_mob = len(self.engine.game_map.visible_monsters)
+
+        height = number_of_mob + 5
+
+        if height <= 3:
+            height = 3
+
+        arcade.draw_rectangle_filled(
+            constants.screen_center_x + self.x_offset,
+            constants.screen_center_y + 50,
+            constants.inventory_window_width - 40,
+            constants.inventory_window_height - 50,
+            arcade.color.BLACK_OLIVE
+        )
+
+        content = ''
+        for i, actor in enumerate(self.engine.game_map.visible_monsters):
+            item_key = chr(ord("a") + i)
+            content += f'({item_key}) {actor.name} '
+            content += f'  hp: {actor.fighter.hp}'
+            content += f'  ack: {actor.fighter.power}'
+            content += f'  def: {actor.fighter.defense}'
+            content += f'  spd: {actor.fighter.speed} \n'
+            arcade.draw_text(item_key,
+                             actor.sprite.center_x,
+                             actor.sprite.center_y,
+                             anchor_x='center',
+                             anchor_y='center',
+                             )
+
+        self.content.text = content
+        self.title.draw()
+        self.content.draw()
 
     def on_index_selected(self, x: int, y: int) -> None:
         """Return to main handler."""

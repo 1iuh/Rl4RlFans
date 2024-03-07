@@ -59,10 +59,11 @@ class Actor(Entity):
     def rand(self):
         for attr, value in mob_data[self.level].items():
             setattr(self.fighter, '_'+attr, value)
-            # if len(self.desc) > 0:
-            #     self.desc = ','.join([self.desc, f"{attr}+{value}"])
-            # else:
-            #     self.desc = f"{attr}+{value}"
+        self.fighter._max_hp = self.fighter._hp
+        # if len(self.desc) > 0:
+        #     self.desc = ','.join([self.desc, f"{attr}+{value}"])
+        # else:
+        #     self.desc = f"{attr}+{value}"
 
     @property
     def is_alive(self) -> bool:

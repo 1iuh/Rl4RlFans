@@ -30,7 +30,7 @@ class MessageLog:
             arcade.color.WHITE,  # type: ignore
             12,
             multiline=True,
-            width=175,
+            width=165,
         )
 
     def add_message(

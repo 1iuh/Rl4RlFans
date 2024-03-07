@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+import constants
 
 import arcade
 
@@ -31,3 +32,13 @@ def render_bar(current_value, maximum_value, total_width,
             90, start_y, bar_width*12, 20, color)  # type: ignore
     arcade.draw_text(f"{name}:{current_value}/{maximum_value}", 60, start_y,
                      anchor_y='center')
+
+
+def render_mob_bar(current_value, maximum_value, start_x, start_y):
+
+    bar_width = int(float(current_value) / maximum_value * constants.grid_size)
+    y_offset = constants.grid_size / 2
+
+    arcade.draw_rectangle_filled(
+        start_x, start_y + y_offset,
+        bar_width, 2, arcade.color.RED)  # type: ignore

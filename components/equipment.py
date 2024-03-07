@@ -51,10 +51,16 @@ class Equipment(BaseComponent):
 
     def put_on(self, gear: Gear) -> None:
         if gear.part == GearParts.HANDS:
+            if self.hands is not None:
+                self.put_down(self.hands)
             self.hands = gear
         elif gear.part == GearParts.BODY:
+            if self.body is not None:
+                self.put_down(self.body)
             self.body = gear
         elif gear.part == GearParts.FOOT:
+            if self.foot is not None:
+                self.put_down(self.foot)
             self.foot = gear
 
         gear.parent = self

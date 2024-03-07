@@ -3,7 +3,8 @@ from __future__ import annotations
 from tcod.map import compute_fov
 from input_handlers import MainGameEventHandler, StartMenuEventHandler
 from message_log import MessageLog
-from render_functions import render_bar
+from entities.actor import Actor
+from render_functions import render_bar, render_mob_bar
 import constants
 import arcade
 import json
@@ -12,7 +13,6 @@ import json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from entities.entity import Actor
     from game_map import GameMap
     from input_handlers import EventHandler
     from actions import Action
@@ -80,7 +80,7 @@ class StartMenuEngine(Engine):
                 option = f"=> {option} <="
             arcade.draw_text(
                 option,
-                int(constants.screen_center_x),
+                int(constants.screen_center_x) - 100,
                 int(constants.screen_center_y - 50 - 26*i),
                 arcade.color.WHITE, 22, anchor_x='center'
             )
@@ -237,6 +237,13 @@ class GameEngine(Engine):
                 font_size=10
             )
             i += 1
+
+        for entity in self.game_map.entities:
+            if entity.sprite.visible and isinstance(entity, Actor):
+                current_value = entity.fighter.hp
+                maximum_value = entity.fighter.max_hp
+                render_mob_bar(current_value, maximum_value,
+                               entity.sprite.center_x, entity.sprite.center_y)
 
     def continue_last_game(self):
         with open('./saves/savegame.sav', "r") as f:

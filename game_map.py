@@ -50,6 +50,14 @@ class GameMap:
         self.entities.remove(entity)
         self.entity_sprites.remove(entity.sprite)
 
+    @property
+    def visible_monsters(self):
+        mobs = []
+        for e in self.entities:
+            if isinstance(e, Actor) and e.entity_id != 0 and e.sprite.visible:
+                mobs.append(e)
+        return mobs
+
     def init_construct_sprites(self):
         x = 0
         y = 0
@@ -134,6 +142,7 @@ class GameMap:
             entity.sprite.visible = self.visible[entity.x, entity.y]
             entity.sprite.center_x = entity.x * constants.grid_size
             entity.sprite.center_y = entity.y * constants.grid_size
+            # draw hp bar
 
         self.construct_sprites.draw()
         self.entity_sprites.draw()
