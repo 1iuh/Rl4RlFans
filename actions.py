@@ -8,23 +8,21 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
+    from entities.gear import Gear
     from engine import Engine
 
 
 class Action:
 
     entity: Actor
-    speed: int = 1
 
     def __init__(self, entity):
         super().__init__()
         self.entity = entity
 
     @property
-    def final_speed(self):
-        if hasattr(self.entity, 'fighter'):
-            return self.speed - self.entity.fighter.speed
-        return 0
+    def speed(self):
+        return self.entity.fighter.speed
 
     @property
     def engine(self) -> Engine:
@@ -43,8 +41,6 @@ class Action:
 
 
 class ActionWithDirection(Action):
-
-    speed: int = 3
 
     def __init__(self, entity, dx, dy):
         super().__init__(entity)
@@ -74,8 +70,6 @@ class ActionWithDirection(Action):
 
 class MeleeAction(ActionWithDirection):
 
-    speed: int = 8
-
     def perform(self) -> None:
 
         if not self.entity.fighter.is_alive:
@@ -86,25 +80,25 @@ class MeleeAction(ActionWithDirection):
         if not target:
             attack_color = color.player_atk
             self.engine.message_log.add_message(
-                f"{self.entity.name.capitalize()} 近战攻击但是落空了", attack_color
+                f"{self.entity.name} miss", attack_color
             )
             return
 
         damage = self.entity.fighter.power - target.fighter.defense
 
-        attack_desc = f"{self.entity.name.capitalize()} 使用拳头攻击了 {target.name}"
+        attack_desc = f"{self.speed}: {self.entity.name} attacks {target.name}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
         if damage > 0:
             self.engine.message_log.add_message(
-                f"{attack_desc} 造成了 {damage} 物理伤害.", attack_color
+                f"{attack_desc} for {damage} hit points.", attack_color
             )
             target.fighter.hp -= damage
         else:
             self.engine.message_log.add_message(
-                f"{attack_desc} 但是毫无效果.", attack_color
+                f"{attack_desc} but does no damage.", attack_color
             )
 
 
@@ -115,23 +109,28 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message("那里没路")
+            self.engine.message_log.add_message("No way")
             return
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is out of bounds.
-            self.engine.message_log.add_message("那里没路")
+            self.engine.message_log.add_message("No way")
             return
         if self.engine.game_map.get_blocking_entity_at_location(
                 dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message("那里没路")
+            self.engine.message_log.add_message("No way")
             return
 
+        attack_desc = f"{self.speed}: {self.entity.name} moved."
+        self.engine.message_log.add_message(attack_desc)
         self.entity.move(self.dx, self.dy)
 
 
 class WaitAction(Action):
-    speed: int = 0
+
+    @property
+    def speed(self):
+        return 0
 
     def perform(self):
         pass
@@ -179,12 +178,26 @@ class TPAction(Action):
 
 class MissileActivateAction(Action):
 
+    @property
+    def speed(self):
+        return 999
+
     def __init__(self, entity, target_xy):
         super().__init__(entity)
         self.target_xy = target_xy
 
     def perform(self) -> None:
         self.entity.activate()
+
+
+class PutDownAction(Action):
+
+    def __init__(self, actor, gear: Gear):
+        super().__init__(actor)
+        self.gear = gear
+
+    def perform(self) -> None:
+        self.gear.put_down()
 
 
 class PickupAction(Action):

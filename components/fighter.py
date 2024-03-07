@@ -105,13 +105,13 @@ class Fighter(BaseComponent):
             death_message_color = color.player_die
             self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
-            death_message = f"{self.parent.name} 被杀死了!"
+            death_message = f"{self.parent.name} died!"
             death_message_color = color.enemy_die
 
         self.parent.blocks_movement = False
         self.parent.sprite.is_alive = False
         self.parent.ai = None
-        self.parent.name = f"{self.parent.name} 的残骸 "
+        self.parent.name = f"{self.parent.name}'s remain."
         self.parent.sprite.render_order = RenderOrder.CORPSE
         self.engine.message_log.add_message(death_message, death_message_color)
 

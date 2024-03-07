@@ -201,7 +201,8 @@ class Missile(Entity):
         for actor in self.gamemap.actors:
             if actor.distance(*self.target_xy) <= self.radius:
                 self.gamemap.engine.message_log.add_message(
-                    f"{actor.name} 被炽热的爆炸吞噬, 受到了 {self.damage} 伤害!")
+                    f"a fireball explodes, {actor.name} \
+                            takes {self.damage} damage!")
                 actor.fighter.take_damage(self.damage)
                 vfx = VisualEffects(
                     9000,

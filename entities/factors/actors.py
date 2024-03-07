@@ -7,7 +7,7 @@ from components.fighter import Fighter
 
 player = Actor(
         entity_id=0,
-        name="你",
+        name="you",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=40, defense=2, power=8, speed=5),
         inventory=Inventory(capacity=26),
@@ -16,7 +16,7 @@ player = Actor(
 
 a_tree = Actor(
         entity_id=1000,
-        name="阿树",
+        name="atree",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=10, defense=4, power=5, speed=8),
         inventory=Inventory(capacity=0),
@@ -25,7 +25,7 @@ a_tree = Actor(
 
 twoflower = Actor(
         entity_id=1001,
-        name="蓝猫",
+        name="twoflower",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=15, defense=0, power=3, speed=10),
         inventory=Inventory(capacity=0),
@@ -34,7 +34,7 @@ twoflower = Actor(
 
 sagancharum = Actor(
         entity_id=1002,
-        name="甘蔗",
+        name="sagancharum",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=3),
         inventory=Inventory(capacity=0),
@@ -50,7 +50,7 @@ feishiko = Actor(
         )
 toufu = Actor(
         entity_id=1004,
-        name="麻婆豆腐",
+        name="toufu",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=5),
         inventory=Inventory(capacity=0),
@@ -58,7 +58,7 @@ toufu = Actor(
         )
 silencess = Actor(
         entity_id=1005,
-        name="言静",
+        name="silencess",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=7),
         inventory=Inventory(capacity=0),
@@ -67,7 +67,7 @@ silencess = Actor(
 
 superlight = Actor(
         entity_id=1006,
-        name="科学超电灯泡",
+        name="superlight",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=18, defense=2, power=3, speed=8),
         inventory=Inventory(capacity=0),

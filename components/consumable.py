@@ -54,7 +54,7 @@ class HealingConsumable(Consumable):
 
         if amount_recovered > 0:
             self.engine.message_log.add_message(
-                f"你 使用了 {self.parent.name}, 恢复了 {amount_recovered} 生命值!",
+                f"You use {self.parent.name}, record {amount_recovered} hp!",
                 color.health_recovered,
             )
             self.consume()
@@ -181,6 +181,10 @@ class FireballSkillConsumable(Consumable):
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("You can`t see there.")
+
+        self.engine.message_log.add_message(
+                f"{action.speed}: {action.entity.name} threw a fireball")
+
         missile = fireball_missile.copy()
         missile.x = action.entity.x
         missile.y = action.entity.y

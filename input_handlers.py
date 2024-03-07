@@ -19,6 +19,7 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from engine import GameEngine, StartMenuEngine
     from entities.entity import Item
+    from entities.gear import Gear
 
 MOVE_KEYS = {
     arcade_key.H: (-1, 0),
@@ -77,7 +78,7 @@ class EventHandler:
 class MainGameEventHandler(EventHandler):
 
     def handle_enemy_turns(self, player_action) -> None:
-        self.engine.message_log.add_message("============New Turn============")
+        self.engine.message_log.add_message("== New Turn ==")
         action_queue = [player_action]
         for entity in set(
                 self.engine.game_map.entities) - {self.engine.player}:
@@ -89,7 +90,7 @@ class MainGameEventHandler(EventHandler):
                 except exceptions.Impossible as exc:
                     self.engine.message_log.add_message(
                             exc.args[0], color.impossible)
-        action_queue.sort(key=lambda x: x.final_speed)
+        action_queue.sort(key=lambda x: x.speed, reverse=True)
         for act in action_queue:
             if hasattr(act.entity, 'is_alive') and not act.entity.is_alive:
                 continue
@@ -634,7 +635,7 @@ class EquipmentEventHandler(AskUserEventHandler):
 
         if 0 <= index <= 26:
             try:
-                selected_item = player.inventory.items[index]
+                selected_item = player.equipment.gears[index][1]
             except IndexError:
                 self.engine.message_log.add_message(
                     "Invalid entry.", color.invalid)
@@ -642,6 +643,6 @@ class EquipmentEventHandler(AskUserEventHandler):
             return self.on_item_selected(selected_item)
         return super().on_key_press(key, modifiers)
 
-    def on_item_selected(self, item: Item) -> Optional[Action]:
+    def on_item_selected(self, gear: Gear) -> Optional[Action]:
         """Called when the user selects a valid item."""
-        raise NotImplementedError()
+        return actions.PutDownAction(self.engine.player, gear)
