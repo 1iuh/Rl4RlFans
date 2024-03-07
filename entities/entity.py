@@ -83,6 +83,7 @@ class Item(Entity):
         y: int = 0,
         name: str = "<Unnamed>",
         sprite_f=None,
+        desc,
         consumable: Consumable,
     ):
         super().__init__(
@@ -94,8 +95,13 @@ class Item(Entity):
             sprite_f=sprite_f,
         )
 
+        self.desc = desc
         self.consumable = consumable
         self.consumable.parent = self
+
+    @property
+    def attributes(self):
+        return self.desc
 
     def to_dict(self):
         return dict(

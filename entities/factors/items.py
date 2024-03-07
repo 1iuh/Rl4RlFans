@@ -5,14 +5,16 @@ import sprites
 
 health_potion = Item(
         entity_id=6000,
-        name="生命药水",
-        consumable=consumable.HealingConsumable(amount=4),
+        name="health potion",
+        desc='recover 10 hp',
+        consumable=consumable.HealingConsumable(amount=10),
         sprite_f=sprites.potion_0,
         )
 
 lightning_scroll = Item(
         entity_id=6002,
         name="闪电卷轴",
+        desc='null',
         consumable=consumable.LightningDamageConsumable(damage=20,
                                                         maximum_range=5),
         sprite_f=sprites.potion_1,
@@ -21,6 +23,7 @@ lightning_scroll = Item(
 confusion_scroll = Item(
         entity_id=6003,
         name="迷惑卷轴",
+        desc='null',
         consumable=consumable.ConfusionConsumable(number_of_turns=10),
         sprite_f=sprites.potion_2,
         )
@@ -28,6 +31,7 @@ confusion_scroll = Item(
 fireball_scroll = Item(
         entity_id=6004,
         name="火球卷轴",
+        desc='null',
         consumable=consumable.FireballConsumable(20, 2),
         sprite_f=sprites.potion_2,
         )

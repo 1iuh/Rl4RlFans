@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 
 tileset_textures = arcade.load_spritesheet(
     "./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
+
+gear_textures = arcade.load_spritesheet(
+    "./asset/gears.png", 48, 48, 16, 350, 0, None)
 potions_textures = arcade.load_spritesheet(
     "./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
 big_zombie_textures = arcade.load_texture(
@@ -223,20 +226,32 @@ def flame_sprite():
 
 
 def sword_sprite():
-    return ItemSprite(path_or_texture='./asset/frames/weapon_anime_sword.png',
-                      scale=0.6)
+    return ItemSprite(path_or_texture=gear_textures[336], scale=0.5)
+
+
+def wand_sprite():
+    return ItemSprite(path_or_texture=gear_textures[321], scale=0.5)
+
+
+def hat():
+    return ItemSprite(path_or_texture=gear_textures[176], scale=0.5)
+
+
+def cloth():
+    return ItemSprite(path_or_texture=gear_textures[0], scale=0.5)
+
+
+def boot():
+    return ItemSprite(path_or_texture=gear_textures[63], scale=0.5)
 
 
 def iron_helmet_sprite():
-    return ItemSprite(path_or_texture='./asset/Equipment/Iron Helmet.png',
-                      scale=0.6)
+    return ItemSprite(path_or_texture=gear_textures[187], scale=0.5)
 
 
 def iron_armor_sprite():
-    return ItemSprite(path_or_texture='./asset/Equipment/Iron Armor.png',
-                      scale=0.6)
+    return ItemSprite(path_or_texture=gear_textures[1], scale=0.5)
 
 
 def iron_boot_sprite():
-    return ItemSprite(path_or_texture='./asset/Equipment/Iron Boot.png',
-                      scale=0.6)
+    return ItemSprite(path_or_texture=gear_textures[64], scale=0.5)

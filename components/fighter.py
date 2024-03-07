@@ -92,7 +92,7 @@ class Fighter(BaseComponent):
 
         amount_recovered = new_hp_value - self.hp
 
-        self.hp = new_hp_value
+        self._hp = new_hp_value
 
         return amount_recovered
 

@@ -5,7 +5,7 @@ from engine import GameEngine
 from arcade import SpriteList, Sprite
 
 from entities import entity_dict
-from entities.factors import actors, gears
+from entities.factors import actors, gears, items
 from entities.entity import Item
 from entities.gear import Gear
 from entities.actor import Actor
@@ -226,21 +226,15 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < 0.1:
-                gears.boots.level = level
-                item = gears.boots.copy()
-                item.x = x
-                item.y = y
-                dungeon.spawn_entity(item)
-            elif item_chance < 0.2:
-                gears.plate_mail.level = level
-                item = gears.plate_mail.copy()
+            if item_chance < 0.2:
+                gear = random.choice(gears.all_gears)
+                gear.level = level
+                item = gear.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
             elif item_chance < 0.3:
-                gears.wand.level = level
-                item = gears.wand.copy()
+                item = items.health_potion.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
