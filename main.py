@@ -49,8 +49,8 @@ class MyGame(arcade.Window):
 
     def enter_next_level(self):
         player = self.engine.player
-        player.hp = player.max_hp
-        player.mp = player.max_mp
+        player.fighter.hp = player.fighter.max_hp
+        player.fighter.mp = player.fighter.max_mp
         level = self.engine.game_map.level + 1
         self.engine = GameEngine(player, self)
         self.engine.game_map = generate_dungeon(

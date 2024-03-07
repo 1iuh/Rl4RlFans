@@ -3,6 +3,7 @@ from __future__ import annotations
 from entities.entity import Entity
 from components.equipment import Equipment
 from entities.factors.skills import fireball_skill
+from entities.mob_data import mob_data
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -15,6 +16,7 @@ class Actor(Entity):
 
     sprite: ActorSprite
     skills: list
+    level = 1
 
     def __init__(self,
                  *,
@@ -46,6 +48,21 @@ class Actor(Entity):
 
         self.skills = []
         self.skills.append(fireball_skill(self))
+
+    def copy(self):
+        clone = super().copy()
+        if self.entity_id == 0:
+            return clone
+        clone.rand()
+        return clone
+
+    def rand(self):
+        for attr, value in mob_data[self.level].items():
+            setattr(self.fighter, '_'+attr, value)
+            # if len(self.desc) > 0:
+            #     self.desc = ','.join([self.desc, f"{attr}+{value}"])
+            # else:
+            #     self.desc = f"{attr}+{value}"
 
     @property
     def is_alive(self) -> bool:

@@ -151,7 +151,7 @@ def floor_sprite():
 
 def down_stair_sprite():
     return ConstructSprite(
-        tileset_textures[81],
+        tileset_textures[83],
         tileset_textures[82],
         tileset_textures[130],
         scale=0.5)

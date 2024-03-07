@@ -4,7 +4,7 @@ map_height = 35
 room_max_size = 10
 room_min_size = 6
 max_rooms = 30
-max_monsters_per_room = 1
+max_monsters_per_room = 4
 max_items_per_room = 5
 
 grid_size = 24

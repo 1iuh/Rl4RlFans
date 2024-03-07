@@ -197,9 +197,13 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
     for _ in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
+        val = random.random()
+        if val > 0.8:
+            continue
 
         if not any(entity.x == x and entity.y == y
                    for entity in dungeon.entities):
+            actors.a_tree.level = level
             entity = actors.a_tree.copy()
             entity.x = x
             entity.y = y
