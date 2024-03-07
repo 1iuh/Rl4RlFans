@@ -19,13 +19,15 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
     return names.capitalize()
 
 
-def render_bar(current_value: int, maximum_value: int, total_width: int) -> None:
+def render_bar(current_value, maximum_value, total_width,
+               color, start_y, name):
 
     bar_width = int(float(current_value) / maximum_value * total_width)
 
     arcade.draw_rectangle_outline(
-        100, 800, total_width*12, 20, arcade.color.AERO_BLUE)  # type: ignore
+        90, start_y, total_width*12, 20, arcade.color.AERO_BLUE)
     if bar_width > 0:
         arcade.draw_rectangle_filled(
-            100, 800, bar_width*12, 20, arcade.color.RED_ORANGE)  # type: ignore
-    # arcade.draw_text(f"HP:{current_value}/{maximum_value}", 70, 794)
+            90, start_y, bar_width*12, 20, color)  # type: ignore
+    arcade.draw_text(f"{name}:{current_value}/{maximum_value}", 60, start_y,
+                     anchor_y='center')

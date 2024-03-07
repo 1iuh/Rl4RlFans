@@ -1,8 +1,6 @@
-from typing import Iterable, List, Reversible, Tuple
-import textwrap
+from typing import List, Tuple
 
 import arcade
-import constants
 import color
 
 
@@ -29,15 +27,18 @@ class MessageLog:
             "",
             0,
             0,
-            arcade.color.WHITE, # type: ignore
-            constants.font_size,
+            arcade.color.WHITE,  # type: ignore
+            10,
             font_name='stsong',
             multiline=True,
-            width=400,
+            width=175,
         )
 
     def add_message(
-        self, text: str, fg: Tuple[int, int, int] = color.white, *, stack: bool = True,
+        self, text: str,
+        fg: Tuple[int, int, int] = color.white,
+        *,
+        stack: bool = True,
     ) -> None:
         """Add a message to this log.
         `text` is the message text, `fg` is the text color.
@@ -49,7 +50,7 @@ class MessageLog:
         else:
             self.messages.append(Message(text, fg))
 
-    def render( self, x: int, y: int, lines:int, cursor:int=0) -> None:
+    def render(self, x: int, y: int, lines: int, cursor: int = 0) -> None:
         """Render this log over the given area.
         `x`, `y`, `width`, `height` is the rectangular region to render onto
         the `console`.
@@ -60,9 +61,11 @@ class MessageLog:
                 end = lines
             else:
                 end = cursor
-            self.context.text = "\n".join([m.full_text for m in self.messages[start: end]])
+            self.context.text = "\n".join(
+                [m.full_text for m in self.messages[start: end]])
         else:
-            self.context.text = "\n".join([m.full_text for m in self.messages[-lines: ]])
+            self.context.text = "\n".join(
+                [m.full_text for m in self.messages[-lines:]])
         self.context.x = x
         self.context.y = y
         self.context.draw()

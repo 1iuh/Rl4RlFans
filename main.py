@@ -24,15 +24,13 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.goto_start_menu()
-        # self.camera = arcade.SimpleCamera(viewport=(
-        #    100, 0, constants.screen_width, constants.screen_height))
 
     def on_draw(self):
         """Render the screen."""
 
         self.clear()
         self.engine.on_render()
-        arcade.draw_text("%.2f" % arcade.get_fps(30), 100, 100)
+        # arcade.draw_text("%.2f" % arcade.get_fps(30), 100, 100)
 
     def on_update(self, delta_time):
         self.engine.on_update(delta_time)

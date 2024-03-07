@@ -95,7 +95,6 @@ class MainGameEventHandler(EventHandler):
                 continue
             act.perform()
         self.engine.update_fov()
-        self.engine.update_camera()
 
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.

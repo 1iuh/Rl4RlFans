@@ -32,9 +32,9 @@ class Equipment(BaseComponent):
     @property
     def gears(self):
         return [
-                ('hands', self.hands),
-                ('body', self.body),
-                ('foot', self.foot),
+                ('Hands', self.hands),
+                ('Body', self.body),
+                ('Foot', self.foot),
                 ]
 
     def put_down(self, part):

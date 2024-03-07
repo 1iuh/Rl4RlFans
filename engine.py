@@ -130,9 +130,8 @@ class GameEngine(Engine):
         self.game_map.explored |= self.game_map.visible
 
     def update_camera(self):
-        # self.window.camera.center(self.player.sprite.position)
-        # self.window.camera.use()
-        pass
+        self.window.camera.center(self.player.sprite.position)
+        self.window.camera.use()
 
     def on_update(self, delta_time):
         self.event_handler.on_update(delta_time)
@@ -145,32 +144,92 @@ class GameEngine(Engine):
 
     def render(self) -> None:
         self.game_map.render()
-        self.message_log.render(x=14, y=720, lines=10)
+        self.render_ui()
+
+    def render_ui(self):
+        arcade.draw_lrbt_rectangle_filled(
+            0,
+            180,
+            0,
+            constants.screen_height,
+            arcade.color.BLACK_OLIVE
+        )
+        self.message_log.render(x=10, y=420, lines=16)
+        i = 0
         render_bar(
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=12,
+            color=arcade.color.RED_ORANGE,
+            start_y=800 - 24 * i,
+            name='HP'
         )
-        arcade.draw_text(f'Power: {self.player.fighter.power}',
-                         10,
-                         constants.screen_height-20
-                         )
-        arcade.draw_text(f'Defense: {self.player.fighter.defense}',
-                         10,
-                         constants.screen_height-40
-                         )
-        arcade.draw_text(f'Speed: {self.player.fighter.speed}',
-                         10,
-                         constants.screen_height-60
-                         )
-        arcade.draw_text(f'Magic: {self.player.fighter.magic}',
-                         10,
-                         constants.screen_height-80
-                         )
-        arcade.draw_text(f'Mp: {self.player.fighter.mp}',
-                         10,
-                         constants.screen_height-100
-                         )
+        i += 1
+        render_bar(
+            current_value=self.player.fighter.mp,
+            maximum_value=self.player.fighter.max_mp,
+            total_width=12,
+            color=arcade.color.BABY_BLUE,
+            start_y=800 - 24 * i,
+            name='MP'
+        )
+
+        i = 0
+        stats_start_x = 38
+        arcade.draw_text(
+            'Stats:',
+            stats_start_x - 20,
+            constants.screen_height - 100 - constants.font_line_height * i,
+            font_size=14
+        )
+        i += 1
+        arcade.draw_text(
+            f'Power: {self.player.fighter.power}',
+            stats_start_x,
+            constants.screen_height - 100 - constants.font_line_height * i
+        )
+        i += 1
+        arcade.draw_text(
+            f'Defense: {self.player.fighter.defense}',
+            stats_start_x,
+            constants.screen_height - 100 - constants.font_line_height * i
+        )
+        i += 1
+        arcade.draw_text(
+            f'Speed: {self.player.fighter.speed}',
+            stats_start_x,
+            constants.screen_height - 100 - constants.font_line_height * i
+        )
+        i += 1
+        arcade.draw_text(
+            f'Magic: {self.player.fighter.magic}',
+            stats_start_x,
+            constants.screen_height - 100 - constants.font_line_height * i
+        )
+
+        i += 2
+        arcade.draw_text(
+            'Equipments:',
+            stats_start_x - 20,
+            constants.screen_height - 100 - constants.font_line_height * i,
+            font_size=14
+        )
+        i += 1
+
+        for d in self.player.equipment.gears:
+            key = d[0]
+            val = d[1]
+            if val is None:
+                gear_name = 'null'
+            else:
+                gear_name = val.name
+
+            arcade.draw_text(
+                f'{key}: {gear_name}',
+                stats_start_x,
+                constants.screen_height - 100 - constants.font_line_height * i,
+            )
+            i += 1
 
     def continue_last_game(self):
         with open('./saves/savegame.sav', "r") as f:
@@ -187,6 +246,6 @@ class GameEngine(Engine):
 
     def to_dict(self) -> dict:
         return dict(
-                player=self.player.to_dict(),
-                game_map=self.game_map.to_dict()
+            player=self.player.to_dict(),
+            game_map=self.game_map.to_dict()
         )
