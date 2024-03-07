@@ -37,14 +37,14 @@ class Equipment(BaseComponent):
                 ('Foot', self.foot),
                 ]
 
-    def put_down(self, part):
-        if part == GearParts.BODY:
+    def put_down(self, gear):
+        if gear.part == GearParts.BODY:
             gear = self.body
             self.body = None
-        elif part == GearParts.FOOT:
+        elif gear.part == GearParts.FOOT:
             gear = self.foot
             self.foot = None
-        elif part == GearParts.HANDS:
+        elif gear.part == GearParts.HANDS:
             gear = self.hands
             self.hands = None
         self.parent.inventory.put_donw(gear)
