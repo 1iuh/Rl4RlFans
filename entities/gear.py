@@ -141,8 +141,8 @@ class GearEnchantment:
         if count == 0:
             self.title = "Normal "
         elif count == 1:
-            self.title = "Magic  "
+            self.title = "Magic "
         elif count == 2:
-            self.title = "Super  "
+            self.title = "Super "
         elif count == 3:
-            self.title = "Amazing"
+            self.title = "Amazing "

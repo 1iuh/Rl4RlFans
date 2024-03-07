@@ -175,43 +175,44 @@ class GameEngine(Engine):
         )
 
         i = 0
-        stats_start_x = 38
+        stats_start_x = 30
+        font_line_height = 18
         arcade.draw_text(
             'Stats:',
-            stats_start_x - 20,
-            constants.screen_height - 100 - constants.font_line_height * i,
+            stats_start_x - 12,
+            constants.screen_height - 100 - font_line_height * i,
             font_size=14
         )
         i += 1
         arcade.draw_text(
             f'Power: {self.player.fighter.power}',
             stats_start_x,
-            constants.screen_height - 100 - constants.font_line_height * i
+            constants.screen_height - 100 - font_line_height * i
         )
         i += 1
         arcade.draw_text(
             f'Defense: {self.player.fighter.defense}',
             stats_start_x,
-            constants.screen_height - 100 - constants.font_line_height * i
+            constants.screen_height - 100 - font_line_height * i
         )
         i += 1
         arcade.draw_text(
             f'Speed: {self.player.fighter.speed}',
             stats_start_x,
-            constants.screen_height - 100 - constants.font_line_height * i
+            constants.screen_height - 100 - font_line_height * i
         )
         i += 1
         arcade.draw_text(
             f'Magic: {self.player.fighter.magic}',
             stats_start_x,
-            constants.screen_height - 100 - constants.font_line_height * i
+            constants.screen_height - 100 - font_line_height * i
         )
 
         i += 2
         arcade.draw_text(
             'Equipments:',
-            stats_start_x - 20,
-            constants.screen_height - 100 - constants.font_line_height * i,
+            stats_start_x - 10,
+            constants.screen_height - 100 - font_line_height * i,
             font_size=14
         )
         i += 1
@@ -223,11 +224,17 @@ class GameEngine(Engine):
                 gear_name = 'null'
             else:
                 gear_name = val.name
-
             arcade.draw_text(
-                f'{key}: {gear_name}',
+                f'{key}:',
                 stats_start_x,
-                constants.screen_height - 100 - constants.font_line_height * i,
+                constants.screen_height - 100 - font_line_height * i,
+            )
+            i += 1
+            arcade.draw_text(
+                f'└ {gear_name}',
+                stats_start_x,
+                constants.screen_height - 100 - font_line_height * i,
+                font_size=10
             )
             i += 1
 
