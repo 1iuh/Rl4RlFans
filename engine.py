@@ -174,9 +174,17 @@ class GameEngine(Engine):
             name='MP'
         )
 
-        i = 0
+        i = 1
         stats_start_x = 30
         font_line_height = 18
+
+        arcade.draw_text(
+            f'Dungeon depth: {self.game_map.level}',
+            stats_start_x - 12,
+            constants.screen_height - 100 - font_line_height * i,
+            font_size=14
+        )
+        i += 2
         arcade.draw_text(
             'Stats:',
             stats_start_x - 12,

@@ -42,3 +42,73 @@ def render_mob_bar(current_value, maximum_value, start_x, start_y):
     arcade.draw_rectangle_filled(
         start_x, start_y + y_offset,
         bar_width, 2, arcade.color.RED)  # type: ignore
+
+
+title = None
+content = None
+
+
+def render_one_window(title_txt, content_txt, offset_x=0):
+    global title
+    global content
+
+    center_x = constants.screen_center_x - constants.inventory_window_width/2
+    center_x = int(center_x) + offset_x
+    content_margin_left = 20
+    if title is None:
+        title = arcade.Text(
+            "",
+            center_x,
+            (int(constants.screen_center_y
+                 + constants.inventory_window_height/2)
+             - constants.font_line_height),
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            align='center',
+            width=constants.inventory_window_width,
+        )
+    if content is None:
+        content = arcade.Text(
+            "",
+            center_x,
+            int(constants.screen_center_y + constants.inventory_window_height /
+                2) - constants.font_line_height*4,
+            arcade.color.WHITE,  # type: ignore
+            constants.font_size,
+            multiline=True,
+            align='left',
+            width=constants.inventory_window_width,
+        )
+
+    title.x = center_x
+    content.x = center_x + content_margin_left
+    title.text = title_txt
+    content.text = content_txt
+
+    arcade.draw_rectangle_filled(
+        center_x+constants.inventory_window_width/2,
+        constants.screen_center_y,
+        constants.inventory_window_width,
+        constants.inventory_window_height,
+        arcade.color.BLACK_OLIVE
+    )
+
+    title.draw()
+    content.draw()
+
+
+def render_one_auto_window(title_txt, content_txt, player_center_x):
+    offset_x = constants.screen_width - constants.screen_center_x
+    offset_x -= constants.inventory_window_width/2 + 10
+
+    if player_center_x >= constants.screen_center_x:
+        render_one_window(title_txt, content_txt, -offset_x)
+    else:
+        render_one_window(title_txt, content_txt, offset_x)
+
+
+def render_tow_window(title_txt, content_txt, sub_title_txt, sub_content_txt):
+    render_one_window(title_txt, content_txt,
+                      constants.inventory_window_width/2 + 5)
+    render_one_window(sub_title_txt, sub_content_txt,
+                      -constants.inventory_window_width/2 - 5)

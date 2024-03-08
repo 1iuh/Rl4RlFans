@@ -58,6 +58,14 @@ class GameMap:
                 mobs.append(e)
         return mobs
 
+    @property
+    def visible_items(self):
+        items = []
+        for e in self.entities:
+            if isinstance(e, (Item, Gear)) and e.sprite.visible:
+                items.append(e)
+        return items
+
     def init_construct_sprites(self):
         x = 0
         y = 0

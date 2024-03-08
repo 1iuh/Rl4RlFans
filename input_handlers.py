@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from arcade import key as arcade_key
+from render_functions import (render_one_window, render_tow_window,
+                              render_one_auto_window)
 import arcade
 import constants
 import math
@@ -241,65 +243,8 @@ class InventoryEventHandler(AskUserEventHandler):
 
     TITLE = "<missing title>"
 
-    def __init__(self, engine):
-        super().__init__(engine)
-        self.title = arcade.Text(
-            f"{self.TITLE}",
-            int(constants.screen_center_x
-                - constants.inventory_window_width/2),
-            (int(constants.screen_center_y
-                 + constants.inventory_window_height/2)
-             - constants.font_line_height),
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            align='center',
-            width=constants.inventory_window_width,
-        )
-        self.content = arcade.Text(
-            "",
-            int(constants.screen_center_x
-                - constants.inventory_window_width/2 + 30),
-            int(constants.screen_center_y + constants.inventory_window_height /
-                2) - constants.font_line_height*4,
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            multiline=True,
-            align='left',
-            width=constants.inventory_window_width,
-        )
-
     def on_render(self) -> None:
-        """Render an inventory menu, which displays the items in the inventory,
-        and the letter to select them. Will move to a different position based
-        on where the player is located, so the player can always see where they
-        are.
-        """
         super().on_render()
-        number_of_items_in_inventory = len(self.engine.player.inventory.items)
-
-        height = number_of_items_in_inventory + 2
-
-        if height <= 3:
-            height = 3
-
-        arcade.draw_rectangle_filled(
-            constants.screen_center_x,
-            constants.screen_center_y,
-            constants.inventory_window_width,
-            constants.inventory_window_height,
-            arcade.color.BLACK_OLIVE
-        )
-
-        content = ''
-        if number_of_items_in_inventory > 0:
-            for i, item in enumerate(self.engine.player.inventory.items):
-                item_key = chr(ord("a") + i)
-                content += f'({item_key}) {item.name}\n        └ {item.attributes}\n'
-            self.content.text = content
-        else:
-            self.content.text = '(empty)'
-        self.title.draw()
-        self.content.draw()
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         player = self.engine.player
@@ -328,29 +273,15 @@ class SkillHandler(InventoryEventHandler):
         super().on_render()
         number_of_items = len(self.engine.player.skills)
 
-        height = number_of_items + 2
-
-        if height <= 3:
-            height = 3
-
-        arcade.draw_rectangle_filled(
-            constants.screen_center_x,
-            constants.screen_center_y,
-            constants.inventory_window_width,
-            constants.inventory_window_height,
-            arcade.color.BLACK_OLIVE
-        )
-
         content = ''
         if number_of_items > 0:
             for i, item in enumerate(self.engine.player.skills):
                 item_key = chr(ord("a") + i)
                 content += f'({item_key}) {item.name}\n'
-            self.content.text = content
         else:
-            self.content.text = '(null)'
-        self.title.draw()
-        self.content.draw()
+            content = '(null)'
+
+        render_one_window(self.TITLE, content)
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         player = self.engine.player
@@ -381,6 +312,34 @@ class InventoryActivateHandler(InventoryEventHandler):
     """Handle using an inventory item."""
 
     TITLE = "Inventory"
+    sub_title = "Equipment"
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+    def on_render(self) -> None:
+        super().on_render()
+
+        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+        content = ''
+        if number_of_items_in_inventory > 0:
+            for i, item in enumerate(self.engine.player.inventory.items):
+                item_key = chr(ord("a") + i)
+                content += f'({item_key}) {item.name}\n'
+                content += f'        └ {item.attributes}\n'
+        else:
+            content = '(empty)'
+
+        sub_content = ''
+        for i, t in enumerate(self.engine.player.equipment.gears):
+            key = t[0]
+            val = t[1]
+            if val is None:
+                sub_content += f'{key}: null\n'
+            else:
+                sub_content += f'{key}: {val.name}\n'
+                sub_content += f'    └ {val.attributes}\n'
+        render_tow_window(self.TITLE, content, self.sub_title, sub_content)
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Return the action for the selected item."""
@@ -391,6 +350,21 @@ class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
 
     TITLE = "Select a item to drop."
+
+    def on_render(self) -> None:
+        super().on_render()
+
+        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+        content = ''
+        if number_of_items_in_inventory > 0:
+            for i, item in enumerate(self.engine.player.inventory.items):
+                item_key = chr(ord("a") + i)
+                content += f'({item_key}) {item.name}\n'
+                content += f'        └ {item.attributes}\n'
+        else:
+            content = '(empty)'
+
+        render_one_window(self.TITLE, content)
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
         """Drop this item."""
@@ -440,7 +414,7 @@ class SelectIndexHandler(AskUserEventHandler):
 
 
 class LookHandler(AskUserEventHandler):
-    TITLE = 'Monsters'
+    TITLE = 'Monsters And Items'
 
     def __init__(self, engine):
         super().__init__(engine)
@@ -449,47 +423,8 @@ class LookHandler(AskUserEventHandler):
         if self.engine.player.x >= constants.map_width/2:
             self.x_offset = -self.x_offset
 
-        self.title = arcade.Text(
-            f"{self.TITLE}",
-            int(constants.screen_center_x
-                - constants.inventory_window_width/2) + self.x_offset,
-            (int(constants.screen_center_y
-                 + constants.inventory_window_height/2)
-             - constants.font_line_height),
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            align='center',
-            width=constants.inventory_window_width,
-        )
-        self.content = arcade.Text(
-            "",
-            int(constants.screen_center_x + 30
-                - constants.inventory_window_width/2) + self.x_offset,
-            int(constants.screen_center_y + constants.inventory_window_height /
-                2) - constants.font_line_height*4,
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            multiline=True,
-            align='left',
-            width=constants.inventory_window_width,
-        )
-
     def on_render(self) -> None:
         super().on_render()
-        number_of_mob = len(self.engine.game_map.visible_monsters)
-
-        height = number_of_mob + 5
-
-        if height <= 3:
-            height = 3
-
-        arcade.draw_rectangle_filled(
-            constants.screen_center_x + self.x_offset,
-            constants.screen_center_y + 50,
-            constants.inventory_window_width - 40,
-            constants.inventory_window_height - 50,
-            arcade.color.BLACK_OLIVE
-        )
 
         content = ''
         for i, actor in enumerate(self.engine.game_map.visible_monsters):
@@ -506,9 +441,18 @@ class LookHandler(AskUserEventHandler):
                              anchor_y='center',
                              )
 
-        self.content.text = content
-        self.title.draw()
-        self.content.draw()
+        content += "\n"
+        for i, item in enumerate(self.engine.game_map.visible_items):
+            item_key = chr(ord("A") + i)
+            content += f'({item_key}) {item.name}\n'
+            arcade.draw_text(item_key,
+                             item.sprite.center_x,
+                             item.sprite.center_y,
+                             anchor_x='center',
+                             anchor_y='center',
+                             )
+        render_one_auto_window(self.TITLE, content,
+                               self.engine.player.sprite.center_x)
 
     def on_index_selected(self, x: int, y: int) -> None:
         """Return to main handler."""
@@ -553,6 +497,9 @@ class EscMenuHandler(AskUserEventHandler):
         elif key in (arcade_key.J, arcade_key.DOWN):
             self.cursor_index += 1
         elif key in CONFIRM_KEYS:
+            return self.on_index_selected()
+        else:
+            self.cursor_index = 0
             return self.on_index_selected()
 
     def on_index_selected(self) -> None:
@@ -637,47 +584,9 @@ class EquipmentEventHandler(AskUserEventHandler):
 
     def __init__(self, engine):
         super().__init__(engine)
-        self.title = arcade.Text(
-            f"{self.TITLE}",
-            int(constants.screen_center_x
-                - constants.inventory_window_width/2),
-            (int(constants.screen_center_y
-                 + constants.inventory_window_height/2)
-             - constants.font_line_height),
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            align='center',
-            width=constants.inventory_window_width,
-        )
-        self.content = arcade.Text(
-            "",
-            int(constants.screen_center_x
-                - constants.inventory_window_width/2),
-            int(constants.screen_center_y + constants.inventory_window_height /
-                2) - constants.font_line_height*4,
-            arcade.color.WHITE,  # type: ignore
-            constants.font_size,
-            multiline=True,
-            align='center',
-            width=constants.inventory_window_width,
-        )
 
     def on_render(self) -> None:
         super().on_render()
-        number_of_items_in_inventory = len(self.engine.player.equipment.gears)
-
-        height = number_of_items_in_inventory + 2
-
-        if height <= 3:
-            height = 3
-
-        arcade.draw_rectangle_filled(
-            constants.screen_center_x,
-            constants.screen_center_y,
-            constants.inventory_window_width,
-            constants.inventory_window_height,
-            arcade.color.BLACK_OLIVE
-        )
 
         content = ''
         for i, t in enumerate(self.engine.player.equipment.gears):
@@ -687,11 +596,9 @@ class EquipmentEventHandler(AskUserEventHandler):
             if val is None:
                 content += f'({item_key}) {key}: null\n'
             else:
-                content += f'({item_key}) {key}: {val.name}\n        └ {val.attributes}\n'
-
-        self.content.text = content
-        self.title.draw()
-        self.content.draw()
+                content += f'({item_key}) {key}: {val.name}\n'
+                content += f'        └ {val.attributes}\n'
+            render_one_window(self.TITLE, content)
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         player = self.engine.player
