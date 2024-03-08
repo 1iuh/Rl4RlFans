@@ -6,7 +6,6 @@ from entities import actors
 import copy
 import constants
 
-arcade.enable_timings()
 
 
 class MyGame(arcade.Window):
@@ -91,4 +90,8 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    import os
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        os.chdir(sys._MEIPASS)
     main()
