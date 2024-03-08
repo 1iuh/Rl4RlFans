@@ -2,37 +2,37 @@
 mob_data = {
         1: {
             'hp': 20,
-            'power': 5,
+            'power': 7,
             'defense': 3,
             'speed': 3,
             },
         2: {
             'hp': 40,
-            'power': 10,
+            'power': 12,
             'defense': 6,
             'speed': 5,
             },
         3: {
             'hp': 60,
-            'power': 15,
+            'power': 17,
             'defense': 9,
             'speed': 7,
             },
         4: {
             'hp': 80,
-            'power': 20,
+            'power': 22,
             'defense': 12,
             'speed': 9,
             },
         5: {
             'hp': 100,
-            'power': 25,
+            'power': 27,
             'defense': 15,
             'speed': 11,
             },
         6: {
             'hp': 120,
-            'power': 30,
+            'power': 32,
             'defense': 18,
             'speed': 13,
             },

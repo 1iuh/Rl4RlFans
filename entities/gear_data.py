@@ -62,98 +62,97 @@ wand_data = {
 
 armor_data = {
     1: {
-        'defense': 5,
+        'defense': 3,
         'max_hp': 5
     },
     2: {
-        'defense': 8,
+        'defense': 5,
         'max_hp': 10
     },
     3: {
-        'defense': 11,
+        'defense': 8,
         'max_hp': 15
     },
     4: {
-        'defense': 14,
+        'defense': 11,
         'max_hp': 20
     },
     5: {
-        'defense': 17,
+        'defense': 14,
         'max_hp': 25
     },
     6: {
-        'defense': 20,
+        'defense': 18,
         'max_hp': 30
     },
     7: {
-        'defense': 23,
+        'defense': 20,
         'max_hp': 35
     },
     8: {
-        'defense': 26,
+        'defense': 23,
         'max_hp': 40
     },
 }
 
 colth_data = {
     1: {
-        'defense': 2,
         'max_mp': 10
     },
     2: {
-        'defense': 4,
+        'defense': 2,
         'max_mp': 14
     },
     3: {
-        'defense': 6,
+        'defense': 4,
         'max_mp': 18
     },
     4: {
-        'defense': 8,
+        'defense': 6,
         'max_mp': 22
     },
     5: {
-        'defense': 10,
+        'defense': 8,
         'max_mp': 26
     },
     6: {
-        'defense': 12,
+        'defense': 10,
         'max_mp': 30
     },
     7: {
-        'defense': 14,
+        'defense': 12,
         'max_mp': 34
     },
     8: {
-        'defense': 16,
+        'defense': 14,
         'max_mp': 38
     },
 }
 
 iron_boots_data = {
     1: {
-        'defense': 2,
+        'defense': 1,
     },
     2: {
-        'defense': 3,
+        'defense': 2,
     },
     3: {
-        'defense': 4,
+        'defense': 3,
     },
     4: {
-        'defense': 5,
+        'defense': 4,
     },
     5: {
-        'defense': 6,
+        'defense': 5,
     },
     6: {
-        'defense': 7,
+        'defense': 6,
     },
     7: {
-        'defense': 8,
+        'defense': 7,
     },
     8: {
-        'defense': 9,
+        'defense': 8,
     },
 }
 
