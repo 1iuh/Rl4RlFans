@@ -278,6 +278,8 @@ class SkillHandler(InventoryEventHandler):
             for i, item in enumerate(self.engine.player.skills):
                 item_key = chr(ord("a") + i)
                 content += f'({item_key}) {item.name}\n'
+                content += f'    └ cost: {item.mana_cost},'
+                content += f' damage: {item.desc}\n'
         else:
             content = '(null)'
 

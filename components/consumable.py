@@ -10,6 +10,10 @@ from exceptions import Impossible
 from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
 from entities.factors.others import fireball_missile
 
+from entities.entity import VisualEffects
+from components.ai import VfxAI
+import sprites
+
 from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
@@ -207,3 +211,82 @@ class FireballSkillConsumable(Consumable):
         self.consume()
         action = missile.ai.perform()
         action.perform()
+
+    def consume(self) -> None:
+        pass
+
+
+class TPConsumable(Consumable):
+
+    def __init__(self, radius: int):
+        self.radius = radius
+
+    def get_action(self, consumer: Actor) -> Optional[actions.Action]:
+        self.engine.message_log.add_message(
+            "Choice target.", color.needs_target
+        )
+        self.engine.event_handler = SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
+        )
+        return None
+
+    def activate(self, action: actions.SkillAction) -> None:
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You can`t see there.")
+
+        action.entity.fighter.mp -= action.skill.mana_cost
+        action.entity.x = action.target_xy[0]
+        action.entity.y = action.target_xy[1]
+
+        self.engine.message_log.add_message(
+                f"{action.speed}: {action.entity.name} cast tp.")
+
+    def consume(self) -> None:
+        pass
+
+
+class LightningBoltConsumable(Consumable):
+
+    def __init__(self, damage: int, radius: int):
+        self.damage = damage
+        self.radius = radius
+
+    def get_action(self, consumer: Actor) -> Optional[actions.Action]:
+        self.engine.message_log.add_message(
+            "Choice target.", color.needs_target
+        )
+        self.engine.event_handler = SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
+        )
+        return None
+
+    def activate(self, action: actions.SkillAction) -> None:
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You can`t see there.")
+
+        action.entity.fighter.mp -= action.skill.mana_cost
+        vfxs = []
+        for actor in self.gamemap.actors:
+            if (actor.x == action.target_xy[0] and
+                    actor.y == action.target_xy[1]):
+                damage = self.damage + action.entity.fighter.magic * 2
+                self.gamemap.engine.message_log.add_message(
+                    f"{action.entity.name} cast a lightning bolt,\
+                         {actor.name} takes {damage} damage!")
+                actor.fighter.take_damage(damage)
+                vfx = VisualEffects(
+                    9000,
+                    sprite_f=sprites.flame_sprite,
+                    ai_cls=VfxAI,
+                    actor=actor
+                )
+                vfxs.append(vfx)
+        for v in vfxs:
+            self.gamemap.spawn_entity(v)
+
+    def consume(self) -> None:
+        pass

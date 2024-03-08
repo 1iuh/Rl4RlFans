@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from entities.entity import Entity
 from components.equipment import Equipment
-from entities.factors.skills import fireball_skill
+from entities.factors import skills
 from entities.mob_data import mob_data
 
 from typing import TYPE_CHECKING
@@ -47,7 +47,9 @@ class Actor(Entity):
         self.equipment = Equipment(self)
 
         self.skills = []
-        self.skills.append(fireball_skill(self))
+        self.skills.append(skills.fireball_skill(self))
+        self.skills.append(skills.teleportation_skill(self))
+        self.skills.append(skills.lightning_bolt_skill(self))
 
     def copy(self):
         clone = super().copy()

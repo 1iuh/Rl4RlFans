@@ -6,7 +6,7 @@ import sprites
 health_potion = Item(
         entity_id=6000,
         name="health potion",
-        desc='recover 20 hp',
+        desc='recover 20% hp',
         consumable=consumable.HealingConsumable(amount=20),
         sprite_f=sprites.health_potion,
         )
@@ -14,7 +14,7 @@ health_potion = Item(
 mana_potion = Item(
         entity_id=6001,
         name="mana potion",
-        desc='recover 20 mp',
+        desc='recover 20% mp',
         consumable=consumable.ManaRecoverConsumable(amount=20),
         sprite_f=sprites.mana_potion,
         )
