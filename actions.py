@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
+    from entities.skill import Skill
     from entities.gear import Gear
     from engine import Engine
 
@@ -143,6 +144,26 @@ class BumpAction(ActionWithDirection):
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()
+
+
+class SkillAction(Action):
+    def __init__(self, entity: Actor, skill: Skill, target_xy):
+        super().__init__(entity)
+        self.skill = skill
+        if not target_xy:
+            target_xy = entity.x, entity.y
+        self.target_xy = target_xy
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.target_xy)
+
+    def perform(self) -> None:
+        """Invoke the items ability,
+        this action will be given to provide context.
+        """
+        self.skill.consumable.activate(self)
 
 
 class ItemAction(Action):

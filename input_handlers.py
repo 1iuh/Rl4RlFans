@@ -304,7 +304,6 @@ class SkillHandler(InventoryEventHandler):
                 "Mana Not Enough.", color.invalid)
             return None
         else:
-            self.engine.player.fighter.mp -= skill.mana_cost
             return skill.consumable.get_action(self.engine.player)
 
 

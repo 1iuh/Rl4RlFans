@@ -183,14 +183,16 @@ class FireballSkillConsumable(Consumable):
         self.engine.event_handler = AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,
-            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+            callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
         )
         return None
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: actions.SkillAction) -> None:
 
         if not self.engine.game_map.visible[action.target_xy]:
             raise Impossible("You can`t see there.")
+
+        action.entity.fighter.mp -= action.skill.mana_cost
 
         self.engine.message_log.add_message(
                 f"{action.speed}: {action.entity.name} threw a fireball")
