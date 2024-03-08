@@ -215,7 +215,7 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
         val = random.random()
-        if val > 0.8:
+        if val > 0.7:
             continue
 
         if not any(entity.x == x and entity.y == y
