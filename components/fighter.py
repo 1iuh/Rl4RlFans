@@ -6,6 +6,8 @@ from input_handlers import GameOverEventHandler
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
 import color
+from entities.factors import items, gears
+import random
 
 if TYPE_CHECKING:
     from entities.entity import Actor
@@ -126,6 +128,26 @@ class Fighter(BaseComponent):
         self.parent.name = f"{self.parent.name}'s remain."
         self.parent.sprite.render_order = RenderOrder.CORPSE
         self.engine.message_log.add_message(death_message, death_message_color)
+        self.drop_loots()
+
+    def drop_loots(self):
+        if self.parent.entity_id == 0:
+            return
+        ranval = random.random()
+        if ranval < 0.15:
+            gear = random.choice(gears.all_gears)
+            gear.level = self.parent.level
+            item = gear.copy()
+            item.x = self.parent.x
+            item.y = self.parent.y
+            self.engine.game_map.spawn_entity(item)
+        elif ranval < 0.2:
+            gear = random.choice(gears.all_gears)
+            gear.level = self.parent.level
+            item = gear.copy()
+            item.x = self.parent.x
+            item.y = self.parent.y
+            self.engine.game_map.spawn_entity(item)
 
     def to_dict(self):
         return dict(
