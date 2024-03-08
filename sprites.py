@@ -91,6 +91,7 @@ class ConstructSprite(arcade.Sprite):
             else:
                 self.texture = self.dark_texture
 
+
 class MissileSprite(arcade.Sprite):
 
     left_time: float = 0
@@ -166,20 +167,124 @@ def wall_sprite():
 
 
 def player_sprite():
-
     return ActorSprite("./asset/player_idle_f{0}.png", 3, scale=1)
 
 
-def big_demon():
-    return ActorSprite("./asset/frames/big_demon_idle_anim_f{0}.png", 4, scale=0.666)
+def goblin_sprite():
+    return ActorSprite("./asset/frames/goblin_idle_anim_f{0}.png",
+                       4, scale=1)
 
 
-def big_zombie():
-    return ActorSprite("./asset/frames/big_zombie_idle_anim_f{0}.png", 4, scale=0.666)
+def ice_zombie_sprite():
+    return ActorSprite("./asset/frames/ice_zombie_anim_f{0}.png",
+                       4, scale=1)
 
 
-def chort():
+def imp_sprite():
+    return ActorSprite("./asset/frames/imp_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def masked_orc_sprite():
+    return ActorSprite("./asset/frames/masked_orc_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def muddy_sprite():
+    return ActorSprite("./asset/frames/muddy_anim_f{0}.png",
+                       4, scale=1)
+
+
+def nec_sprite():
+    return ActorSprite("./asset/frames/necromancer_anim_f{0}.png",
+                       4, scale=1)
+
+
+def ogre_sprite():
+    return ActorSprite("./asset/frames/ogre_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def orc_shaman_sprite():
+    return ActorSprite("./asset/frames/orc_shaman_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def orc_warrior_sprite():
+    return ActorSprite("./asset/frames/orc_warrior_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def skelet_sprite():
+    return ActorSprite("./asset/frames/skelet_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def slug_sprite():
+    return ActorSprite("./asset/frames/slug_anim_f{0}.png",
+                       4, scale=1)
+
+
+def swampy_sprite():
+    return ActorSprite("./asset/frames/swampy_anim_f{0}.png",
+                       4, scale=1)
+
+
+def tiny_slug_sprite():
+    return ActorSprite("./asset/frames/tiny_slug_anim_f{0}.png",
+                       4, scale=1)
+
+
+def tiny_zombie_sprite():
+    return ActorSprite("./asset/frames/tiny_zombie_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def wogol_sprite():
+    return ActorSprite("./asset/frames/wogol_idle_anim_f{0}.png",
+                       4, scale=1)
+
+
+def zombie_sprite():
+    return ActorSprite("./asset/frames/zombie_anim_f{0}.png",
+                       4, scale=1)
+
+
+def big_demon_sprite():
+    return ActorSprite("./asset/frames/big_demon_idle_anim_f{0}.png",
+                       4, scale=0.666)
+
+
+def big_zombie_sprite():
+    return ActorSprite("./asset/frames/big_zombie_idle_anim_f{0}.png",
+                       4, scale=0.666)
+
+
+def chort_sprite():
     return ActorSprite("./asset/frames/chort_idle_anim_f{0}.png", 4, scale=1)
+
+
+monster_sprites = [
+    goblin_sprite,
+    ice_zombie_sprite,
+    imp_sprite,
+    masked_orc_sprite,
+    muddy_sprite,
+    nec_sprite,
+    ogre_sprite,
+    orc_shaman_sprite,
+    orc_warrior_sprite,
+    skelet_sprite,
+    slug_sprite,
+    swampy_sprite,
+    tiny_slug_sprite,
+    tiny_zombie_sprite,
+    wogol_sprite,
+    zombie_sprite,
+    big_demon_sprite,
+    big_zombie_sprite,
+    chort_sprite
+]
 
 
 def toufu():
@@ -187,15 +292,18 @@ def toufu():
 
 
 def feishiko():
-    return ActorSprite("./asset/frames/lizard_m_idle_anim_f{0}.png", 4, scale=1)
+    return ActorSprite("./asset/frames/lizard_m_idle_anim_f{0}.png",
+                       4, scale=1)
 
 
 def silencess():
-    return ActorSprite("./asset/frames/wizzard_m_idle_anim_f{0}.png", 4, scale=1)
+    return ActorSprite("./asset/frames/wizzard_m_idle_anim_f{0}.png",
+                       4, scale=1)
 
 
 def superlight():
-    return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png", 4, scale=1)
+    return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png",
+                       4, scale=1)
 
 
 def fireball_missile_sprite():

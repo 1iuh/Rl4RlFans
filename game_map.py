@@ -220,8 +220,9 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
 
         if not any(entity.x == x and entity.y == y
                    for entity in dungeon.entities):
-            actors.a_tree.level = level
-            entity = actors.a_tree.copy()
+            monster = random.choice(actors.monsters)
+            monster.level = level
+            entity = monster.copy()
             entity.x = x
             entity.y = y
             dungeon.spawn_entity(entity)

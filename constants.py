@@ -33,6 +33,7 @@ inventory_window_width = screen_width - 800
 inventory_window_height = screen_height - 300
 
 missile_move_speed = 4
+end_level = 6
 
 actor_stats_keys = [
         'power',

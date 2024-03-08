@@ -87,7 +87,7 @@ class Fighter(BaseComponent):
         if self.hp == self.max_hp:
             return 0
 
-        amount = self.max_hp * amount / 100
+        amount = int(self.max_hp * amount / 100)
         new_hp_value = self.hp + amount
 
         if new_hp_value > self.max_hp:
@@ -102,7 +102,7 @@ class Fighter(BaseComponent):
     def mana_recover(self, amount: int) -> int:
         if self.mp == self.max_mp:
             return 0
-        amount = self.max_mp * amount / 100
+        amount = int(self.max_mp * amount / 100)
         new_mp_value = self.mp + amount
         if new_mp_value > self.max_mp:
             new_mp_value = self.max_mp
@@ -142,7 +142,7 @@ class Fighter(BaseComponent):
             item.y = self.parent.y
             self.engine.game_map.spawn_entity(item)
         elif ranval < 0.2:
-            gear = random.choice(gears.all_gears)
+            gear = random.choice(items.all_item)
             gear.level = self.parent.level
             item = gear.copy()
             item.x = self.parent.x

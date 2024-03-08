@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from tcod.map import compute_fov
-from input_handlers import MainGameEventHandler, StartMenuEventHandler
+from input_handlers import (MainGameEventHandler, StartMenuEventHandler,
+                            WinEventHandler)
 from message_log import MessageLog
 from entities.actor import Actor
 from render_functions import render_bar, render_mob_bar
@@ -46,8 +47,6 @@ class StartMenuEngine(Engine):
     title = 'Roguelike For Roguelike Fans'
     options = [
         'New Game',
-        'Continue',
-        'Config',
         'Exit',
     ]
 
@@ -96,8 +95,6 @@ class StartMenuEngine(Engine):
         if self.cursor_index == 0:
             self.window.start_new_game()
         elif self.cursor_index == 1:
-            self.window.continue_last_game()
-        elif self.cursor_index == 3:
             arcade.exit()
 
 
@@ -260,6 +257,9 @@ class GameEngine(Engine):
             self.player.load_dict(game_data['player'])
             self.game_map.spawn_entity(self.player)
 
+    def quit(self):
+        self.window.goto_start_menu()
+
     def save_and_quit(self):
         save_data = json.dumps(self.to_dict())
         with open('./saves/savegame.sav', "wb") as f:
@@ -269,7 +269,10 @@ class GameEngine(Engine):
     def enter_next_level(self):
         if (self.game_map.tiles[self.player.x, self.player.y][2] ==
                 constants.down_stair_tilecode):
-            self.window.enter_next_level()
+            if (self.game_map.level == constants.end_level):
+                self.event_handler = WinEventHandler(self)
+            else:
+                self.window.enter_next_level()
 
     def to_dict(self) -> dict:
         return dict(

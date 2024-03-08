@@ -148,9 +148,34 @@ class MainGameEventHandler(EventHandler):
 
 class GameOverEventHandler(EventHandler):
 
+    TITLE = "You Die."
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
+        render_one_window(self.TITLE, "Press Esc to continue.")
+
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         if key == arcade_key.ESCAPE:
-            raise SystemExit()
+            return self.engine.quit()
+
+
+class WinEventHandler(EventHandler):
+
+    TITLE = "You Win."
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
+        render_one_window(self.TITLE, "Press Esc to continue.")
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        if key == arcade_key.ESCAPE:
+            return self.engine.quit()
 
 
 class HistoryViewer(EventHandler):
@@ -435,7 +460,8 @@ class LookHandler(AskUserEventHandler):
                 content += f'  hp: {actor.fighter.hp}'
                 content += f'  ack: {actor.fighter.power}'
                 content += f'  def: {actor.fighter.defense}'
-                content += f'  spd: {actor.fighter.speed} \n'
+                content += f'  spd: {actor.fighter.speed}'
+            content += '\n'
             arcade.draw_text(item_key,
                              actor.sprite.center_x,
                              actor.sprite.center_y,
@@ -462,7 +488,7 @@ class LookHandler(AskUserEventHandler):
 
 
 class EscMenuHandler(AskUserEventHandler):
-    options = ['Resume', 'Save & Quit']
+    options = ['Resume', 'Quit']
     cursor_index = 0
 
     def __init__(self, engine: GameEngine):
@@ -507,7 +533,7 @@ class EscMenuHandler(AskUserEventHandler):
     def on_index_selected(self) -> None:
         """Return to main handler."""
         if self.cursor_index == 1:
-            self.engine.save_and_quit()
+            self.engine.quit()
         else:
             self.engine.event_handler = MainGameEventHandler(self.engine)
 

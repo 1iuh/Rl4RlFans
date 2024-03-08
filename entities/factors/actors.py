@@ -1,6 +1,6 @@
 import sprites
 from components.ai import HostileEnemy
-from components.inventory import Inventory
+from components import inventory
 from ..actor import Actor
 from components.fighter import Fighter
 
@@ -10,10 +10,28 @@ player = Actor(
         name="you",
         ai_cls=HostileEnemy,
         fighter=Fighter(hp=40, defense=2, power=8, speed=5),
-        inventory=Inventory(capacity=12),
+        inventory=inventory.Inventory(capacity=12),
         sprite_f=sprites.player_sprite
         )
 
+monsters = []
+entity_id = 1000
+
+for sp in sprites.monster_sprites:
+    name = sp.__name__.replace("_sprite", "").replace("_", " ")
+    actor = Actor(
+         entity_id=entity_id,
+         name=name,
+         ai_cls=HostileEnemy,
+         fighter=Fighter(hp=10, defense=4, power=5, speed=8),
+         inventory=inventory.Inventory(capacity=0),
+         sprite_f=sp
+         )
+    monsters.append(actor)
+    entity_id += 1
+
+
+"""
 a_tree = Actor(
         entity_id=1000,
         name="atree",
@@ -73,3 +91,4 @@ superlight = Actor(
         inventory=Inventory(capacity=0),
         sprite_f=sprites.superlight,
         )
+"""
