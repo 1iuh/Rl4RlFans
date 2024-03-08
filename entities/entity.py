@@ -124,20 +124,24 @@ class VisualEffects(Entity):
         entity_id: int,
         sprite_f,
         ai_cls,
-        x: int = 0,
-        y: int = 0,
+        actor,
         name: str = "Missile",
     ):
-        super().__init__(
-            entity_id=entity_id,
-            parent=None,
-            x=x,
-            y=y,
-            name=name,
-            blocks_movement=False,
-            sprite_f=sprite_f,
-        )
+        self.entity_id = entity_id
+        self.name = name
+        self.blocks_movement = False
+        self.sprite_f = sprite_f
+
+        self.actor = actor
         self.ai = ai_cls(self)
+
+    @property
+    def x(self):
+        return self.actor.x
+
+    @property
+    def y(self):
+        return self.actor.y
 
     def activate(self):
         self.gamemap.despawn_entity(self)
@@ -212,10 +216,9 @@ class Missile(Entity):
                 actor.fighter.take_damage(self.damage)
                 vfx = VisualEffects(
                     9000,
-                    x=actor.x,
-                    y=actor.y,
                     sprite_f=sprites.flame_sprite,
-                    ai_cls=VfxAI
+                    ai_cls=VfxAI,
+                    actor=actor
                 )
                 vfxs.append(vfx)
         for v in vfxs:

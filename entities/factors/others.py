@@ -5,10 +5,9 @@ import sprites
 
 fireVFX = VisualEffects(
                     9000,
-                    x=0,
-                    y=0,
                     sprite_f=sprites.flame_sprite,
-                    ai_cls=VfxAI
+                    ai_cls=VfxAI,
+                    actor=None
                 )
 
 fireball_missile = Missile(

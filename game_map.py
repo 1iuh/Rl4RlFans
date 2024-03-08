@@ -234,15 +234,15 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < 0.2:
+            if item_chance < 0.15:
                 gear = random.choice(gears.all_gears)
                 gear.level = level
                 item = gear.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            elif item_chance < 0.3:
-                item = items.health_potion.copy()
+            elif item_chance < 0.25:
+                item = random.choice(items.all_item).copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)

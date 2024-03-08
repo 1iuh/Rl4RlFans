@@ -430,10 +430,11 @@ class LookHandler(AskUserEventHandler):
         for i, actor in enumerate(self.engine.game_map.visible_monsters):
             item_key = chr(ord("a") + i)
             content += f'({item_key}) {actor.name} '
-            content += f'  hp: {actor.fighter.hp}'
-            content += f'  ack: {actor.fighter.power}'
-            content += f'  def: {actor.fighter.defense}'
-            content += f'  spd: {actor.fighter.speed} \n'
+            if actor.is_alive:
+                content += f'  hp: {actor.fighter.hp}'
+                content += f'  ack: {actor.fighter.power}'
+                content += f'  def: {actor.fighter.defense}'
+                content += f'  spd: {actor.fighter.speed} \n'
             arcade.draw_text(item_key,
                              actor.sprite.center_x,
                              actor.sprite.center_y,

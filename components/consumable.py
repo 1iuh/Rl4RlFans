@@ -51,15 +51,25 @@ class HealingConsumable(Consumable):
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
         amount_recovered = consumer.fighter.heal(self.amount)
+        self.engine.message_log.add_message(
+            f"You use {self.parent.name}, record {amount_recovered} hp!",
+            color.health_recovered,
+        )
+        self.consume()
 
-        if amount_recovered > 0:
-            self.engine.message_log.add_message(
-                f"You use {self.parent.name}, record {amount_recovered} hp!",
-                color.health_recovered,
-            )
-            self.consume()
-        else:
-            raise Impossible("你的生命值是满的.")
+
+class ManaRecoverConsumable(Consumable):
+    def __init__(self, amount: int):
+        self.amount = amount
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        amount_recovered = consumer.fighter.mana_recover(self.amount)
+        self.engine.message_log.add_message(
+            f"You use {self.parent.name}, record {amount_recovered} mp!",
+            color.health_recovered,
+        )
+        self.consume()
 
 
 class LightningDamageConsumable(Consumable):

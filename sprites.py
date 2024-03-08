@@ -16,8 +16,6 @@ tileset_textures = arcade.load_spritesheet(
 
 gear_textures = arcade.load_spritesheet(
     "./asset/gears.png", 48, 48, 16, 350, 0, None)
-potions_textures = arcade.load_spritesheet(
-    "./asset/Potions 48x48.png", 48, 48, 5, 50, 0, None)
 big_zombie_textures = arcade.load_texture(
     "./asset/frames/big_zombie_run_anim_f0.png")
 chort_textures = arcade.load_texture("./asset/frames/chort_idle_anim_f0.png")
@@ -92,7 +90,6 @@ class ConstructSprite(arcade.Sprite):
                 self.texture = self.light_texture
             else:
                 self.texture = self.dark_texture
-
 
 class MissileSprite(arcade.Sprite):
 
@@ -201,22 +198,6 @@ def superlight():
     return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png", 4, scale=1)
 
 
-def potion_0():
-    return ItemSprite(path_or_texture=potions_textures[0], scale=0.4)
-
-
-def potion_1():
-    return ItemSprite(path_or_texture=potions_textures[10], scale=0.4)
-
-
-def potion_2():
-    return ItemSprite(path_or_texture=potions_textures[20], scale=0.4)
-
-
-def potion_3():
-    return ItemSprite(path_or_texture=potions_textures[30], scale=0.4)
-
-
 def fireball_missile_sprite():
     return MissileSprite("./asset/fireball/1_{0}.png", 20, 0.5)
 
@@ -226,32 +207,40 @@ def flame_sprite():
 
 
 def sword_sprite():
-    return ItemSprite(path_or_texture=gear_textures[336], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[336], scale=0.4)
 
 
 def wand_sprite():
-    return ItemSprite(path_or_texture=gear_textures[321], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[321], scale=0.4)
 
 
 def hat():
-    return ItemSprite(path_or_texture=gear_textures[176], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[176], scale=0.4)
 
 
 def cloth():
-    return ItemSprite(path_or_texture=gear_textures[0], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[0], scale=0.4)
 
 
 def boot():
-    return ItemSprite(path_or_texture=gear_textures[63], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[63], scale=0.4)
 
 
 def iron_helmet_sprite():
-    return ItemSprite(path_or_texture=gear_textures[187], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[187], scale=0.4)
 
 
 def iron_armor_sprite():
-    return ItemSprite(path_or_texture=gear_textures[1], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[1], scale=0.4)
 
 
 def iron_boot_sprite():
-    return ItemSprite(path_or_texture=gear_textures[64], scale=0.5)
+    return ItemSprite(path_or_texture=gear_textures[64], scale=0.4)
+
+
+def health_potion():
+    return ItemSprite(path_or_texture=gear_textures[237], scale=0.4)
+
+
+def mana_potion():
+    return ItemSprite(path_or_texture=gear_textures[238], scale=0.4)
