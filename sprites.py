@@ -6,20 +6,31 @@ import math
 from render_order import RenderOrder
 
 from typing import TYPE_CHECKING
+import sys
+import os
 
 if TYPE_CHECKING:
     from entities.entity import Missile
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+gear_textures = arcade.load_spritesheet(resource_path("asset/gears.png"), 48, 48, 16, 350, 0, None)
 
 tileset_textures = arcade.load_spritesheet(
-    "./asset/Tiles and Walls 48x48.png", 48, 48, 17, 153, 0, None)
-
-gear_textures = arcade.load_spritesheet(
-    "./asset/gears.png", 48, 48, 16, 350, 0, None)
+    resource_path("asset/Tiles and Walls 48x48.png"), 48, 48, 17, 153, 0, None)
 big_zombie_textures = arcade.load_texture(
-    "./asset/frames/big_zombie_run_anim_f0.png")
-chort_textures = arcade.load_texture("./asset/frames/chort_idle_anim_f0.png")
-
+    resource_path("asset/frames/big_zombie_run_anim_f0.png"))
+chort_textures = arcade.load_texture(resource_path(resource_path("asset/frames/chort_idle_anim_f0.png")))
+background = arcade.load_texture(resource_path("asset/Background/background_0.png"))
 
 class ItemSprite(arcade.Sprite):
 
@@ -167,101 +178,101 @@ def wall_sprite():
 
 
 def player_sprite():
-    return ActorSprite("./asset/player_idle_f{0}.png", 3, scale=1)
+    return ActorSprite(resource_path("asset/player_idle_f{0}.png"), 3, scale=1)
 
 
 def goblin_sprite():
-    return ActorSprite("./asset/frames/goblin_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/goblin_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def ice_zombie_sprite():
-    return ActorSprite("./asset/frames/ice_zombie_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/ice_zombie_anim_f{0}.png"),
                        4, scale=1)
 
 
 def imp_sprite():
-    return ActorSprite("./asset/frames/imp_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/imp_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def masked_orc_sprite():
-    return ActorSprite("./asset/frames/masked_orc_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/masked_orc_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def muddy_sprite():
-    return ActorSprite("./asset/frames/muddy_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/muddy_anim_f{0}.png"),
                        4, scale=1)
 
 
 def nec_sprite():
-    return ActorSprite("./asset/frames/necromancer_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/necromancer_anim_f{0}.png"),
                        4, scale=1)
 
 
 def ogre_sprite():
-    return ActorSprite("./asset/frames/ogre_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/ogre_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def orc_shaman_sprite():
-    return ActorSprite("./asset/frames/orc_shaman_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/orc_shaman_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def orc_warrior_sprite():
-    return ActorSprite("./asset/frames/orc_warrior_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/orc_warrior_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def skelet_sprite():
-    return ActorSprite("./asset/frames/skelet_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/skelet_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def slug_sprite():
-    return ActorSprite("./asset/frames/slug_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/slug_anim_f{0}.png"),
                        4, scale=1)
 
 
 def swampy_sprite():
-    return ActorSprite("./asset/frames/swampy_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/swampy_anim_f{0}.png"),
                        4, scale=1)
 
 
 def tiny_slug_sprite():
-    return ActorSprite("./asset/frames/tiny_slug_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/tiny_slug_anim_f{0}.png"),
                        4, scale=1)
 
 
 def tiny_zombie_sprite():
-    return ActorSprite("./asset/frames/tiny_zombie_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/tiny_zombie_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def wogol_sprite():
-    return ActorSprite("./asset/frames/wogol_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/wogol_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def zombie_sprite():
-    return ActorSprite("./asset/frames/zombie_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/zombie_anim_f{0}.png"),
                        4, scale=1)
 
 
 def big_demon_sprite():
-    return ActorSprite("./asset/frames/big_demon_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/big_demon_idle_anim_f{0}.png"),
                        4, scale=0.666)
 
 
 def big_zombie_sprite():
-    return ActorSprite("./asset/frames/big_zombie_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/big_zombie_idle_anim_f{0}.png"),
                        4, scale=0.666)
 
 
 def chort_sprite():
-    return ActorSprite("./asset/frames/chort_idle_anim_f{0}.png", 4, scale=1)
+    return ActorSprite(resource_path("asset/frames/chort_idle_anim_f{0}.png"), 4, scale=1)
 
 
 monster_sprites = [
@@ -288,30 +299,30 @@ monster_sprites = [
 
 
 def toufu():
-    return ActorSprite("./asset/frames/dwarf_m_idle_anim_f{0}.png", 4, scale=1)
+    return ActorSprite(resource_path("asset/frames/dwarf_m_idle_anim_f{0}.png"), 4, scale=1)
 
 
 def feishiko():
-    return ActorSprite("./asset/frames/lizard_m_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/lizard_m_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def silencess():
-    return ActorSprite("./asset/frames/wizzard_m_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/wizzard_m_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def superlight():
-    return ActorSprite("./asset/frames/pumpkin_dude_idle_anim_f{0}.png",
+    return ActorSprite(resource_path("asset/frames/pumpkin_dude_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
 def fireball_missile_sprite():
-    return MissileSprite("./asset/fireball/1_{0}.png", 20, 0.5)
+    return MissileSprite(resource_path("asset/fireball/1_{0}.png"), 20, 0.5)
 
 
 def flame_sprite():
-    return MissileSprite("./asset/FireVF/Fire+Sparks{0}.png", 4, 0.4)
+    return MissileSprite(resource_path("asset/FireVF/Fire+Sparks{0}.png"), 4, 0.4)
 
 
 def sword_sprite():

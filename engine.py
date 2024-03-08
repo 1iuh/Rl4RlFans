@@ -9,6 +9,7 @@ from render_functions import render_bar, render_mob_bar
 import constants
 import arcade
 import json
+import sprites
 
 
 from typing import TYPE_CHECKING
@@ -55,8 +56,7 @@ class StartMenuEngine(Engine):
         self.event_handler = StartMenuEventHandler(self)
 
     def on_start(self):
-        self.background = arcade.load_texture(
-            "./asset/Background/background_0.png")
+        self.background = sprites.background
 
     def on_render(self):
         # draw background
