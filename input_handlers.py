@@ -32,6 +32,10 @@ MOVE_KEYS = {
     arcade_key.UP: (0, 1),
     arcade_key.L: (1, 0),
     arcade_key.RIGHT:  (1, 0),
+    arcade_key.Y:  (-1, 1),
+    arcade_key.U:  (1, 1),
+    arcade_key.B:  (-1, -1),
+    arcade_key.N:  (1, -1),
 }
 
 CURSOR_Y_KEYS = {
