@@ -7,7 +7,6 @@ import copy
 import constants
 
 
-
 class MyGame(arcade.Window):
     """
     Main application class.

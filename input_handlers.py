@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from arcade import key as arcade_key
 from render_functions import (render_one_window, render_tow_window,
-                              render_one_auto_window)
+                              render_one_auto_window, render_notice_window)
 import arcade
 import constants
 import math
@@ -65,7 +65,14 @@ class EventHandler:
         pass
 
     def handle_events(self, key, modifiers) -> None:
-        self.handle_action(self.on_key_press(key, modifiers))
+        try:
+            self.handle_action(self.on_key_press(key, modifiers))
+        except exceptions.PlayerDie:
+            death_message = "You die."
+            death_message_color = color.player_die
+            self.engine.message_log.add_message(
+                    death_message, death_message_color)
+            self.engine.event_handler = GameOverEventHandler(self.engine)
 
     def handle_action(self, action: Optional[Action]) -> bool:
         pass
@@ -155,7 +162,7 @@ class GameOverEventHandler(EventHandler):
 
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
-        render_one_window(self.TITLE, "Press Esc to continue.")
+        render_notice_window(self.TITLE, "Press Esc to continue.")
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         if key == arcade_key.ESCAPE:
@@ -171,7 +178,7 @@ class WinEventHandler(EventHandler):
 
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
-        render_one_window(self.TITLE, "Press Esc to continue.")
+        render_notice_window(self.TITLE, "Press Esc to continue.")
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         if key == arcade_key.ESCAPE:

@@ -201,16 +201,34 @@ class FireballSkillConsumable(Consumable):
         self.engine.message_log.add_message(
                 f"{action.speed}: {action.entity.name} threw a fireball")
 
-        missile = fireball_missile.copy()
-        missile.x = action.entity.x
-        missile.y = action.entity.y
-        missile.target_xy = action.target_xy
-        missile.damage = self.base_damage + self.parent.parent.fighter.magic
-        missile.radius = self.radius
-        self.engine.game_map.spawn_entity(missile)
-        self.consume()
-        action = missile.ai.perform()
-        action.perform()
+        vfxs = []
+        for actor in self.gamemap.actors:
+            if actor.distance(*action.target_xy) <= self.radius:
+                damage = self.base_damage + action.entity.fighter.magic
+                self.gamemap.engine.message_log.add_message(
+                    f"a fireball explodes, {actor.name} \
+                            takes {damage} damage!")
+                actor.fighter.take_damage(damage)
+                vfx = VisualEffects(
+                    9000,
+                    sprite_f=sprites.flame_sprite,
+                    ai_cls=VfxAI,
+                    actor=actor
+                )
+                vfxs.append(vfx)
+        for v in vfxs:
+            self.gamemap.spawn_entity(v)
+
+        # missile = fireball_missile.copy()
+        # missile.x = action.entity.x
+        # missile.y = action.entity.y
+        # missile.target_xy = action.target_xy
+        # missile.damage = self.base_damage + self.parent.parent.fighter.magic
+        # missile.radius = self.radius
+        # self.engine.game_map.spawn_entity(missile)
+        # self.consume()
+        # action = missile.ai.perform()
+        # action.perform()
 
     def consume(self) -> None:
         pass

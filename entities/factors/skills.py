@@ -4,9 +4,9 @@ from components import consumable
 
 def fireball_skill(actor):
     return Skill('Fireball',
-                 '3+Magic',
+                 '5+Magic',
                  5,
-                 consumable.FireballSkillConsumable(3, 2), actor)
+                 consumable.FireballSkillConsumable(5, 2), actor)
 
 
 def teleportation_skill(actor):
@@ -17,6 +17,6 @@ def teleportation_skill(actor):
 
 def lightning_bolt_skill(actor):
     return Skill('lightning bolt',
-                 '5+Magic*2',
+                 '8+Magic*2',
                  4,
-                 consumable.LightningBoltConsumable(5, 5), actor)
+                 consumable.LightningBoltConsumable(8, 5), actor)

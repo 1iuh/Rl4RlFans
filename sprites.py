@@ -12,6 +12,7 @@ import os
 if TYPE_CHECKING:
     from entities.entity import Missile
 
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -23,14 +24,17 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-gear_textures = arcade.load_spritesheet(resource_path("asset/gears.png"), 48, 48, 16, 350, 0, None)
-
+gear_textures = arcade.load_spritesheet(
+    resource_path("asset/gears.png"), 48, 48, 16, 350, 0, None)
 tileset_textures = arcade.load_spritesheet(
     resource_path("asset/Tiles and Walls 48x48.png"), 48, 48, 17, 153, 0, None)
 big_zombie_textures = arcade.load_texture(
     resource_path("asset/frames/big_zombie_run_anim_f0.png"))
-chort_textures = arcade.load_texture(resource_path(resource_path("asset/frames/chort_idle_anim_f0.png")))
-background = arcade.load_texture(resource_path("asset/Background/background_0.png"))
+chort_textures = arcade.load_texture(resource_path(
+    resource_path("asset/frames/chort_idle_anim_f0.png")))
+background = arcade.load_texture(
+    resource_path("asset/Background/background_0.png"))
+
 
 class ItemSprite(arcade.Sprite):
 
@@ -74,7 +78,8 @@ class ActorSprite(arcade.Sprite):
 
 class ConstructSprite(arcade.Sprite):
 
-    def __init__(self, dark_texture: arcade.Texture, light_texture: arcade.Texture, void_texture: arcade.Texture,
+    def __init__(self, dark_texture: arcade.Texture,
+                 light_texture: arcade.Texture, void_texture: arcade.Texture,
                  scale: float):
 
         super().__init__(scale=scale)
@@ -197,8 +202,9 @@ def imp_sprite():
 
 
 def masked_orc_sprite():
-    return ActorSprite(resource_path("asset/frames/masked_orc_idle_anim_f{0}.png"),
-                       4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/masked_orc_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
 def muddy_sprite():
@@ -217,13 +223,15 @@ def ogre_sprite():
 
 
 def orc_shaman_sprite():
-    return ActorSprite(resource_path("asset/frames/orc_shaman_idle_anim_f{0}.png"),
-                       4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/orc_shaman_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
 def orc_warrior_sprite():
-    return ActorSprite(resource_path("asset/frames/orc_warrior_idle_anim_f{0}.png"),
-                       4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/orc_warrior_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
 def skelet_sprite():
@@ -247,13 +255,15 @@ def tiny_slug_sprite():
 
 
 def tiny_zombie_sprite():
-    return ActorSprite(resource_path("asset/frames/tiny_zombie_idle_anim_f{0}.png"),
-                       4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/tiny_zombie_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
 def wogol_sprite():
-    return ActorSprite(resource_path("asset/frames/wogol_idle_anim_f{0}.png"),
-                       4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/wogol_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
 def zombie_sprite():
@@ -262,17 +272,20 @@ def zombie_sprite():
 
 
 def big_demon_sprite():
-    return ActorSprite(resource_path("asset/frames/big_demon_idle_anim_f{0}.png"),
-                       4, scale=0.666)
+    return ActorSprite(
+            resource_path("asset/frames/big_demon_idle_anim_f{0}.png"),
+            4, scale=0.666)
 
 
 def big_zombie_sprite():
-    return ActorSprite(resource_path("asset/frames/big_zombie_idle_anim_f{0}.png"),
-                       4, scale=0.666)
+    return ActorSprite(
+            resource_path("asset/frames/big_zombie_idle_anim_f{0}.png"),
+            4, scale=0.666)
 
 
 def chort_sprite():
-    return ActorSprite(resource_path("asset/frames/chort_idle_anim_f{0}.png"), 4, scale=1)
+    return ActorSprite(
+            resource_path("asset/frames/chort_idle_anim_f{0}.png"), 4, scale=1)
 
 
 monster_sprites = [

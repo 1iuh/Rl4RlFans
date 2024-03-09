@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from components.base_component import BaseComponent
 from input_handlers import GameOverEventHandler
+import exceptions
 
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
@@ -80,6 +81,8 @@ class Fighter(BaseComponent):
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))
 
+        if self._hp == 0 and self.parent.entity_id == 0:
+            raise exceptions.PlayerDie
         if self._hp == 0 and self.parent.ai:
             self.die()
 
@@ -114,14 +117,8 @@ class Fighter(BaseComponent):
         self.hp -= amount
 
     def die(self) -> None:
-        if self.engine.player is self.parent:
-            death_message = "You die."
-            death_message_color = color.player_die
-            self.engine.event_handler = GameOverEventHandler(self.engine)
-        else:
-            death_message = f"{self.parent.name} died!"
-            death_message_color = color.enemy_die
-
+        death_message = f"{self.parent.name} died!"
+        death_message_color = color.enemy_die
         self.parent.blocks_movement = False
         self.parent.sprite.is_alive = False
         self.parent.ai = None
