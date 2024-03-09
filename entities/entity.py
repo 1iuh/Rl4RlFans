@@ -4,6 +4,7 @@ import math
 import sprites
 import copy
 from components.ai import VfxAI
+import constants
 
 from typing import TYPE_CHECKING, Optional, Tuple, Union
 
@@ -101,7 +102,7 @@ class Item(Entity):
 
     @property
     def attributes(self):
-        return self.desc
+        return constants.sub_line_placeholder + self.desc
 
     def to_dict(self):
         return dict(

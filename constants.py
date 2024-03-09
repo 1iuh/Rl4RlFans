@@ -32,14 +32,17 @@ down_stair_tilecode = 1003
 inventory_window_width = screen_width - 800
 inventory_window_height = screen_height - 300
 
+font_name = 'LT Binary Neue Round'
+sub_line_placeholder = '       └ '
+
 missile_move_speed = 4
 end_level = 6
 
 actor_stats_keys = [
-        'power',
-        'max_hp',
-        'magic',
-        'defense',
-        'max_mp',
-        'speed',
-        ]
+    'power',
+    'max_hp',
+    'magic',
+    'defense',
+    'max_mp',
+    'speed',
+]

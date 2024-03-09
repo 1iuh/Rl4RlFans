@@ -75,7 +75,7 @@ class EventHandler:
             death_message = "You die."
             death_message_color = color.player_die
             self.engine.message_log.add_message(
-                    death_message, death_message_color)
+                death_message, death_message_color)
             self.engine.event_handler = GameOverEventHandler(self.engine)
 
     def handle_action(self, action: Optional[Action]) -> bool:
@@ -91,7 +91,6 @@ class EventHandler:
 class MainGameEventHandler(EventHandler):
 
     def handle_enemy_turns(self, player_action) -> None:
-        self.engine.message_log.add_message("== New Turn ==")
         action_queue = [player_action]
         for entity in set(
                 self.engine.game_map.entities) - {self.engine.player}:
@@ -102,7 +101,7 @@ class MainGameEventHandler(EventHandler):
                     action_queue.append(entity.ai.perform())
                 except exceptions.Impossible as exc:
                     self.engine.message_log.add_message(
-                            exc.args[0], color.impossible)
+                        exc.args[0], color.impossible)
         action_queue.sort(key=lambda x: x.speed, reverse=True)
         for act in action_queue:
             if hasattr(act.entity, 'is_alive') and not act.entity.is_alive:
@@ -148,13 +147,71 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = InventoryDropHandler(self.engine)
         elif key == arcade_key.S:
             self.engine.event_handler = SkillHandler(self.engine)
-        elif key == arcade_key.SPACE:
+        elif key == arcade_key.X:
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.ESCAPE:
             self.engine.event_handler = EscMenuHandler(self.engine)
+        elif key == arcade_key.QUESTION:
+            self.engine.event_handler = HotKeysEventHandler(self.engine)
 
         # No valid key was pressed
         return action
+
+
+class HotKeysEventHandler(EventHandler):
+
+    TITLE = "Welcome."
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
+        content = """
+    Defeat monsters, pick up equipment
+    and enter the depths of the dungeon.
+
+    Tips:
+    1. Entering the next level of the
+       dungeon restores HP and MP.
+    2. Your skills are powerful.
+
+    Keys:
+
+         y  k  u    7 8 9
+    use  h  .  l or 4 . 6  to move.
+         b  j  n    1 2 3
+
+    ?        Show this window.
+    i        Lists equipment and items.
+    s        Lists Your spells.
+    x        List monsters and items within
+             your field of vision.
+    g        Pick up items.
+    d        Drop items.
+    c        Unequip a gear.
+    Enter    Cycle through down stairs.
+
+    Stats:
+
+    HP       You die if your health drops
+             to zero.
+    MP       This is used primarily
+             for spellcasting.
+    Power    Melee attack damage.
+    Defense  Reduce the amount of melee
+             damage you suffer.
+    Magic    Determine how powerful your
+             spells are.
+    Speed    Decide the order of action.
+
+        Press any key to continue.
+        """
+        render_notice_window(self.TITLE, content, height=720, align='left',
+                             margin_top=80)
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        self.engine.event_handler = MainGameEventHandler(self.engine)
 
 
 class GameOverEventHandler(EventHandler):
@@ -363,7 +420,7 @@ class InventoryActivateHandler(InventoryEventHandler):
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
                 content += f'({item_key}) {item.name}\n'
-                content += f'        └ {item.attributes}\n'
+                content += f'{item.attributes}\n'
         else:
             content = '(empty)'
 
@@ -375,7 +432,7 @@ class InventoryActivateHandler(InventoryEventHandler):
                 sub_content += f'{key}: null\n'
             else:
                 sub_content += f'{key}: {val.name}\n'
-                sub_content += f'    └ {val.attributes}\n'
+                sub_content += f'{val.attributes}\n'
         render_tow_window(self.TITLE, content, self.sub_title, sub_content)
 
     def on_item_selected(self, item: Item) -> Optional[Action]:
@@ -397,7 +454,7 @@ class InventoryDropHandler(InventoryEventHandler):
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
                 content += f'({item_key}) {item.name}\n'
-                content += f'        └ {item.attributes}\n'
+                content += f'{item.attributes}\n'
         else:
             content = '(empty)'
 
@@ -478,6 +535,7 @@ class LookHandler(AskUserEventHandler):
                              actor.sprite.center_y,
                              anchor_x='center',
                              anchor_y='center',
+                             font_name=constants.font_name,
                              )
 
         content += "\n"
@@ -489,6 +547,7 @@ class LookHandler(AskUserEventHandler):
                              item.sprite.center_y,
                              anchor_x='center',
                              anchor_y='center',
+                             font_name=constants.font_name,
                              )
         render_one_auto_window(self.TITLE, content,
                                self.engine.player.sprite.center_x)
@@ -526,7 +585,8 @@ class EscMenuHandler(AskUserEventHandler):
                 constants.screen_center_x,
                 constants.screen_center_y - i * 28,
                 anchor_x='center',
-                font_size=24
+                font_size=24,
+                font_name=constants.font_name,
             )
             i += 1
 
@@ -636,7 +696,7 @@ class EquipmentEventHandler(AskUserEventHandler):
                 content += f'({item_key}) {key}: null\n'
             else:
                 content += f'({item_key}) {key}: {val.name}\n'
-                content += f'        └ {val.attributes}\n'
+                content += f'{val.attributes}\n'
             render_one_window(self.TITLE, content)
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:

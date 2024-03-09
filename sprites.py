@@ -24,6 +24,9 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+arcade.load_font(
+        resource_path("asset/fonts/LTBinaryNeueRound-Regular.ttf"))
+
 gear_textures = arcade.load_spritesheet(
     resource_path("asset/gears.png"), 48, 48, 16, 350, 0, None)
 tileset_textures = arcade.load_spritesheet(

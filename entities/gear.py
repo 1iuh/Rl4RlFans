@@ -4,6 +4,7 @@ from entities.entity import Entity
 from entities.gear_enchantment_data import rate_of_enchant, enchant_stat_value
 from random import random, choice
 import constants
+from constants import sub_line_placeholder
 
 
 from typing import TYPE_CHECKING
@@ -74,7 +75,8 @@ class Gear(Entity):
     @property
     def attributes(self):
         if len(self.enchantments.desc) > 0:
-            return self.desc + '\n        └ ' + self.enchantments.desc
+            return (sub_line_placeholder + self.desc + '\n'
+                    + sub_line_placeholder + self.enchantments.desc)
         return self.desc
 
     def to_dict(self):
@@ -139,10 +141,10 @@ class GearEnchantment:
 
     def set_title(self, count):
         if count == 0:
-            self.title = "Normal "
+            self.title = "Normal"
         elif count == 1:
-            self.title = "Magic "
+            self.title = "Magic"
         elif count == 2:
-            self.title = "Super "
+            self.title = "Super"
         elif count == 3:
-            self.title = "Amazing "
+            self.title = "Amazing"

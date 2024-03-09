@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from tcod.map import compute_fov
 from input_handlers import (MainGameEventHandler, StartMenuEventHandler,
-                            WinEventHandler)
+                            WinEventHandler, HotKeysEventHandler)
 from message_log import MessageLog
 from entities.actor import Actor
 from render_functions import render_bar, render_mob_bar
@@ -81,7 +81,8 @@ class StartMenuEngine(Engine):
                 option,
                 int(constants.screen_center_x) - 100,
                 int(constants.screen_center_y - 50 - 26*i),
-                arcade.color.WHITE, 22, anchor_x='center'
+                arcade.color.WHITE, 22, anchor_x='center',
+                font_name=constants.font_name
             )
             i += 1
 
@@ -104,7 +105,6 @@ class GameEngine(Engine):
 
     def __init__(self, player: Actor, window):
 
-        self.event_handler: EventHandler = MainGameEventHandler(self)
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
 
@@ -113,6 +113,11 @@ class GameEngine(Engine):
         super().__init__(window)
 
     def on_start(self):
+
+        if (self.game_map.level == 1):
+            self.event_handler: EventHandler = HotKeysEventHandler(self)
+        else:
+            self.event_handler: EventHandler = MainGameEventHandler(self)
         self.update_fov()
 
     def update_fov(self) -> None:
@@ -149,7 +154,7 @@ class GameEngine(Engine):
             180,
             0,
             constants.screen_height,
-            arcade.color.BLACK_OLIVE
+            arcade.color.BLACK_LEATHER_JACKET
         )
         self.message_log.render(x=10, y=420, lines=16)
         i = 0
@@ -179,38 +184,44 @@ class GameEngine(Engine):
             f'Dungeon depth: {self.game_map.level}',
             stats_start_x - 12,
             constants.screen_height - 100 - font_line_height * i,
-            font_size=14
+            font_size=14,
+            font_name=constants.font_name
         )
         i += 2
         arcade.draw_text(
             'Stats:',
             stats_start_x - 12,
             constants.screen_height - 100 - font_line_height * i,
-            font_size=14
+            font_size=14,
+            font_name=constants.font_name
         )
         i += 1
         arcade.draw_text(
             f'Power: {self.player.fighter.power}',
             stats_start_x,
-            constants.screen_height - 100 - font_line_height * i
+            constants.screen_height - 100 - font_line_height * i,
+            font_name=constants.font_name
         )
         i += 1
         arcade.draw_text(
             f'Defense: {self.player.fighter.defense}',
             stats_start_x,
-            constants.screen_height - 100 - font_line_height * i
+            constants.screen_height - 100 - font_line_height * i,
+            font_name=constants.font_name
         )
         i += 1
         arcade.draw_text(
             f'Speed: {self.player.fighter.speed}',
             stats_start_x,
-            constants.screen_height - 100 - font_line_height * i
+            constants.screen_height - 100 - font_line_height * i,
+            font_name=constants.font_name
         )
         i += 1
         arcade.draw_text(
             f'Magic: {self.player.fighter.magic}',
             stats_start_x,
-            constants.screen_height - 100 - font_line_height * i
+            constants.screen_height - 100 - font_line_height * i,
+            font_name=constants.font_name
         )
 
         i += 2
@@ -218,7 +229,8 @@ class GameEngine(Engine):
             'Equipments:',
             stats_start_x - 10,
             constants.screen_height - 100 - font_line_height * i,
-            font_size=14
+            font_size=14,
+            font_name=constants.font_name
         )
         i += 1
 
@@ -233,13 +245,15 @@ class GameEngine(Engine):
                 f'{key}:',
                 stats_start_x,
                 constants.screen_height - 100 - font_line_height * i,
+                font_name=constants.font_name
             )
             i += 1
             arcade.draw_text(
                 f'└ {gear_name}',
                 stats_start_x,
                 constants.screen_height - 100 - font_line_height * i,
-                font_size=10
+                font_size=10,
+                font_name=constants.font_name
             )
             i += 1
 
@@ -247,8 +261,10 @@ class GameEngine(Engine):
             if entity.sprite.visible and isinstance(entity, Actor):
                 current_value = entity.fighter.hp
                 maximum_value = entity.fighter.max_hp
-                render_mob_bar(current_value, maximum_value,
-                               entity.sprite.center_x, entity.sprite.center_y)
+                if current_value != maximum_value:
+                    render_mob_bar(current_value, maximum_value,
+                                   entity.sprite.center_x,
+                                   entity.sprite.center_y)
 
     def continue_last_game(self):
         with open('./saves/savegame.sav', "r") as f:

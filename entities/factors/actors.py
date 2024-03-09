@@ -9,7 +9,7 @@ player = Actor(
         entity_id=0,
         name="you",
         ai_cls=HostileEnemy,
-        fighter=Fighter(hp=40, defense=2, power=8, speed=5),
+        fighter=Fighter(hp=40, defense=20, power=80, speed=5),
         inventory=inventory.Inventory(capacity=12),
         sprite_f=sprites.player_sprite
         )
