@@ -1,12 +1,19 @@
 from entities.entity import VisualEffects, Missile
-from components.ai import MissileAI, VfxAI
+from components import ai
 import sprites
 
 
 fireVFX = VisualEffects(
                     9000,
                     sprite_f=sprites.flame_sprite,
-                    ai_cls=VfxAI,
+                    ai_cls=ai.VfxAI,
+                    actor=None
+                )
+
+lightning_fx = VisualEffects(
+                    9002,
+                    sprite_f=sprites.lightning_sprite,
+                    ai_cls=ai.VfxAI,
                     actor=None
                 )
 
@@ -19,8 +26,5 @@ fireball_missile = Missile(
             damage=0,
             radius=0,
             parent=None,
-            ai_cls=MissileAI,
+            ai_cls=ai.MissileAI,
         )
-
-if __name__ == '__main__':
-    fireVFX.copy()

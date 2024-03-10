@@ -156,6 +156,13 @@ class GameEngine(Engine):
             constants.screen_height,
             arcade.color.BLACK_LEATHER_JACKET
         )
+        arcade.draw_lrbt_rectangle_outline(
+            0,
+            180,
+            0,
+            constants.screen_height,
+            arcade.color.WHITE_SMOKE
+        )
         self.message_log.render(x=10, y=420, lines=16)
         i = 0
         render_bar(

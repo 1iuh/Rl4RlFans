@@ -1,5 +1,5 @@
 import sprites
-from components.ai import HostileEnemy
+from components import ai
 from components import inventory
 from ..actor import Actor
 from components.fighter import Fighter
@@ -8,8 +8,8 @@ from components.fighter import Fighter
 player = Actor(
         entity_id=0,
         name="you",
-        ai_cls=HostileEnemy,
-        fighter=Fighter(hp=40, defense=20, power=80, speed=5),
+        ai_cls=ai.HostileEnemy,
+        fighter=Fighter(hp=40, defense=20, power=80, speed=5, magic=0),
         inventory=inventory.Inventory(capacity=12),
         sprite_f=sprites.player_sprite
         )
@@ -22,8 +22,8 @@ for sp in sprites.monster_sprites:
     actor = Actor(
          entity_id=entity_id,
          name=name,
-         ai_cls=HostileEnemy,
-         fighter=Fighter(hp=10, defense=4, power=5, speed=8),
+         ai_cls=ai.HostileEnemy,
+         fighter=Fighter(hp=10, defense=4, power=5, speed=8, magic=3),
          inventory=inventory.Inventory(capacity=0),
          sprite_f=sp
          )

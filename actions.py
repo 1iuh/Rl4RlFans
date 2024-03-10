@@ -5,6 +5,8 @@ import exceptions
 
 from typing import TYPE_CHECKING, Optional
 
+from entities.factors import others
+
 
 if TYPE_CHECKING:
     from entities.entity import Actor, Item
@@ -96,6 +98,43 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
+            target.fighter.hp -= damage
+        else:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but does no damage.", attack_color
+            )
+
+
+class RangeAttackAction(ActionWithDirection):
+
+    def perform(self) -> None:
+
+        if not self.entity.fighter.is_alive:
+            return
+
+        target = self.target_actor
+
+        if not target:
+            attack_color = color.player_atk
+            self.engine.message_log.add_message(
+                f"{self.entity.name} miss", attack_color
+            )
+            return
+
+        damage = self.entity.fighter.magic
+
+        attack_desc = f"{self.speed}: {self.entity.name} invoked lightning on {target.name}"
+        if self.entity is self.engine.player:
+            attack_color = color.player_atk
+        else:
+            attack_color = color.enemy_atk
+        if damage > 0:
+            self.engine.message_log.add_message(
+                f"{attack_desc} for {damage} hit points.", attack_color
+            )
+            vfx = others.lightning_fx.copy()
+            vfx.actor = target
+            self.engine.game_map.spawn_entity(vfx)
             target.fighter.hp -= damage
         else:
             self.engine.message_log.add_message(

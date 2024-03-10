@@ -7,7 +7,7 @@ import components.inventory
 import components.ai
 from components.base_component import BaseComponent
 from exceptions import Impossible
-from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
+import input_handlers
 from entities.factors.others import fireball_missile
 
 from entities.entity import VisualEffects
@@ -113,7 +113,7 @@ class ConfusionConsumable(Consumable):
         self.engine.message_log.add_message(
             "选择目的地.", color.needs_target
         )
-        self.engine.event_handler = SingleRangedAttackHandler(
+        self.engine.event_handler = input_handlers.SingleRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
@@ -151,7 +151,7 @@ class FireballConsumable(Consumable):
         self.engine.message_log.add_message(
             "Choice target.", color.needs_target
         )
-        self.engine.event_handler = AreaRangedAttackHandler(
+        self.engine.event_handler = input_handlers.AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
@@ -184,7 +184,7 @@ class FireballSkillConsumable(Consumable):
         self.engine.message_log.add_message(
             "Choice target.", color.needs_target
         )
-        self.engine.event_handler = AreaRangedAttackHandler(
+        self.engine.event_handler = input_handlers.AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,
             callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
@@ -243,7 +243,7 @@ class TPConsumable(Consumable):
         self.engine.message_log.add_message(
             "Choice target.", color.needs_target
         )
-        self.engine.event_handler = SingleRangedAttackHandler(
+        self.engine.event_handler = input_handlers.SingleRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
         )
@@ -275,7 +275,7 @@ class LightningBoltConsumable(Consumable):
         self.engine.message_log.add_message(
             "Choice target.", color.needs_target
         )
-        self.engine.event_handler = SingleRangedAttackHandler(
+        self.engine.event_handler = input_handlers.SingleRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.SkillAction(consumer, self.parent, xy),
         )
@@ -297,8 +297,8 @@ class LightningBoltConsumable(Consumable):
                          {actor.name} takes {damage} damage!")
                 actor.fighter.take_damage(damage)
                 vfx = VisualEffects(
-                    9000,
-                    sprite_f=sprites.flame_sprite,
+                    9002,
+                    sprite_f=sprites.lightning_sprite,
                     ai_cls=VfxAI,
                     actor=actor
                 )

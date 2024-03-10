@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from components.base_component import BaseComponent
-from input_handlers import GameOverEventHandler
 import exceptions
 
 from typing import TYPE_CHECKING
@@ -27,13 +26,13 @@ class Fighter(BaseComponent):
     _mp: int
 
     def __init__(self, hp: int, defense: int, power: int,
-                 speed: int):
+                 speed: int, magic: int):
         self._max_hp = hp
         self._hp = hp
         self._defense = defense
         self._power = power
         self._speed = speed
-        self._magic = 0
+        self._magic = magic
         self._max_mp = 20
         self._mp = 20
 

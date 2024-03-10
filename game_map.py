@@ -70,13 +70,15 @@ class GameMap:
         x = 0
         y = 0
         self.gamemap.construct_sprites.clear()
+        floor_sprite = random.choice(sprites.floor_sprites)
+        wall_sprite = random.choice(sprites.wall_sprites)
         for row in self.gamemap.tiles:
             for col in row:
                 cons: Sprite
                 if col[2] == constants.floor_tilecode:
-                    cons = sprites.floor_sprite()
+                    cons = floor_sprite()
                 elif col[2] == constants.wall_tilecode:
-                    cons = sprites.wall_sprite()
+                    cons = wall_sprite()
                 elif col[2] == constants.down_stair_tilecode:
                     cons = sprites.down_stair_sprite()
                 else:

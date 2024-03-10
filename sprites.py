@@ -49,7 +49,7 @@ class ItemSprite(arcade.Sprite):
 
 class ActorSprite(arcade.Sprite):
 
-    corpse_texture = tileset_textures[100]
+    corpse_texture = tileset_textures[99]
     is_alive = True
     render_order: RenderOrder = RenderOrder.ACTOR
 
@@ -161,7 +161,71 @@ class MissileSprite(arcade.Sprite):
             self.texture = self.frames[self.cur_frame_idx].texture
 
 
-def floor_sprite():
+def floor_sprite_8():
+
+    return ConstructSprite(
+        tileset_textures[121],
+        tileset_textures[120],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_7():
+
+    return ConstructSprite(
+        tileset_textures[104],
+        tileset_textures[103],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_6():
+
+    return ConstructSprite(
+        tileset_textures[87],
+        tileset_textures[86],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_5():
+
+    return ConstructSprite(
+        tileset_textures[70],
+        tileset_textures[69],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_4():
+
+    return ConstructSprite(
+        tileset_textures[53],
+        tileset_textures[52],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_3():
+
+    return ConstructSprite(
+        tileset_textures[36],
+        tileset_textures[35],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_2():
+
+    return ConstructSprite(
+        tileset_textures[19],
+        tileset_textures[18],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def floor_sprite_1():
+
     return ConstructSprite(
         tileset_textures[2],
         tileset_textures[1],
@@ -169,18 +233,71 @@ def floor_sprite():
         scale=0.5)
 
 
-def down_stair_sprite():
+floor_sprites = [
+        floor_sprite_1,
+        floor_sprite_2,
+        floor_sprite_3,
+        floor_sprite_4,
+        floor_sprite_5,
+        floor_sprite_6,
+        floor_sprite_7,
+        floor_sprite_8,
+        ]
+
+
+def wall_sprite_5():
     return ConstructSprite(
-        tileset_textures[83],
-        tileset_textures[82],
+        tileset_textures[78],
+        tileset_textures[76],
         tileset_textures[130],
         scale=0.5)
 
 
-def wall_sprite():
+def wall_sprite_4():
     return ConstructSprite(
-        tileset_textures[12],
+        tileset_textures[44],
+        tileset_textures[42],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def wall_sprite_3():
+    return ConstructSprite(
+        tileset_textures[47],
+        tileset_textures[45],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def wall_sprite_1():
+    return ConstructSprite(
+        tileset_textures[13],
         tileset_textures[11],
+        tileset_textures[130],
+        scale=0.5)
+
+
+def wall_sprite_2():
+    return ConstructSprite(
+        tileset_textures[125],
+        tileset_textures[123],
+        tileset_textures[130],
+        scale=0.5)
+
+
+wall_sprites = [
+        wall_sprite_1,
+        wall_sprite_2,
+        wall_sprite_3,
+        wall_sprite_4,
+        wall_sprite_5,
+        ]
+
+
+def down_stair_sprite():
+    return ConstructSprite(
+        tileset_textures[83],
+        tileset_textures[82],
         tileset_textures[130],
         scale=0.5)
 
@@ -215,7 +332,7 @@ def muddy_sprite():
                        4, scale=1)
 
 
-def nec_sprite():
+def necromancer_sprite():
     return ActorSprite(resource_path("asset/frames/necromancer_anim_f{0}.png"),
                        4, scale=1)
 
@@ -297,7 +414,7 @@ monster_sprites = [
     imp_sprite,
     masked_orc_sprite,
     muddy_sprite,
-    nec_sprite,
+    necromancer_sprite,
     ogre_sprite,
     orc_shaman_sprite,
     orc_warrior_sprite,
@@ -338,7 +455,12 @@ def fireball_missile_sprite():
 
 
 def flame_sprite():
-    return MissileSprite(resource_path("asset/FireVF/Fire+Sparks{0}.png"), 4, 0.4)
+    return MissileSprite(
+            resource_path("asset/FireVF/Fire+Sparks{0}.png"), 4, 0.4)
+
+
+def lightning_sprite():
+    return MissileSprite(resource_path("asset/lightning/f{0}.png"), 4, 0.2)
 
 
 def sword_sprite():
