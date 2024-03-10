@@ -1,53 +1,27 @@
-
-rate_of_enchant = {
-        1: {
-            1: 0.2,
-            2: 0,
-            3: 1,
-            },
-        2: {
-            1: 0.2,
-            2: 0,
-            3: 0,
-            },
-        3: {
-            1: 0.3,
-            2: 0.05,
-            3: 0,
-            },
-        4: {
-            1: 0.4,
-            2: 0.1,
-            3: 0.03,
-            },
-        5: {
-            1: 0.5,
-            2: 0.15,
-            3: 0.07,
-            },
-        6: {
-            1: 0.7,
-            2: 0.25,
-            3: 0.09,
-            },
-        7: {
-            1: 0.8,
-            2: 0.3,
-            3: 0.11,
-            },
-        8: {
-            1: 0.9,
-            2: 0.35,
-            3: 0.13,
-            },
-        }
+import constants
+base_enchant_rate = {
+        1: 0.4,
+        2: 0.2,
+        3: 0.1,
+    }
 
 
-enchant_stat_value = {
-        'power': [2, 4, 6, 8, 10, 12, 14, 16],
-        'defense': [2, 3, 4, 5, 6, 7, 8, 9],
-        'magic': [1, 2, 3, 4, 5, 6, 7, 8],
-        'max_hp': [3, 6, 9, 12, 15, 18, 21, 24],
-        'max_mp': [4, 8, 12, 16, 20, 24, 28, 32],
-        'speed': [1, 2, 3, 4, 5, 6, 7, 8],
-}
+def rate_of_enchant(count):
+    rate = base_enchant_rate[count]
+    return rate * constants.enchant_bonus
+
+
+base_enchant_stat = {
+        'power': 2,
+        'defense': 2,
+        'magic': 2,
+        'max_hp': 3,
+        'max_mp': 4,
+        'speed': 1
+    }
+
+
+def enchant_stat_value(level: int, stat_key):
+    base = base_enchant_stat[stat_key]
+    val = int(base * (constants.enchant_stats_bonus ** level))
+    return val

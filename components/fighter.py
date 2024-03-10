@@ -6,8 +6,9 @@ import exceptions
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
 import color
-from entities.factors import items, gears
+from entities.factors import gears
 import random
+import constants
 
 if TYPE_CHECKING:
     from entities.entity import Actor
@@ -127,18 +128,11 @@ class Fighter(BaseComponent):
         self.drop_loots()
 
     def drop_loots(self):
-        if self.parent.entity_id == 0:
+        if not self.parent.is_monster():
             return
         ranval = random.random()
-        if ranval < 0.15:
+        if ranval < constants.monster_drop_rate:
             gear = random.choice(gears.all_gears)
-            gear.level = self.parent.level
-            item = gear.copy()
-            item.x = self.parent.x
-            item.y = self.parent.y
-            self.engine.game_map.spawn_entity(item)
-        elif ranval < 0.2:
-            gear = random.choice(items.all_item)
             gear.level = self.parent.level
             item = gear.copy()
             item.x = self.parent.x

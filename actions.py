@@ -83,9 +83,12 @@ class MeleeAction(ActionWithDirection):
         if not target:
             attack_color = color.player_atk
             self.engine.message_log.add_message(
-                f"{self.entity.name} miss", attack_color
+                f"{self.speed}: {self.entity.name} melee attack missed.", attack_color
             )
             return
+        if self.entity is self.engine.player:
+            if target.is_friend():
+                raise exceptions.Talk
 
         damage = self.entity.fighter.power - target.fighter.defense
 
@@ -96,7 +99,7 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.enemy_atk
         if damage > 0:
             self.engine.message_log.add_message(
-                f"{attack_desc} for {damage} hit points.", attack_color
+                f"{attack_desc} for {damage} damage.", attack_color
             )
             target.fighter.hp -= damage
         else:
@@ -117,7 +120,7 @@ class RangeAttackAction(ActionWithDirection):
         if not target:
             attack_color = color.player_atk
             self.engine.message_log.add_message(
-                f"{self.entity.name} miss", attack_color
+                f"{self.speed}: {self.entity.name} lightning bolt missed.", attack_color
             )
             return
 
@@ -149,20 +152,14 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message("No way")
             return
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is out of bounds.
-            self.engine.message_log.add_message("No way")
             return
         if self.engine.game_map.get_blocking_entity_at_location(
                 dest_x, dest_y):
             # Destination is out of bounds.
-            self.engine.message_log.add_message("No way")
             return
-
-        attack_desc = f"{self.speed}: {self.entity.name} moved."
-        self.engine.message_log.add_message(attack_desc)
         self.entity.move(self.dx, self.dy)
 
 
@@ -274,16 +271,16 @@ class PickupAction(Action):
         for item in self.engine.game_map.items:
             if actor_location_x == item.x and actor_location_y == item.y:
                 if len(inventory.items) >= inventory.capacity:
-                    raise exceptions.Impossible("inventory is full.")
+                    raise exceptions.Impossible("Inventory is full.")
                 self.engine.game_map.despawn_entity(item)
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 
-                self.engine.message_log.add_message(f"you pickup {item.name}!")
+                self.engine.message_log.add_message(f"You pickup {item.name}!")
                 return
 
         self.engine.message_log.add_message(
-                "there is nothing!")
+                "There is nothing!")
 
 
 class DropItem(ItemAction):

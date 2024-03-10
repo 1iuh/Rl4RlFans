@@ -171,3 +171,31 @@ class ConfusedEnemy(BaseAI):
             # The actor will either try to move or attack in the chosen random direction.
             # Its possible the actor will just bump into the wall, wasting a turn.
             return actions.BumpAction(self.entity, direction_x, direction_y)
+
+
+class FriendsAI(BaseAI):
+
+    def perform(self) -> actions.Action:
+
+        target = self.engine.player
+        dx = target.x - self.entity.x
+        dy = target.y - self.entity.y
+        distance = max(abs(dx), abs(dy))  # Chebyshev distance.
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            if distance <= 3:
+                return actions.WaitAction(self.entity)
+
+        direction_x, direction_y = random.choice(
+            [
+                (-1, -1),  # Northwest
+                (0, -1),  # North
+                (1, -1),  # Northeast
+                (-1, 0),  # West
+                (1, 0),  # East
+                (-1, 1),  # Southwest
+                (0, 1),  # South
+                (1, 1),  # Southeast
+            ]
+        )
+
+        return actions.BumpAction(self.entity, direction_x, direction_y)

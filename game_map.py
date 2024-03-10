@@ -54,7 +54,7 @@ class GameMap:
     def visible_monsters(self):
         mobs = []
         for e in self.entities:
-            if isinstance(e, Actor) and e.entity_id != 0 and e.sprite.visible:
+            if isinstance(e, Actor) and e.is_monster() and e.sprite.visible:
                 mobs.append(e)
         return mobs
 
@@ -209,16 +209,26 @@ class RectangularRoom:
         )
 
 
+def place_friend(room, dungeon, level):
+    x = random.randint(room.x1 + 1, room.x2 - 1)
+    y = random.randint(room.y1 + 1, room.y2 - 1)
+    if not any(entity.x == x and entity.y == y
+               for entity in dungeon.entities):
+        monster = random.choice(actors.friends)
+        monster.level = level
+        entity = monster.copy()
+        entity.x = x
+        entity.y = y
+        dungeon.spawn_entity(entity)
+
+
 def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
-    number_of_monsters = random.randint(0, maximum_monsters)
+    number_of_monsters = random.randint(0, maximum_monsters+level-1)
     number_of_items = random.randint(0, maximum_items)
 
     for _ in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
-        val = random.random()
-        if val > 0.7:
-            continue
 
         if not any(entity.x == x and entity.y == y
                    for entity in dungeon.entities):
@@ -237,14 +247,14 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < 0.15:
+            if item_chance < constants.gear_generate_rate:
                 gear = random.choice(gears.all_gears)
                 gear.level = level
                 item = gear.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            elif item_chance < 0.25:
+            elif item_chance < constants.item_generate_rate:
                 item = random.choice(items.all_item).copy()
                 item.x = x
                 item.y = y
@@ -306,6 +316,9 @@ def generate_dungeon(
     # put stair
     room = random.choice(rooms)
     dungeon.tiles[room.center] = tile_types.down_stair
+    # put friends
+    room = random.choice(rooms)
+    place_friend(room, dungeon, level)
 
     dungeon.init_construct_sprites()
     return dungeon

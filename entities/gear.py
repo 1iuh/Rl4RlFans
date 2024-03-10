@@ -62,8 +62,9 @@ class Gear(Entity):
         return clone
 
     def rand(self):
-        for attr, value in self.stats[self.level].items():
-            setattr(self, attr, value)
+        for attr, value in self.stats(self.level).items():
+            value *= constants.gear_base_stat_bonus
+            setattr(self, attr, int(value))
             if len(self.desc) > 0:
                 self.desc = ','.join([self.desc, f"{attr}+{value}"])
             else:
@@ -77,7 +78,7 @@ class Gear(Entity):
         if len(self.enchantments.desc) > 0:
             return (sub_line_placeholder + self.desc + '\n'
                     + sub_line_placeholder + self.enchantments.desc)
-        return self.desc
+        return sub_line_placeholder + self.desc
 
     def to_dict(self):
         return dict(
@@ -118,20 +119,19 @@ class GearEnchantment:
         self.level = level
         self.desc = ''
         self.title = ''
-        rate = rate_of_enchant[self.level]
         ran_val = random()
         count = 0
 
-        if ran_val < rate[1]:
+        if ran_val < rate_of_enchant(1):
             count = 1
-        if ran_val < rate[2]:
+        if ran_val < rate_of_enchant(2):
             count = 2
-        if ran_val < rate[3]:
+        if ran_val < rate_of_enchant(3):
             count = 3
         self.set_title(count)
         for _ in range(count):
             stat_key = choice(constants.actor_stats_keys)
-            val = enchant_stat_value[stat_key][self.level]
+            val = enchant_stat_value(self.level, stat_key)
             old_val = getattr(self, stat_key)
             setattr(self, stat_key, old_val + val)
             if len(self.desc) > 0:

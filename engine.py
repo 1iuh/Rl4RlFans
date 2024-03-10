@@ -101,6 +101,7 @@ class StartMenuEngine(Engine):
 
 class GameEngine(Engine):
 
+    event_handler: EventHandler
     game_map: GameMap
 
     def __init__(self, player: Actor, window):
@@ -265,13 +266,12 @@ class GameEngine(Engine):
             i += 1
 
         for entity in self.game_map.entities:
-            if entity.sprite.visible and isinstance(entity, Actor):
+            if entity.sprite.visible and isinstance(entity, Actor) and entity.is_monster():
                 current_value = entity.fighter.hp
                 maximum_value = entity.fighter.max_hp
-                if current_value != maximum_value:
-                    render_mob_bar(current_value, maximum_value,
-                                   entity.sprite.center_x,
-                                   entity.sprite.center_y)
+                render_mob_bar(current_value, maximum_value,
+                               entity.sprite.center_x,
+                               entity.sprite.center_y)
 
     def continue_last_game(self):
         with open('./saves/savegame.sav', "r") as f:

@@ -6,6 +6,7 @@ from render_functions import (render_one_window, render_tow_window,
 import arcade
 import constants
 import math
+import friend_choice
 
 from actions import (
     Action,
@@ -24,18 +25,26 @@ if TYPE_CHECKING:
     from entities.gear import Gear
 
 MOVE_KEYS = {
-    arcade_key.H: (-1, 0),
     arcade_key.LEFT:  (-1, 0),
-    arcade_key.J: (0, -1),
     arcade_key.DOWN: (0, -1),
-    arcade_key.K: (0, 1),
     arcade_key.UP: (0, 1),
-    arcade_key.L: (1, 0),
     arcade_key.RIGHT:  (1, 0),
+    arcade_key.H: (-1, 0),
+    arcade_key.J: (0, -1),
+    arcade_key.K: (0, 1),
+    arcade_key.L: (1, 0),
     arcade_key.Y:  (-1, 1),
     arcade_key.U:  (1, 1),
     arcade_key.B:  (-1, -1),
     arcade_key.N:  (1, -1),
+    arcade_key.NUM_1:  (-1, -1),
+    arcade_key.NUM_2: (0, -1),
+    arcade_key.NUM_3:  (1, -1),
+    arcade_key.NUM_4: (-1, 0),
+    arcade_key.NUM_6: (1, 0),
+    arcade_key.NUM_7:  (-1, 1),
+    arcade_key.NUM_8: (0, 1),
+    arcade_key.NUM_9:  (1, 1),
 }
 
 CURSOR_Y_KEYS = {
@@ -45,11 +54,14 @@ CURSOR_Y_KEYS = {
     arcade_key.PAGEDOWN: 10,
     arcade_key.J: -1,
     arcade_key.K: 1,
+    arcade_key.DOWN: -1,
+    arcade_key.UP: 1
 }
 
 WAIT_KEYS = {
     arcade_key.PERIOD,
     arcade_key.KEY_5,
+    arcade_key.NUM_5,
     arcade_key.CLEAR,
 }
 
@@ -103,10 +115,21 @@ class MainGameEventHandler(EventHandler):
                     self.engine.message_log.add_message(
                         exc.args[0], color.impossible)
         action_queue.sort(key=lambda x: x.speed, reverse=True)
+        self.engine.message_log.clear()
         for act in action_queue:
             if hasattr(act.entity, 'is_alive') and not act.entity.is_alive:
                 continue
-            act.perform()
+            try:
+                act.perform()
+            except exceptions.Talk:
+                self.engine.event_handler = FriendEventHandler(
+                        self.engine, act.target_actor)
+            except exceptions.InventoryIsFull:
+                self.engine.message_log.add_message(
+                        "Inventory is full.", color.invalid)
+
+        self.engine.player.fighter.hp += 1
+        self.engine.player.fighter.mp += 1
         self.engine.update_fov()
 
     def handle_action(self, action: Optional[Action]) -> bool:
@@ -135,13 +158,13 @@ class MainGameEventHandler(EventHandler):
             self.engine.enter_next_level()
         elif key in WAIT_KEYS:
             action = WaitAction(self.engine)
-        elif key == arcade_key.V:
-            self.engine.event_handler = HistoryViewer(self.engine)
+        # elif key == arcade_key.V:
+        #    self.engine.event_handler = HistoryViewer(self.engine)
         elif key == arcade_key.G:
             action = PickupAction(player)
         elif key == arcade_key.I:
             self.engine.event_handler = InventoryActivateHandler(self.engine)
-        elif key == arcade_key.E:
+        elif key == arcade_key.C:
             self.engine.event_handler = EquipmentEventHandler(self.engine)
         elif key == arcade_key.D:
             self.engine.event_handler = InventoryDropHandler(self.engine)
@@ -244,6 +267,46 @@ class WinEventHandler(EventHandler):
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         if key == arcade_key.ESCAPE:
             return self.engine.quit()
+
+
+class FriendEventHandler(EventHandler):
+
+    TITLE = "Unamned"
+
+    def __init__(self, engine, friend):
+        super().__init__(engine)
+        self.friend = friend
+        self.TITLE = f'{friend.name} \n is talking to you.'
+        self.choices = friend_choice.got_2_choices()
+
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
+        content = '\nYou saved my life. Choose your reward.\n'
+        content += ''
+
+        for i, choice in enumerate(self.choices):
+            item_key = chr(ord("a") + i)
+            content += f'({item_key}) {choice.desc}\n'
+
+        render_one_window(self.TITLE, content)
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        index = key - arcade_key.A
+
+        if 0 <= index <= 26:
+            try:
+                selected_item = self.choices[index]
+            except IndexError:
+                self.engine.message_log.add_message(
+                    "Invalid entry.", color.invalid)
+                return None
+            return self.on_item_selected(selected_item)
+        return super().on_key_press(key, modifiers)
+
+    def on_item_selected(self, choice) -> Optional[Action]:
+        choice.perform()
+        self.engine.game_map.despawn_entity(self.friend)
+        self.engine.event_handler = MainGameEventHandler(self.engine)
 
 
 class HistoryViewer(EventHandler):
@@ -523,8 +586,9 @@ class LookHandler(AskUserEventHandler):
         content = ''
         for i, actor in enumerate(self.engine.game_map.visible_monsters):
             item_key = chr(ord("a") + i)
-            content += f'({item_key}) {actor.name} '
+            content += f'({item_key}) {actor.name}'
             if actor.is_alive:
+                content += '\n' + constants.sub_line_placeholder
                 content += f'  hp: {actor.fighter.hp}'
                 content += f'  ack: {actor.fighter.power}'
                 content += f'  def: {actor.fighter.defense}'

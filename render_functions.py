@@ -70,6 +70,7 @@ def render_notice_window(title_txt, content_txt, offset_x=0,
             align='center',
             width=constants.inventory_window_width,
             font_name='LT Binary Neue Round',
+            multiline=True,
         )
     if notice_window_content is None:
         notice_window_content = arcade.Text(
@@ -134,6 +135,7 @@ def render_one_window(title_txt, content_txt, offset_x=0):
             align='center',
             width=constants.inventory_window_width,
             font_name='LT Binary Neue Round',
+            multiline=True,
         )
     if content is None:
         content = arcade.Text(

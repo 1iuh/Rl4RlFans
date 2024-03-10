@@ -198,16 +198,12 @@ class FireballSkillConsumable(Consumable):
 
         action.entity.fighter.mp -= action.skill.mana_cost
 
-        self.engine.message_log.add_message(
-                f"{action.speed}: {action.entity.name} threw a fireball")
-
         vfxs = []
         for actor in self.gamemap.actors:
             if actor.distance(*action.target_xy) <= self.radius:
                 damage = self.base_damage + action.entity.fighter.magic
                 self.gamemap.engine.message_log.add_message(
-                    f"a fireball explodes, {actor.name} \
-                            takes {damage} damage!")
+                    f"You dealt {actor.name} {damage} fire damage!")
                 actor.fighter.take_damage(damage)
                 vfx = VisualEffects(
                     9000,
@@ -293,8 +289,7 @@ class LightningBoltConsumable(Consumable):
                     actor.y == action.target_xy[1]):
                 damage = self.damage + action.entity.fighter.magic * 2
                 self.gamemap.engine.message_log.add_message(
-                    f"{action.entity.name} cast a lightning bolt,\
-                         {actor.name} takes {damage} damage!")
+                    f"{action.entity.name} dealt {actor.name} {damage} lightning damage.")
                 actor.fighter.take_damage(damage)
                 vfx = VisualEffects(
                     9002,

@@ -1,78 +1,42 @@
+import constants
 
 mob_data = {
-        1: {
-            'hp': 20,
-            'power': 7,
+        constants.MonsterType.Minion: {
+            'hp': 12,
+            'power': 6,
             'defense': 3,
-            'speed': 3,
-            },
-        2: {
-            'hp': 40,
-            'power': 12,
-            'defense': 6,
+            'magic': 0,
             'speed': 5,
             },
-        3: {
-            'hp': 60,
-            'power': 17,
-            'defense': 9,
-            'speed': 7,
+        constants.MonsterType.Ranger: {
+            'hp': 8,
+            'power': 0,
+            'defense': 2,
+            'magic': 4,
+            'speed': 3,
             },
-        4: {
-            'hp': 80,
-            'power': 22,
-            'defense': 12,
-            'speed': 9,
+        constants.MonsterType.Tank: {
+            'hp': 16,
+            'power': 6,
+            'defense': 4,
+            'magic': 0,
+            'speed': 1,
             },
-        5: {
-            'hp': 100,
-            'power': 27,
-            'defense': 15,
-            'speed': 11,
-            },
-        6: {
-            'hp': 120,
-            'power': 32,
-            'defense': 18,
-            'speed': 13,
+        constants.MonsterType.Assassin: {
+            'hp': 10,
+            'power': 10,
+            'defense': 2,
+            'magic': 0,
+            'speed': 10,
             },
         }
 
-elite_mob_data = {
-        1: {
-            'hp': 60,
-            'power': 8,
-            'defense': 5,
-            'speed': 4,
-            },
-        2: {
-            'hp': 90,
-            'power': 18,
-            'defense': 10,
-            'speed': 8,
-            },
-        3: {
-            'hp': 120,
-            'power': 28,
-            'defense': 15,
-            'speed': 12,
-            },
-        4: {
-            'hp': 150,
-            'power': 38,
-            'defense': 20,
-            'speed': 16,
-            },
-        5: {
-            'hp': 180,
-            'power': 48,
-            'defense': 25,
-            'speed': 20,
-            },
-        6: {
-            'hp': 210,
-            'power': 58,
-            'defense': 30,
-            'speed': 24,
-            },
-        }
+monster_growth_base_rate = {
+        'power': 1.2,
+        'hp': 1.3,
+        'magic': 1.2,
+        'defense': 1.3,
+        'speed': 1.1,
+    }
+
+elite_stat_rate = 1.3

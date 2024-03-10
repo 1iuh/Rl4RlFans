@@ -3,7 +3,8 @@ from __future__ import annotations
 from entities.entity import Entity
 from components.equipment import Equipment
 from entities.factors import skills
-from entities.mob_data import mob_data
+from entities import mob_data
+import constants
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -17,6 +18,7 @@ class Actor(Entity):
     sprite: ActorSprite
     skills: list
     level = 1
+    cate = 0
 
     def __init__(self,
                  *,
@@ -28,6 +30,7 @@ class Actor(Entity):
                  ai_cls,
                  fighter: Fighter,
                  inventory: Inventory,
+                 cate,
                  ):
 
         super().__init__(
@@ -45,11 +48,22 @@ class Actor(Entity):
         self.inventory = inventory
         self.inventory.parent = self
         self.equipment = Equipment(self)
+        self.cate = cate
 
         self.skills = []
         self.skills.append(skills.fireball_skill(self))
         self.skills.append(skills.teleportation_skill(self))
         self.skills.append(skills.lightning_bolt_skill(self))
+
+    def is_friend(self):
+        if 3000 > self.entity_id >= 2000:
+            return True
+        return False
+
+    def is_monster(self):
+        if 2000 > self.entity_id >= 1000:
+            return True
+        return False
 
     def copy(self):
         clone = super().copy()
@@ -59,13 +73,12 @@ class Actor(Entity):
         return clone
 
     def rand(self):
-        for attr, value in mob_data[self.level].items():
-            setattr(self.fighter, '_'+attr, value)
+        base_stat = mob_data.mob_data[self.cate]
+        for k, v in base_stat.items():
+            rate = mob_data.monster_growth_base_rate[k] ** self.level
+            val = int(v * rate * constants.monster_stat_bonus)
+            setattr(self.fighter, '_'+k, val)
         self.fighter._max_hp = self.fighter._hp
-        # if len(self.desc) > 0:
-        #     self.desc = ','.join([self.desc, f"{attr}+{value}"])
-        # else:
-        #     self.desc = f"{attr}+{value}"
 
     @property
     def is_alive(self) -> bool:

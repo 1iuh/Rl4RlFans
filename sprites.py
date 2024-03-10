@@ -306,148 +306,189 @@ def player_sprite():
     return ActorSprite(resource_path("asset/player_idle_f{0}.png"), 3, scale=1)
 
 
-def goblin_sprite():
+def Goblin_sprite():
     return ActorSprite(resource_path("asset/frames/goblin_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
-def ice_zombie_sprite():
+def Ice_zombie_sprite():
     return ActorSprite(resource_path("asset/frames/ice_zombie_anim_f{0}.png"),
                        4, scale=1)
 
 
-def imp_sprite():
+def Imp_sprite():
     return ActorSprite(resource_path("asset/frames/imp_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
-def masked_orc_sprite():
+def Masked_orc_sprite():
     return ActorSprite(
             resource_path("asset/frames/masked_orc_idle_anim_f{0}.png"),
             4, scale=1)
 
 
-def muddy_sprite():
+def Muddy_sprite():
     return ActorSprite(resource_path("asset/frames/muddy_anim_f{0}.png"),
                        4, scale=1)
 
 
-def necromancer_sprite():
+def Necromancer_sprite():
     return ActorSprite(resource_path("asset/frames/necromancer_anim_f{0}.png"),
                        4, scale=1)
 
 
-def ogre_sprite():
+def Ogre_sprite():
     return ActorSprite(resource_path("asset/frames/ogre_idle_anim_f{0}.png"),
-                       4, scale=1)
+                       4, scale=0.8)
 
 
-def orc_shaman_sprite():
+def Orc_shaman_sprite():
     return ActorSprite(
             resource_path("asset/frames/orc_shaman_idle_anim_f{0}.png"),
             4, scale=1)
 
 
-def orc_warrior_sprite():
+def Orc_warrior_sprite():
     return ActorSprite(
             resource_path("asset/frames/orc_warrior_idle_anim_f{0}.png"),
             4, scale=1)
 
 
-def skelet_sprite():
+def Skelet_sprite():
     return ActorSprite(resource_path("asset/frames/skelet_idle_anim_f{0}.png"),
                        4, scale=1)
 
 
-def slug_sprite():
+def Slug_sprite():
     return ActorSprite(resource_path("asset/frames/slug_anim_f{0}.png"),
                        4, scale=1)
 
 
-def swampy_sprite():
+def Swampy_sprite():
     return ActorSprite(resource_path("asset/frames/swampy_anim_f{0}.png"),
                        4, scale=1)
 
 
-def tiny_slug_sprite():
+def Tiny_slug_sprite():
     return ActorSprite(resource_path("asset/frames/tiny_slug_anim_f{0}.png"),
                        4, scale=1)
 
 
-def tiny_zombie_sprite():
+def Tiny_zombie_sprite():
     return ActorSprite(
             resource_path("asset/frames/tiny_zombie_idle_anim_f{0}.png"),
             4, scale=1)
 
 
-def wogol_sprite():
+def Wogol_sprite():
     return ActorSprite(
             resource_path("asset/frames/wogol_idle_anim_f{0}.png"),
             4, scale=1)
 
 
-def zombie_sprite():
+def Zombie_sprite():
     return ActorSprite(resource_path("asset/frames/zombie_anim_f{0}.png"),
                        4, scale=1)
 
 
-def big_demon_sprite():
+def Big_demon_sprite():
     return ActorSprite(
             resource_path("asset/frames/big_demon_idle_anim_f{0}.png"),
             4, scale=0.666)
 
 
-def big_zombie_sprite():
+def Big_zombie_sprite():
     return ActorSprite(
             resource_path("asset/frames/big_zombie_idle_anim_f{0}.png"),
             4, scale=0.666)
 
 
-def chort_sprite():
+def Chort_sprite():
     return ActorSprite(
             resource_path("asset/frames/chort_idle_anim_f{0}.png"), 4, scale=1)
 
 
 monster_sprites = [
-    goblin_sprite,
-    ice_zombie_sprite,
-    imp_sprite,
-    masked_orc_sprite,
-    muddy_sprite,
-    necromancer_sprite,
-    ogre_sprite,
-    orc_shaman_sprite,
-    orc_warrior_sprite,
-    skelet_sprite,
-    slug_sprite,
-    swampy_sprite,
-    tiny_slug_sprite,
-    tiny_zombie_sprite,
-    wogol_sprite,
-    zombie_sprite,
-    big_demon_sprite,
-    big_zombie_sprite,
-    chort_sprite
+    Goblin_sprite,
+    Ice_zombie_sprite,
+    Imp_sprite,
+    Masked_orc_sprite,
+    Muddy_sprite,
+    Necromancer_sprite,
+    Ogre_sprite,
+    Orc_shaman_sprite,
+    Orc_warrior_sprite,
+    Skelet_sprite,
+    Slug_sprite,
+    Swampy_sprite,
+    Tiny_slug_sprite,
+    Tiny_zombie_sprite,
+    Wogol_sprite,
+    Zombie_sprite,
+    Big_demon_sprite,
+    Big_zombie_sprite,
+    Chort_sprite
 ]
 
 
-def toufu():
-    return ActorSprite(resource_path("asset/frames/dwarf_m_idle_anim_f{0}.png"), 4, scale=1)
+def Ma_po_tofu():
+    return ActorSprite(
+            resource_path("asset/frames/dwarf_m_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
-def feishiko():
-    return ActorSprite(resource_path("asset/frames/lizard_m_idle_anim_f{0}.png"),
-                       4, scale=1)
+def Feishiko():
+    return ActorSprite(
+            resource_path("asset/frames/lizard_m_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
-def silencess():
-    return ActorSprite(resource_path("asset/frames/wizzard_m_idle_anim_f{0}.png"),
-                       4, scale=1)
+def Silencess():
+    return ActorSprite(
+            resource_path("asset/frames/wizzard_m_idle_anim_f{0}.png"),
+            4, scale=1)
 
 
-def superlight():
-    return ActorSprite(resource_path("asset/frames/pumpkin_dude_idle_anim_f{0}.png"),
-                       4, scale=1)
+def Super_light():
+    return ActorSprite(
+            resource_path("asset/frames/pumpkin_dude_idle_anim_f{0}.png"),
+            4, scale=1)
+
+
+def Sagancharum():
+    return ActorSprite(
+            resource_path("asset/frames/elf_f_idle_anim_f{0}.png"),
+            4, scale=1)
+
+
+def A_shu():
+    return ActorSprite(
+            resource_path("asset/frames/knight_f_idle_anim_f{0}.png"),
+            4, scale=1)
+
+
+def Twoflower():
+    return ActorSprite(
+            resource_path("asset/frames/doc_idle_anim_f{0}.png"),
+            4, scale=1)
+
+
+def Jade_Bird():
+    return ActorSprite(
+            resource_path("asset/frames/lizard_f_idle_anim_f{0}.png"),
+            4, scale=1)
+
+
+friends_sprites = [
+        Ma_po_tofu,
+        Feishiko,
+        Silencess,
+        Super_light,
+        Sagancharum,
+        A_shu,
+        Twoflower,
+        Jade_Bird,
+        ]
 
 
 def fireball_missile_sprite():

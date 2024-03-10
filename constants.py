@@ -4,8 +4,6 @@ map_height = 35
 room_max_size = 10
 room_min_size = 6
 max_rooms = 30
-max_monsters_per_room = 4
-max_items_per_room = 5
 
 grid_size = 24
 
@@ -46,3 +44,21 @@ actor_stats_keys = [
     'max_mp',
     'speed',
 ]
+
+
+class MonsterType:
+    Minion = 1
+    Ranger = 2
+    Tank = 3
+    Assassin = 4
+
+
+max_monsters_per_room = 2
+max_items_per_room = 2
+item_generate_rate = 0.25
+gear_generate_rate = 0.15
+monster_drop_rate = 0.4
+enchant_bonus = 1
+enchant_stats_bonus = 1
+gear_base_stat_bonus = 1
+monster_stat_bonus = 1

@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 import arcade
 import color
+import constants
 
 
 class Message:
@@ -31,7 +32,11 @@ class MessageLog:
             12,
             multiline=True,
             width=165,
+            font_name=constants.font_name
         )
+
+    def clear(self):
+        self.messages.clear()
 
     def add_message(
         self, text: str,
