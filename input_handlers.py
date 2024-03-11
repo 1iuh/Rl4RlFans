@@ -264,7 +264,12 @@ class WinEventHandler(EventHandler):
 
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
-        render_notice_window(self.TITLE, "Press Esc to continue.")
+
+        content = "Thanks for playing\n"
+        content += f"You have reached level {self.engine.game_map.level + 1}.\n"
+        content += "Trying to go deeper?\n\n\n"
+        content += "Press Esc to continue."
+        render_notice_window(self.TITLE, content, height=300)
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         if key == arcade_key.ESCAPE:
@@ -799,7 +804,7 @@ class ResetWorldEventHandler(StartMenuEventHandler):
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
         
-        render_notice_window(self.TITLE, "The world has returned to the way it was.\n\n\nPress Esc to continue.", offset_x=-50)
+        render_notice_window(self.TITLE, "The world has returned to the way it was.\n\n\nPress Any Key to continue.", offset_x=-50)
 
     def on_key_press(self, key, modifiers) -> Optional[Action]:
         self.engine.event_handler = StartMenuEventHandler(self.engine)

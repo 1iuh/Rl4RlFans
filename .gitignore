@@ -3,5 +3,5 @@ __pycache__
 .DS_Store
 dist
 build
-main.spec
 asset/savegame.sav
+*.spec

@@ -8,7 +8,7 @@ enchant_bonus = 1
 enchant_stats_bonus = 1
 gear_base_stat_bonus = 1
 monster_stat_bonus = 1
-end_level = 5
+end_level = 4
 
 
 def dict_dump():
