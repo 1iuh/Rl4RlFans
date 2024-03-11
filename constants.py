@@ -34,7 +34,6 @@ font_name = 'LT Binary Neue Round'
 sub_line_placeholder = '       └ '
 
 missile_move_speed = 4
-end_level = 6
 
 actor_stats_keys = [
     'power',
@@ -62,3 +61,4 @@ enchant_bonus = 1
 enchant_stats_bonus = 1
 gear_base_stat_bonus = 1
 monster_stat_bonus = 1
+end_level = 5

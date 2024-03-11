@@ -34,6 +34,10 @@ friend_choices = [
                      lambda: constants.monster_stat_bonus + 0.1),
         FriendChoice('Make the monsters weaker.',
                      lambda: constants.monster_stat_bonus - 0.1),
+        FriendChoice('Win the game early.',
+                     lambda: constants.end_level - 1),
+        FriendChoice('Win the game late.',
+                     lambda: constants.end_level - 1),
         ]
 
 

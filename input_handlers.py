@@ -276,12 +276,12 @@ class FriendEventHandler(EventHandler):
     def __init__(self, engine, friend):
         super().__init__(engine)
         self.friend = friend
-        self.TITLE = f'{friend.name} \n is talking to you.'
+        self.TITLE = f'A roguelike fan named\n"{friend.name}"\n is talking to you.\n'
         self.choices = friend_choice.got_2_choices()
 
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
-        content = '\nYou saved my life. Choose your reward.\n'
+        content = '\n\n\n\nYou found me.\nI can modify this game FOREVER.\nMake your choice.\n'
         content += '\n\n'
 
         for i, choice in enumerate(self.choices):
