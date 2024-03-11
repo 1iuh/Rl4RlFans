@@ -175,7 +175,8 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.ESCAPE:
             self.engine.event_handler = EscMenuHandler(self.engine)
-        elif ((key == arcade.key.SLASH and modifiers ) or
+        elif ((key == arcade.key.SLASH and modifiers) or
+              key == arcade.key.GREATER or
               key == arcade_key.QUESTION):
             self.engine.event_handler = HotKeysEventHandler(self.engine)
 
