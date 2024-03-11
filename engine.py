@@ -45,9 +45,9 @@ class StartMenuEngine(Engine):
 
     cursor_index: int = 0
     window: MyGame
-    title = 'Roguelike For Roguelike Fans'
+    title = 'A Roguelike\nFor\nRoguelike Fans'
     options = [
-        'New Game',
+        'Start Game',
         'Exit',
     ]
 
@@ -67,8 +67,12 @@ class StartMenuEngine(Engine):
         )
         # draw tile
         arcade.draw_text(
-            self.title, 150, 500, arcade.color.WHITE, 36,
-            font_name="Kenney Blocks"
+            self.title,
+            constants.screen_center_x-350, 600, arcade.color.WHITE, 36,
+            font_name=constants.font_name,
+            width=500,
+            multiline=True,
+            align='center'
         )
 
         # draw options

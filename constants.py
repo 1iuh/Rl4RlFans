@@ -10,7 +10,7 @@ grid_size = 24
 screen_width = grid_size * map_width + 5
 screen_height = grid_size * map_height + 5
 
-screen_title = "Roguelike For Roguelike Fans"
+screen_title = "A Roguelike For Roguelike Fans"
 
 screen_center_x = int(screen_width / 2) + 100
 screen_center_y = int(screen_height / 2)

@@ -282,7 +282,7 @@ class FriendEventHandler(EventHandler):
     def on_render(self) -> None:
         super().on_render()  # Draw the main state as the background.
         content = '\nYou saved my life. Choose your reward.\n'
-        content += ''
+        content += '\n\n'
 
         for i, choice in enumerate(self.choices):
             item_key = chr(ord("a") + i)

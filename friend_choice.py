@@ -14,25 +14,25 @@ class FriendChoice:
 
 
 friend_choices = [
-        FriendChoice('There are too few monsters.',
+        FriendChoice('Let there be more monsters.',
                      lambda: constants.max_monsters_per_room + 1),
-        FriendChoice('There are too much monsters',
+        FriendChoice('Make the monsters less.',
                      lambda: constants.max_monsters_per_room + 1),
-        FriendChoice('Too few items, more of them.',
+        FriendChoice('Let potions be more.',
                      lambda: constants.item_generate_rate + 0.1),
-        FriendChoice('Too little gear.',
+        FriendChoice('Let gear be more.',
                      lambda: constants.gear_generate_rate + 0.1),
-        FriendChoice('Monsters drop too little gear.',
+        FriendChoice('Make monsters drop more gear.',
                      lambda: constants.monster_drop_rate + 0.1),
         FriendChoice('More high quality gear.',
                      lambda: constants.enchant_bonus + 0.1),
         FriendChoice('More powerful gear enchantments.',
                      lambda: constants.enchant_stats_bonus + 0.1),
-        FriendChoice('The attributes of the gear suck.',
+        FriendChoice('Make the gear`s attributes better.',
                      lambda: constants.gear_base_stat_bonus + 0.1),
-        FriendChoice('The monsters are too weak.',
+        FriendChoice('Make the monsters stronger.',
                      lambda: constants.monster_stat_bonus + 0.1),
-        FriendChoice('The monsters are too strong.',
+        FriendChoice('Make the monsters weaker.',
                      lambda: constants.monster_stat_bonus - 0.1),
         ]
 
