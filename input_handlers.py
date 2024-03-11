@@ -154,7 +154,8 @@ class MainGameEventHandler(EventHandler):
 
         if key in MOVE_KEYS:
             action = BumpAction(player, *MOVE_KEYS[key])
-        elif key == arcade_key.ENTER:
+        elif ((key == arcade.key.PERIOD and modifiers ) or
+              key == arcade_key.ENTER):
             self.engine.enter_next_level()
         elif key in WAIT_KEYS:
             action = WaitAction(self.engine)
@@ -174,7 +175,8 @@ class MainGameEventHandler(EventHandler):
             self.engine.event_handler = LookHandler(self.engine)
         elif key == arcade_key.ESCAPE:
             self.engine.event_handler = EscMenuHandler(self.engine)
-        elif key == arcade_key.QUESTION:
+        elif ((key == arcade.key.SLASH and modifiers ) or
+              key == arcade_key.QUESTION):
             self.engine.event_handler = HotKeysEventHandler(self.engine)
 
         # No valid key was pressed
@@ -213,7 +215,7 @@ class HotKeysEventHandler(EventHandler):
     g        Pick up items.
     d        Drop items.
     c        Unequip a gear.
-    Enter    Cycle through down stairs.
+    >        Cycle through down stairs.
 
     Stats:
 
@@ -306,6 +308,8 @@ class FriendEventHandler(EventHandler):
     def on_item_selected(self, choice) -> Optional[Action]:
         choice.perform()
         self.engine.game_map.despawn_entity(self.friend)
+        self.engine.save()
+        self.engine.message_log.add_message('The world has been modified.')
         self.engine.event_handler = MainGameEventHandler(self.engine)
 
 
@@ -726,21 +730,6 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         return math.sqrt((x - _x) ** 2 + (y - _y) ** 2)
 
 
-class StartMenuEventHandler:
-    engine: StartMenuEngine
-
-    def __init__(self, engine):
-        self.engine = engine
-
-    def on_key_press(self, key, modifiers):
-        if key in (arcade_key.K, arcade_key.UP):
-            self.engine.cursor_index -= 1
-        elif key in (arcade_key.J, arcade_key.DOWN):
-            self.engine.cursor_index += 1
-        elif key in CONFIRM_KEYS:
-            return self.engine.excute_option()
-
-
 class EquipmentEventHandler(AskUserEventHandler):
 
     TITLE = "Put Off Equipment"
@@ -780,3 +769,37 @@ class EquipmentEventHandler(AskUserEventHandler):
     def on_item_selected(self, gear: Gear) -> Optional[Action]:
         """Called when the user selects a valid item."""
         return actions.PutDownAction(self.engine.player, gear)
+
+class StartMenuEventHandler:
+    engine: StartMenuEngine
+
+    def __init__(self, engine):
+        self.engine = engine
+
+    def on_render(self) -> None:
+        pass
+
+    def on_key_press(self, key, modifiers):
+        if key in (arcade_key.K, arcade_key.UP):
+            self.engine.cursor_index -= 1
+        elif key in (arcade_key.J, arcade_key.DOWN):
+            self.engine.cursor_index += 1
+        elif key in CONFIRM_KEYS:
+            return self.engine.excute_option()
+
+
+
+class ResetWorldEventHandler(StartMenuEventHandler):
+
+    TITLE = "Success"
+
+    def __init__(self, engine):
+        super().__init__(engine)
+
+    def on_render(self) -> None:
+        super().on_render()  # Draw the main state as the background.
+        
+        render_notice_window(self.TITLE, "The world has returned to the way it was.\n\n\nPress Esc to continue.", offset_x=-50)
+
+    def on_key_press(self, key, modifiers) -> Optional[Action]:
+        self.engine.event_handler = StartMenuEventHandler(self.engine)

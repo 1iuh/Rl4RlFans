@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from tcod.map import compute_fov
 from input_handlers import (MainGameEventHandler, StartMenuEventHandler,
-                            WinEventHandler, HotKeysEventHandler)
+                            WinEventHandler, HotKeysEventHandler, ResetWorldEventHandler)
 from message_log import MessageLog
 from entities.actor import Actor
 from render_functions import render_bar, render_mob_bar
@@ -10,6 +10,7 @@ import constants
 import arcade
 import json
 import sprites
+import env_val
 
 
 from typing import TYPE_CHECKING
@@ -48,6 +49,7 @@ class StartMenuEngine(Engine):
     title = 'A Roguelike\nFor\nRoguelike Fans'
     options = [
         'Start Game',
+        'Reset World',
         'Exit',
     ]
 
@@ -89,6 +91,7 @@ class StartMenuEngine(Engine):
                 font_name=constants.font_name
             )
             i += 1
+        self.event_handler.on_render()
 
     def on_update(self, delta_time):
         pass
@@ -99,8 +102,16 @@ class StartMenuEngine(Engine):
     def excute_option(self):
         if self.cursor_index == 0:
             self.window.start_new_game()
-        elif self.cursor_index == 1:
+        if self.cursor_index == 1:
+            self.reset_world()
+        elif self.cursor_index == 2:
             arcade.exit()
+
+    def reset_world(self):
+        save_data = json.dumps(dict())
+        with open(sprites.resource_path('asset/savegame.sav'), "wb") as f:
+            f.write(save_data.encode("utf8"))
+        self.event_handler = ResetWorldEventHandler(self)
 
 
 class GameEngine(Engine):
@@ -123,6 +134,8 @@ class GameEngine(Engine):
             self.event_handler: EventHandler = HotKeysEventHandler(self)
         else:
             self.event_handler: EventHandler = MainGameEventHandler(self)
+
+        self.load()
         self.update_fov()
 
     def update_fov(self) -> None:
@@ -156,19 +169,19 @@ class GameEngine(Engine):
     def render_ui(self):
         arcade.draw_lrbt_rectangle_filled(
             0,
-            180,
+            190,
             0,
             constants.screen_height,
             arcade.color.BLACK_LEATHER_JACKET
         )
         arcade.draw_lrbt_rectangle_outline(
             0,
-            180,
+            190,
             0,
             constants.screen_height,
             arcade.color.WHITE_SMOKE
         )
-        self.message_log.render(x=10, y=420, lines=16)
+        self.message_log.render(x=10, y=410, lines=14)
         i = 0
         render_bar(
             current_value=self.player.fighter.hp,
@@ -269,6 +282,16 @@ class GameEngine(Engine):
             )
             i += 1
 
+        i += 1
+        arcade.draw_text(
+            'Press ? For help',
+            stats_start_x - 10,
+            constants.screen_height - 100 - font_line_height * i,
+            font_size=12,
+            font_name=constants.font_name
+        )
+        i += 1
+
         for entity in self.game_map.entities:
             if entity.sprite.visible and isinstance(entity, Actor) and entity.is_monster():
                 current_value = entity.fighter.hp
@@ -277,26 +300,38 @@ class GameEngine(Engine):
                                entity.sprite.center_x,
                                entity.sprite.center_y)
 
-    def continue_last_game(self):
-        with open('./saves/savegame.sav', "r") as f:
-            game_data = json.loads(f.read())
-            self.game_map.load_dict(game_data['game_map'])
-            self.player.load_dict(game_data['player'])
-            self.game_map.spawn_entity(self.player)
+        
+
+    # def continue_last_game(self):
+        # with open(sprites.resource_path('assets/savegame.sav'), "r") as f:
+            # game_data = json.loads(f.read())
+            # self.game_map.load_dict(game_data['game_map'])
+            # self.player.load_dict(game_data['player'])
+            # self.game_map.spawn_entity(self.player)
 
     def quit(self):
         self.window.goto_start_menu()
 
-    def save_and_quit(self):
-        save_data = json.dumps(self.to_dict())
-        with open('./saves/savegame.sav', "wb") as f:
+    def load(self):
+        with open(sprites.resource_path('asset/savegame.sav'), "r") as f:
+            game_data = json.loads(f.read())
+            env_val.load_dict(game_data)
+
+    def save(self):
+        save_data = json.dumps(env_val.dict_dump())
+        with open(sprites.resource_path('asset/savegame.sav'), "wb") as f:
             f.write(save_data.encode("utf8"))
-        self.window.goto_start_menu()
+
+    # def save_and_quit(self):
+        # save_data = json.dumps(self.to_dict())
+        # with open('./saves/savegame.sav', "wb") as f:
+            # f.write(save_data.encode("utf8"))
+        # self.window.goto_start_menu()
 
     def enter_next_level(self):
         if (self.game_map.tiles[self.player.x, self.player.y][2] ==
                 constants.down_stair_tilecode):
-            if (self.game_map.level == constants.end_level):
+            if (self.game_map.level >= env_val.end_level):
                 self.event_handler = WinEventHandler(self)
             else:
                 self.window.enter_next_level()

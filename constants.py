@@ -50,15 +50,3 @@ class MonsterType:
     Ranger = 2
     Tank = 3
     Assassin = 4
-
-
-max_monsters_per_room = 2
-max_items_per_room = 2
-item_generate_rate = 0.25
-gear_generate_rate = 0.15
-monster_drop_rate = 0.4
-enchant_bonus = 1
-enchant_stats_bonus = 1
-gear_base_stat_bonus = 1
-monster_stat_bonus = 1
-end_level = 5

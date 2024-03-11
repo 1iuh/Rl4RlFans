@@ -33,9 +33,9 @@ mob_data = {
 
 monster_growth_base_rate = {
         'power': 1.2,
-        'hp': 1.3,
+        'hp': 1.2,
         'magic': 1.2,
-        'defense': 1.3,
+        'defense': 1.2,
         'speed': 1.1,
     }
 

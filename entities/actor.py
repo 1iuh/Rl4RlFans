@@ -4,7 +4,7 @@ from entities.entity import Entity
 from components.equipment import Equipment
 from entities.factors import skills
 from entities import mob_data
-import constants
+import env_val
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -76,7 +76,7 @@ class Actor(Entity):
         base_stat = mob_data.mob_data[self.cate]
         for k, v in base_stat.items():
             rate = mob_data.monster_growth_base_rate[k] ** self.level
-            val = int(v * rate * constants.monster_stat_bonus)
+            val = int(v * rate * env_val.monster_stat_bonus)
             setattr(self.fighter, '_'+k, val)
         self.fighter._max_hp = self.fighter._hp
 

@@ -57,8 +57,6 @@ class MyGame(arcade.Window):
             constants.room_min_size,
             constants.room_max_size,
             constants.max_rooms,
-            constants.max_monsters_per_room,
-            constants.max_items_per_room,
             level,
             engine=self.engine,
             )
@@ -73,8 +71,6 @@ class MyGame(arcade.Window):
             constants.room_min_size,
             constants.room_max_size,
             constants.max_rooms,
-            constants.max_monsters_per_room,
-            constants.max_items_per_room,
             1,
             engine=self.engine,
             )

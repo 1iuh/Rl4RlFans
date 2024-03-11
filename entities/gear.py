@@ -5,6 +5,7 @@ from entities.gear_enchantment_data import rate_of_enchant, enchant_stat_value
 from random import random, choice
 import constants
 from constants import sub_line_placeholder
+import env_val
 
 
 from typing import TYPE_CHECKING
@@ -63,7 +64,7 @@ class Gear(Entity):
 
     def rand(self):
         for attr, value in self.stats(self.level).items():
-            value *= constants.gear_base_stat_bonus
+            value *= env_val.gear_base_stat_bonus
             setattr(self, attr, int(value))
             if len(self.desc) > 0:
                 self.desc = ','.join([self.desc, f"{attr}+{value}"])

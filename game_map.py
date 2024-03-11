@@ -9,6 +9,7 @@ from entities.factors import actors, gears, items
 from entities.entity import Item
 from entities.gear import Gear
 from entities.actor import Actor
+import env_val
 import tile_types
 import sprites
 import constants
@@ -247,14 +248,14 @@ def place_entities(room, dungeon, maximum_monsters, maximum_items, level):
                    for entity in dungeon.entities):
             item_chance = random.random()
 
-            if item_chance < constants.gear_generate_rate:
+            if item_chance < env_val.gear_generate_rate:
                 gear = random.choice(gears.all_gears)
                 gear.level = level
                 item = gear.copy()
                 item.x = x
                 item.y = y
                 dungeon.spawn_entity(item)
-            elif item_chance < constants.item_generate_rate:
+            elif item_chance < env_val.item_generate_rate:
                 item = random.choice(items.all_item).copy()
                 item.x = x
                 item.y = y
@@ -267,8 +268,6 @@ def generate_dungeon(
         room_min_size,
         room_max_size,
         max_rooms,
-        max_monsters_per_room,
-        max_items_per_room,
         level,
         engine,
 ):
@@ -307,8 +306,8 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room,
-                       max_items_per_room, level)
+        place_entities(new_room, dungeon, env_val.max_monsters_per_room,
+                       env_val.max_items_per_room, level)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)

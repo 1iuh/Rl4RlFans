@@ -1,6 +1,6 @@
 
-import constants
 import random
+import env_val
 
 
 class FriendChoice:
@@ -11,33 +11,37 @@ class FriendChoice:
 
     def perform(self):
         self.callback()
+        
 
+def change_env_val(env_name, val):
+    v = getattr(env_val, env_name) + val
+    setattr(env_val, env_name, v)
 
 friend_choices = [
         FriendChoice('Let there be more monsters.',
-                     lambda: constants.max_monsters_per_room + 1),
+                     lambda: change_env_val('max_monsters_per_room', 1)),
         FriendChoice('Make the monsters less.',
-                     lambda: constants.max_monsters_per_room + 1),
+                     lambda: change_env_val('max_monsters_per_room', -1)),
         FriendChoice('Let potions be more.',
-                     lambda: constants.item_generate_rate + 0.1),
+                     lambda: change_env_val('item_generate_rate', 0.1)),
         FriendChoice('Let gear be more.',
-                     lambda: constants.gear_generate_rate + 0.1),
+                     lambda: change_env_val('gear_generate_rate', 0.1)),
         FriendChoice('Make monsters drop more gear.',
-                     lambda: constants.monster_drop_rate + 0.1),
+                     lambda: change_env_val('monster_drop_rate', 0.1)),
         FriendChoice('More high quality gear.',
-                     lambda: constants.enchant_bonus + 0.1),
+                     lambda: change_env_val('enchant_bonus', 0.1)),
         FriendChoice('More powerful gear enchantments.',
-                     lambda: constants.enchant_stats_bonus + 0.1),
+                     lambda: change_env_val('enchant_stats_bonus', 0.1)),
         FriendChoice('Make the gear`s attributes better.',
-                     lambda: constants.gear_base_stat_bonus + 0.1),
+                     lambda: change_env_val('gear_base_stat_bonus', 0.1)),
         FriendChoice('Make the monsters stronger.',
-                     lambda: constants.monster_stat_bonus + 0.1),
+                     lambda: change_env_val('monster_stat_bonus', 0.1)),
         FriendChoice('Make the monsters weaker.',
-                     lambda: constants.monster_stat_bonus - 0.1),
+                     lambda: change_env_val('monster_stat_bonus', -0.1)),
         FriendChoice('Win the game early.',
-                     lambda: constants.end_level - 1),
+                     lambda: change_env_val('end_level', -1)),
         FriendChoice('Win the game late.',
-                     lambda: constants.end_level - 1),
+                     lambda: change_env_val('end_level', 1)),
         ]
 
 

@@ -8,7 +8,7 @@ from render_order import RenderOrder
 import color
 from entities.factors import gears
 import random
-import constants
+import env_val
 
 if TYPE_CHECKING:
     from entities.entity import Actor
@@ -131,7 +131,7 @@ class Fighter(BaseComponent):
         if not self.parent.is_monster():
             return
         ranval = random.random()
-        if ranval < constants.monster_drop_rate:
+        if ranval < env_val.monster_drop_rate:
             gear = random.choice(gears.all_gears)
             gear.level = self.parent.level
             item = gear.copy()
